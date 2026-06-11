@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SuratKeluar;
+use App\Models\Siswa;
+use Illuminate\Http\Request;
+
+class SuratKeluarController extends Controller
+{
+    public function index()
+    {
+        $surat = SuratKeluar::orderBy('tanggal_kirim', 'desc')->paginate(15);
+        return view('surat-keluar.index', compact('surat'));
+    }
+
+    public function create()
+    {
+        $siswa = Siswa::select('id', 'nama_lengkap', 'nis', 'nisn')->get();
+        return view('surat-keluar.create', compact('siswa'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nomor_surat' => 'required|unique:surat_keluar',
+            'tujuan' => 'required',
+            'perihal' => 'required',
+            'tanggal_kirim' => 'required|date',
+            'lampiran' => 'nullable',
+            'file_draft' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('file_draft')) {
+            $file = $request->file('file_draft');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat-keluar', $filename, 'public');
+            $validated['file_draft'] = $path;
+        }
+
+        SuratKeluar::create($validated);
+        return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil disimpan.');
+    }
+
+    public function show(SuratKeluar $suratKeluar)
+    {
+        return view('surat-keluar.show', compact('suratKeluar'));
+    }
+
+    public function edit(SuratKeluar $suratKeluar)
+    {
+        return view('surat-keluar.edit', compact('suratKeluar'));
+    }
+
+    public function update(Request $request, SuratKeluar $suratKeluar)
+    {
+        $validated = $request->validate([
+            'nomor_surat' => 'required|unique:surat_keluar,nomor_surat,' . $suratKeluar->id,
+            'tujuan' => 'required',
+            'perihal' => 'required',
+            'tanggal_kirim' => 'required|date',
+            'lampiran' => 'nullable',
+            'file_draft' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        ]);
+
+        if ($request->hasFile('file_draft')) {
+            $file = $request->file('file_draft');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('surat-keluar', $filename, 'public');
+            $validated['file_draft'] = $path;
+        }
+
+        $suratKeluar->update($validated);
+        return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil diupdate.');
+    }
+
+    public function destroy(SuratKeluar $suratKeluar)
+    {
+        $suratKeluar->delete();
+        return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil dihapus.');
+    }
+}
