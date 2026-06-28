@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // tambahkan di atas class
+use Illuminate\Support\Facades\DB;
 
 class KelasController extends Controller
 {
@@ -28,6 +28,7 @@ class KelasController extends Controller
             'guru_pembimbing_id' => 'nullable|exists:gurus,id',
             'kapasitas' => 'nullable|integer|min:1',
             'ruangan' => 'nullable|string|max:100',
+            'fase' => 'nullable|string|max:5',
         ]);
         Kelas::create($validated);
         return redirect()->route('kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
@@ -47,13 +48,11 @@ class KelasController extends Controller
             'guru_pembimbing_id' => 'nullable|exists:gurus,id',
             'kapasitas' => 'nullable|integer|min:1',
             'ruangan' => 'nullable|string|max:100',
+            'fase' => 'nullable|string|max:5',
         ]);
         $kelas->update($validated);
         return redirect()->route('kelas.index')->with('success', 'Kelas berhasil diupdate.');
     }
-
-    // Di model Kelas
-
 
 public function destroy($id)
 {
@@ -78,7 +77,6 @@ public function destroy($id)
             return redirect()->route('kelas.index')->with('error', 'Gagal menghapus kelas. Data tidak ditemukan.');
         }
     } catch (\Exception $e) {
-        // Log error untuk debugging
         \Log::error('Hapus kelas gagal: ' . $e->getMessage());
         return redirect()->route('kelas.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }

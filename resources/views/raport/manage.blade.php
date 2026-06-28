@@ -85,7 +85,7 @@
                             </td>
                             <td>
                                 <textarea name="nilai[{{ $m->id }}][capaian]" class="form-control border-0 bg-light" rows="1" 
-                                          placeholder="Contoh: Menunjukkan penguasaan yang sangat baik dalam...">{{ $nilai[$m->id]->capaian_kompetensi ?? '' }}</textarea>
+                                          placeholder="Contoh: Menunjukkan penguasaan yang sangat baik dalam...">{{ $nilai[$m->id]->deskripsi ?? '' }}</textarea>
                             </td>
                         </tr>
                         @endforeach

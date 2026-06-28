@@ -10,12 +10,23 @@ class Task extends Model
     use HasFactory;
 
     protected $table = 'tasks';
-    protected $fillable = ['judul', 'deskripsi', 'assigned_to', 'prioritas', 'deadline', 'status', 'created_by', 'kategori', 'attachment', 'progress_persen'];
+
+    protected $fillable = [
+        'judul',
+        'deskripsi',
+        'assigned_to',
+        'prioritas',
+        'deadline',
+        'status',
+        'created_by',
+        'kategori',
+        'attachment',
+        'progress_persen',
+    ];
 
     protected $casts = [
         'deadline' => 'date',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'progress_persen' => 'integer',
     ];
 
     public function logs()
@@ -26,5 +37,10 @@ class Task extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 }

@@ -10,10 +10,25 @@ class PemeliharaanSarana extends Model
     use HasFactory;
 
     protected $table = 'pemeliharaan_sarana';
-    protected $fillable = ['sarana_id', 'tanggal_pemeliharaan', 'keterangan', 'teknisi'];
+
+    protected $fillable = [
+        'sarana_id',
+        'tanggal_pemeliharaan',
+        'biaya',
+        'keterangan',
+        'status',
+        'tanggal_selesai',
+        'teknisi',
+    ];
+
+    protected $casts = [
+        'tanggal_pemeliharaan' => 'date',
+        'biaya' => 'decimal:2',
+        'tanggal_selesai' => 'date',
+    ];
 
     public function sarana()
     {
-        return $this->belongsTo(SaranaPrasarana::class);
+        return $this->belongsTo(SaranaPrasarana::class, 'sarana_id');
     }
 }

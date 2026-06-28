@@ -92,6 +92,7 @@ public function index()
             'kelas_id' => $validated['kelas_id'],
             'guru_id' => $validated['guru_id'],
             'mapel_id' => $validated['mapel_id'],
+            'jam_pelajaran_id' => $request->sesi_id,
             'hari' => $validated['hari'],
             'jam_mulai' => $jamMulai,
             'jam_selesai' => $jamSelesai,
@@ -142,6 +143,7 @@ public function index()
             'kelas_id' => $validated['kelas_id'],
             'guru_id' => $validated['guru_id'],
             'mapel_id' => $validated['mapel_id'],
+            'jam_pelajaran_id' => $request->sesi_id,
             'hari' => $validated['hari'],
             'jam_mulai' => $jamMulai,
             'jam_selesai' => $jamSelesai,
@@ -203,81 +205,62 @@ public function grid()
     return view('jadwal.grid', compact('kelas', 'jamPelajaran', 'gurus', 'mapels', 'jadwalGrid'));
 }
 
-    public function resolveKode(Request $request)
-    {
-        $kode = strtoupper(trim($request->kode));
-        $guru = Guru::where('kode', $kode)->first();
-        if (!$guru) {
-            return response()->json(['success' => false, 'message' => 'Kode tidak ditemukan'], 404);
-        }
-        
-        $mapel = null;
-        if ($guru->bidang_studi) {
-            $mapel = Mapel::where('nama_mapel', 'like', '%' . $guru->bidang_studi . '%')->first();
-        }
-        
-        return response()->json([
-            'success' => true,
-            'guru' => $guru,
-            'mapel' => $mapel,
-        ]);
+public function gridStore(Request $request)
+{
+    $request->validate([
+        'kelas_id' => 'required|integer',
+        'hari' => 'required|string',
+        'jam_id' => 'required|integer',
+        'guru_id' => 'required|integer',
+        'mapel_id' => 'required|integer',
+    ]);
+
+    $sesi = JamPelajaran::findOrFail($request->jam_id);
+
+    // Cek konflik guru
+    $conflict = Jadwal::where('guru_id', $request->guru_id)
+        ->where('hari', $request->hari)
+        ->where(function($q) use ($sesi) {
+            $q->whereBetween('jam_mulai', [$sesi->jam_mulai, $sesi->jam_selesai])
+              ->orWhereBetween('jam_selesai', [$sesi->jam_mulai, $sesi->jam_selesai]);
+        })->exists();
+
+    if ($conflict) {
+        return response()->json(['status' => 'error', 'message' => 'Guru sudah memiliki jadwal di waktu tersebut.'], 422);
     }
 
-    public function gridStore(Request $request)
-    {
-        $changes = $request->input('changes', []);
-        $results = [];
+    // Cek apakah sudah ada jadwal di slot tersebut -> update atau create
+    $jadwal = Jadwal::updateOrCreate(
+        [
+            'kelas_id' => $request->kelas_id,
+            'hari' => $request->hari,
+            'jam_pelajaran_id' => $request->jam_id,
+        ],
+        [
+            'guru_id' => $request->guru_id,
+            'mapel_id' => $request->mapel_id,
+            'jam_mulai' => $sesi->jam_mulai,
+            'jam_selesai' => $sesi->jam_selesai,
+        ]
+    );
 
-        foreach ($changes as $change) {
-            if ($change['action'] === 'delete') {
-                Jadwal::where('id', $change['jadwal_id'])->delete();
-                $results[] = ['success' => true, 'id' => $change['jadwal_id'], 'action' => 'delete'];
-                continue;
-            }
+    return response()->json(['status' => 'success', 'jadwal' => $jadwal]);
+}
 
-            $data = [
-                'kelas_id'    => $change['kelas_id'],
-                'guru_id'     => $change['guru_id'],
-                'mapel_id'    => $change['mapel_id'],
-                'hari'        => $change['hari'],
-                'jam_mulai'   => $change['jam_mulai'],
-                'jam_selesai' => $change['jam_selesai'],
-            ];
+public function resolveKode(Request $request)
+{
+    $request->validate(['kode' => 'required|string']);
+    $guru = Guru::where('kode', $request->kode)->first();
 
-            $conflictQuery = Jadwal::where('guru_id', $data['guru_id'])
-                ->where('hari', $data['hari'])
-                ->where(function ($q) use ($data) {
-                    $q->whereBetween('jam_mulai', [$data['jam_mulai'], $data['jam_selesai']])
-                      ->orWhereBetween('jam_selesai', [$data['jam_mulai'], $data['jam_selesai']]);
-                });
-
-            if (!empty($change['jadwal_id'])) {
-                $conflictQuery->where('id', '!=', $change['jadwal_id']);
-            }
-
-            if ($conflictQuery->exists()) {
-                $results[] = [
-                    'success' => false,
-                    'message' => 'Guru sudah mengajar di jam yang sama pada hari ' . $data['hari'],
-                    'data'    => $change
-                ];
-                continue;
-            }
-
-            if (!empty($change['jadwal_id'])) {
-                $jadwal = Jadwal::find($change['jadwal_id']);
-                if ($jadwal) {
-                    $jadwal->update($data);
-                    $results[] = ['success' => true, 'id' => $jadwal->id, 'action' => 'update'];
-                } else {
-                    $results[] = ['success' => false, 'message' => 'Jadwal tidak ditemukan'];
-                }
-            } else {
-                $jadwal = Jadwal::create($data);
-                $results[] = ['success' => true, 'id' => $jadwal->id, 'action' => 'create'];
-            }
-        }
-
-        return response()->json(['success' => true, 'results' => $results]);
+    if (!$guru) {
+        return response()->json(['status' => 'error', 'message' => 'Guru tidak ditemukan.'], 404);
     }
+
+    return response()->json([
+        'status' => 'success',
+        'guru_id' => $guru->id,
+        'nama' => $guru->nama,
+    ]);
+}
+
 }

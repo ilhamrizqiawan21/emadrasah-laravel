@@ -26,6 +26,10 @@ public function create()
             'kode' => 'required|string|unique:gurus',
             'nama' => 'required|string|max:255',
             'bidang_studi' => 'nullable|string|max:255',
+            'nip' => 'nullable|string|unique:gurus,nip',
+            'email' => 'nullable|email|unique:gurus,email',
+            'phone' => 'nullable|string|max:20',
+            'beban_jp' => 'nullable|integer|min:0',
         ]);
 
         Guru::create($validated);
@@ -47,6 +51,7 @@ public function create()
             'nip' => 'nullable|string|unique:gurus,nip,' . $guru->id,
             'email' => 'nullable|email|unique:gurus,email,' . $guru->id,
             'phone' => 'nullable|string|max:20',
+            'beban_jp' => 'nullable|integer|min:0',
         ]);
 
         $guru->update($validated);

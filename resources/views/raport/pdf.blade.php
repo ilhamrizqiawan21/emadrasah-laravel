@@ -36,7 +36,7 @@
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $mapel->nama_mapel ?? $mapel->nama }}</td>
                 <td class="text-center">{{ optional($nilai[$mapel->id] ?? null)->nilai_akhir ?? '-' }}</td>
-                <td>{{ optional($nilai[$mapel->id] ?? null)->capaian_kompetensi ?? '-' }}</td>
+                <td>{{ optional($nilai[$mapel->id] ?? null)->deskripsi ?? '-' }}</td>
             </tr>
             @endforeach
         </tbody>

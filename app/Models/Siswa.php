@@ -26,6 +26,11 @@ class Siswa extends Model
 
     protected $casts = [
         'tanggal_lahir' => 'date',
+        'no_urut' => 'integer',
+        'anak_ke' => 'integer',
+        'saudara_kandung' => 'integer',
+        'saudara_tiri' => 'integer',
+        'saudara_angkat' => 'integer',
         'tinggi_badan_awal' => 'decimal:2',
         'berat_badan_awal' => 'decimal:2',
     ];
@@ -53,6 +58,31 @@ class Siswa extends Model
     public function raportNilai()
     {
         return $this->hasMany(RaportNilai::class);
+    }
+
+    public function raportEkskul()
+    {
+        return $this->hasMany(RaportEkskul::class);
+    }
+
+    public function raportKehadiran()
+    {
+        return $this->hasMany(RaportKehadiran::class);
+    }
+
+    public function raportKelulusan()
+    {
+        return $this->hasOne(RaportKelulusan::class);
+    }
+
+    public function raportP5ppra()
+    {
+        return $this->hasMany(RaportP5ppra::class);
+    }
+
+    public function raportPrestasi()
+    {
+        return $this->hasMany(RaportPrestasi::class);
     }
 
     public function dokumen()

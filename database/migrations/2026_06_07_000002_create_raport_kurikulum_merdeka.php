@@ -8,99 +8,125 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     * Migrasi Khusus Laporan Capaian Hasil Belajar (Raport) - Kurikulum Merdeka
+     * Tabel Raport Kurikulum Merdeka — sesuai skema database madrasah_db (7).sql
      */
     public function up(): void
     {
-        // 1. Tabel Nilai Akademik
+        // 1. Raport Nilai Akademik
         Schema::create('raport_nilai', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('siswa_id');
-            $table->unsignedBigInteger('tahun_pelajaran_id');
-            $table->unsignedTinyInteger('semester')->comment('1=Ganjil, 2=Genap');
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->unsignedTinyInteger('semester')->comment('1=Ganjil Kl7, 2=Genap Kl7, …, 6=Genap Kl9');
             $table->unsignedBigInteger('mapel_id');
-            $table->integer('nilai_akhir')->nullable();
-            $table->text('capaian_kompetensi')->nullable()->comment('Deskripsi kemajuan/capaian siswa');
-            $table->timestamps();
-
-            $table->foreign('siswa_id')->references('id')->on('siswa')->onDelete('cascade');
-            $table->foreign('tahun_pelajaran_id')->references('id')->on('tahun_pelajaran')->onDelete('cascade');
-            $table->foreign('mapel_id')->references('id')->on('mapels')->onDelete('cascade');
+            $table->unsignedTinyInteger('nilai_akhir')->nullable()->comment('0-100');
+            $table->unsignedTinyInteger('kktp')->nullable()->comment('Kriteria Ketercapaian Tujuan Pembelajaran');
+            $table->text('deskripsi')->nullable()->comment('Capaian pembelajaran deskriptif');
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unsignedTinyInteger('nilai_ujian_madrasah')->nullable()->comment('Khusus semester 6');
+            $table->text('deskripsi_ujian')->nullable()->comment('Khusus semester 6');
+            $table->timestamp('created_at')->useCurrent();
+            $table->unique(['siswa_id', 'tahun_pelajaran_id', 'semester', 'mapel_id'], 'uq_raport_nilai');
         });
 
-        // 2. Tabel Ekstrakurikuler (Nilai Raport)
+        // 2. Raport Ekstrakurikuler
         Schema::create('raport_ekskul', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('siswa_id');
-            $table->unsignedBigInteger('tahun_pelajaran_id');
-            $table->unsignedTinyInteger('semester');
-            $table->string('nama_ekskul', 100);
-            $table->string('predikat', 20)->comment('Sangat Baik, Baik, Cukup');
-            $table->text('keterangan')->nullable();
-            $table->timestamps();
-
-            $table->foreign('siswa_id')->references('id')->on('siswa')->onDelete('cascade');
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->unsignedTinyInteger('semester')->comment('1-6');
+            $table->string('nama_ekskul', 150);
+            $table->string('keterangan')->nullable();
+            $table->string('nilai', 30)->nullable()->comment('misal: A, B, C atau Sangat Baik');
+            $table->unsignedTinyInteger('urut')->default(99);
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->index(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'idx_ekskul_siswa');
         });
 
-        // 3. Tabel Ketidakhadiran (Presensi Semester)
-        Schema::create('raport_absensi', function (Blueprint $table) {
+        // 3. Raport Kehadiran
+        Schema::create('raport_kehadiran', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('siswa_id');
-            $table->unsignedBigInteger('tahun_pelajaran_id');
-            $table->unsignedTinyInteger('semester');
-            $table->unsignedSmallInteger('sakit')->default(0);
-            $table->unsignedSmallInteger('izin')->default(0);
-            $table->unsignedSmallInteger('alpa')->default(0);
-            $table->timestamps();
-
-            $table->foreign('siswa_id')->references('id')->on('siswa')->onDelete('cascade');
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->unsignedTinyInteger('semester')->comment('1-6');
+            $table->unsignedSmallInteger('sakit')->default(0)->comment('Jumlah hari sakit');
+            $table->unsignedSmallInteger('ijin')->default(0)->comment('Jumlah hari ijin');
+            $table->unsignedSmallInteger('tanpa_keterangan')->default(0)->comment('Jumlah hari alpha/tanpa keterangan');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unique(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'uq_kehadiran');
+            $table->index('siswa_id', 'idx_kehadiran_siswa');
         });
 
-        // 4. Tabel Proyek P5-PPRA (Profil Pelajar Pancasila & Rahmatan Lil Alamin)
-        Schema::create('raport_p5_ppra', function (Blueprint $table) {
+        // 4. Raport Kelulusan
+        Schema::create('raport_kelulusan', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('siswa_id');
-            $table->unsignedBigInteger('tahun_pelajaran_id');
-            $table->string('tema_proyek', 255);
-            $table->string('nama_proyek', 255);
-            $table->text('deskripsi_proyek')->nullable();
-            $table->timestamps();
-
-            $table->foreign('siswa_id')->references('id')->on('siswa')->onDelete('cascade');
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->enum('status_kelulusan', ['LULUS', 'TIDAK LULUS'])->nullable();
+            $table->date('tanggal_keputusan')->nullable();
+            $table->string('no_ijazah', 50)->nullable();
+            $table->string('no_skhus', 50)->nullable();
+            $table->date('tgl_ijazah')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unique(['siswa_id', 'tahun_pelajaran_id'], 'uq_kelulusan');
         });
 
-        // 5. Tabel Detail Capaian P5-PPRA (Sub-Elemen)
-        Schema::create('raport_p5_detail', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('raport_p5_id');
-            $table->string('dimensi', 100);
-            $table->string('sub_elemen', 255);
-            $table->enum('nilai', ['MB', 'B', 'BSH', 'SAB'])->comment('Mulai Berkembang, Berkembang, Berkembang Sesuai Harapan, Sangat Berkembang');
-            $table->timestamps();
-
-            $table->foreign('raport_p5_id')->references('id')->on('raport_p5_ppra')->onDelete('cascade');
-        });
-
-        // 6. Catatan Wali Kelas
-        Schema::create('raport_catatan_wali', function (Blueprint $table) {
+        // 5. Raport P5/PPRA (Header)
+        Schema::create('raport_p5ppra', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('siswa_id');
-            $table->unsignedBigInteger('tahun_pelajaran_id');
-            $table->unsignedTinyInteger('semester');
-            $table->text('catatan')->nullable();
-            $table->string('kenaikan_kelas', 50)->nullable()->comment('Naik ke kelas X / Tinggal di kelas X');
-            $table->timestamps();
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->unsignedTinyInteger('semester')->comment('1-6');
+            $table->string('tema_projek_1')->nullable();
+            $table->string('tema_projek_2')->nullable();
+            $table->string('tema_projek_3')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->unique(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'uq_p5ppra');
+        });
 
-            $table->foreign('siswa_id')->references('id')->on('siswa')->onDelete('cascade');
+        // 6. Raport P5/PPRA Detail
+        Schema::create('raport_p5ppra_detail', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('p5ppra_id')->comment('FK ke raport_p5ppra.id');
+            $table->unsignedTinyInteger('urut')->default(1);
+            $table->string('dimensi', 150)->nullable();
+            $table->string('elemen')->nullable();
+            $table->string('sub_elemen')->nullable();
+            $table->text('target_pencapaian')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+            $table->index('p5ppra_id', 'idx_p5_header');
+            $table->foreign('p5ppra_id', 'fk_p5detail_header')
+                ->references('id')->on('raport_p5ppra')->onDelete('cascade');
+        });
+
+        // 7. Raport Prestasi
+        Schema::create('raport_prestasi', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('siswa_id');
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->unsignedTinyInteger('semester')->comment('1-6');
+            $table->string('jenis_prestasi', 200)->nullable();
+            $table->string('keterangan')->nullable();
+            $table->string('nilai', 30)->nullable();
+            $table->unsignedTinyInteger('urut')->default(99);
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->index(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'idx_prestasi_siswa');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('raport_catatan_wali');
-        Schema::dropIfExists('raport_p5_detail');
-        Schema::dropIfExists('raport_p5_ppra');
-        Schema::dropIfExists('raport_absensi');
+        Schema::dropIfExists('raport_prestasi');
+        Schema::dropIfExists('raport_p5ppra_detail');
+        Schema::dropIfExists('raport_p5ppra');
+        Schema::dropIfExists('raport_kelulusan');
+        Schema::dropIfExists('raport_kehadiran');
         Schema::dropIfExists('raport_ekskul');
         Schema::dropIfExists('raport_nilai');
     }

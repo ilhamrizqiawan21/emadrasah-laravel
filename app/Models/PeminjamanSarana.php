@@ -10,10 +10,25 @@ class PeminjamanSarana extends Model
     use HasFactory;
 
     protected $table = 'peminjaman_sarana';
-    protected $fillable = ['sarana_id', 'peminjam', 'tipe_peminjam', 'tanggal_pinjam', 'tanggal_kembali', 'denda', 'status'];
+
+    protected $fillable = [
+        'sarana_id',
+        'peminjam',
+        'tipe_peminjam',
+        'tanggal_pinjam',
+        'tanggal_kembali',
+        'denda',
+        'status',
+    ];
+
+    protected $casts = [
+        'tanggal_pinjam' => 'date',
+        'tanggal_kembali' => 'date',
+        'denda' => 'decimal:2',
+    ];
 
     public function sarana()
     {
-        return $this->belongsTo(SaranaPrasarana::class);
+        return $this->belongsTo(SaranaPrasarana::class, 'sarana_id');
     }
 }

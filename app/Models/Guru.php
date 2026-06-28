@@ -10,27 +10,52 @@ class Guru extends Model
     use HasFactory;
 
     protected $table = 'gurus';
-    protected $fillable = ['kode', 'nama', 'bidang_studi', 'jam_tidak_tersedia', 'user_id', 'email', 'phone', 'nip', 'status'];
-    
-    protected $casts = [
-        'jam_tidak_tersedia' => 'array',
+
+    protected $fillable = [
+        'kode',
+        'nama',
+        'bidang_studi',
+        'jam_tidak_tersedia',
+        'user_id',
+        'email',
+        'phone',
+        'nip',
+        'status',
+        'beban_jp',
     ];
 
-    // Relasi: seorang guru memiliki banyak jadwal
+    protected $casts = [
+        'jam_tidak_tersedia' => 'array',
+        'beban_jp' => 'integer',
+    ];
+
     public function jadwals()
     {
         return $this->hasMany(Jadwal::class);
     }
 
-    // Relasi: seorang guru memiliki banyak agenda absensi
     public function agendas()
     {
         return $this->hasMany(AgendaGuru::class);
     }
 
-    // Relasi: guru sebagai pengganti
     public function menjadiPengganti()
     {
         return $this->hasMany(GuruPengganti::class, 'guru_pengganti_id');
+    }
+
+    public function guruKelas()
+    {
+        return $this->hasMany(GuruKelas::class);
+    }
+
+    public function bebanMengajar()
+    {
+        return $this->hasMany(BebanMengajar::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

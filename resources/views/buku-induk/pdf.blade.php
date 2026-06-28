@@ -59,7 +59,7 @@
 
     <div class="section-title">D. KETERANGAN PENDIDIKAN SEBELUMNYA</div>
     <table>
-        <tr><td class="label">17. Sekolah Asal (SD/MI)</td><td class="colon">:</td><td class="value">{{ $siswa->perkembangan->asal_sekolah ?? '-' }}</td></tr>
+        <tr><td class="label">17. Sekolah Asal (SD/MI)</td><td class="colon">:</td><td class="value">{{ $siswa->perkembangan->asal_madrasah ?? '-' }}</td></tr>
         <tr><td class="label">18. Nomor Ijazah</td><td class="colon">:</td><td class="value">{{ $siswa->perkembangan->no_ijazah_asal ?? '-' }}</td></tr>
         <tr><td class="label">19. Diterima di Kelas</td><td class="colon">:</td><td class="value">{{ $siswa->kelas->nama_kelas ?? '-' }}</td></tr>
     </table>

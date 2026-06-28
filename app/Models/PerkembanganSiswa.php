@@ -10,10 +10,8 @@ class PerkembanganSiswa extends Model
     use HasFactory;
 
     protected $table = 'perkembangan_siswa';
-    // Database only has `updated_at` (no `created_at`) — configure Eloquent accordingly.
-    public $timestamps = true;
+
     const CREATED_AT = null;
-    const UPDATED_AT = 'updated_at';
 
     protected $fillable = [
         'siswa_id',
@@ -32,7 +30,7 @@ class PerkembanganSiswa extends Model
         'pindah_ke_madrasah',
         'pindah_tingkat',
         'alasan_keluar',
-        'tgl_keluar'
+        'tgl_keluar',
     ];
 
     protected $casts = [

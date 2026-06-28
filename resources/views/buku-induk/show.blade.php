@@ -55,7 +55,7 @@
 
                 <h5 class="text-primary border-bottom pb-2 mb-3">Pendidikan Sebelumnya</h5>
                 <table class="table table-sm table-borderless mb-4">
-                    <tr><th width="30%">Sekolah Asal</th><td>{{ $siswa->perkembangan->asal_sekolah ?? '-' }}</td></tr>
+                    <tr><th width="30%">Sekolah Asal</th><td>{{ $siswa->perkembangan->asal_madrasah ?? '-' }}</td></tr>
                     <tr><th>No. Ijazah</th><td>{{ $siswa->perkembangan->no_ijazah_asal ?? '-' }}</td></tr>
                 </table>
 

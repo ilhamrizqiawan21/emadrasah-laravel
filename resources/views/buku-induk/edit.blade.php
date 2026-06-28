@@ -112,7 +112,7 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Sekolah Asal</label>
-                        <input type="text" name="asal_sekolah" class="form-control" value="{{ old('asal_sekolah', $siswa->perkembangan->asal_sekolah ?? '') }}">
+                        <input type="text" name="asal_madrasah" class="form-control" value="{{ old('asal_madrasah', $siswa->perkembangan->asal_madrasah ?? '') }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">No. Ijazah Asal</label>

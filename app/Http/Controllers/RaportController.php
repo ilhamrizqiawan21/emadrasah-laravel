@@ -76,7 +76,7 @@ class RaportController extends Controller
                     ],
                     [
                         'nilai_akhir' => $data['angka'],
-                        'capaian_kompetensi' => $data['capaian'] ?? null
+                        'deskripsi' => $data['capaian'] ?? null
                     ]
                 );
             }

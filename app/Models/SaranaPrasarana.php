@@ -10,7 +10,24 @@ class SaranaPrasarana extends Model
     use HasFactory;
 
     protected $table = 'sarana_prasarana';
-    protected $fillable = ['kode_sarana', 'nama_sarana', 'kategori_id', 'spesifikasi', 'jumlah', 'kondisi', 'lokasi_ruang', 'tahun_pengadaan', 'foto'];
+
+    protected $fillable = [
+        'kode_sarana',
+        'nama_sarana',
+        'kategori_id',
+        'spesifikasi',
+        'jumlah',
+        'stok_tersedia',
+        'kondisi',
+        'lokasi_ruang',
+        'tahun_pengadaan',
+        'foto',
+    ];
+
+    protected $casts = [
+        'jumlah' => 'integer',
+        'stok_tersedia' => 'integer',
+    ];
 
     public function kategori()
     {
@@ -19,11 +36,11 @@ class SaranaPrasarana extends Model
 
     public function peminjaman()
     {
-        return $this->hasMany(PeminjamanSarana::class);
+        return $this->hasMany(PeminjamanSarana::class, 'sarana_id');
     }
 
     public function pemeliharaan()
     {
-        return $this->hasMany(PemeliharaanSarana::class);
+        return $this->hasMany(PemeliharaanSarana::class, 'sarana_id');
     }
 }

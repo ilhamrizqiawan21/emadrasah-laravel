@@ -30,6 +30,7 @@ class SaranaController extends Controller
             'kategori_id' => 'required|exists:kategori_sarana,id',
             'spesifikasi' => 'nullable',
             'jumlah' => 'required|integer|min:1',
+            'stok_tersedia' => 'nullable|integer|min:0',
             'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat,hilang',
             'lokasi_ruang' => 'nullable',
             'tahun_pengadaan' => 'nullable|digits:4',
@@ -61,6 +62,7 @@ class SaranaController extends Controller
             'kategori_id' => 'required|exists:kategori_sarana,id',
             'spesifikasi' => 'nullable',
             'jumlah' => 'required|integer|min:1',
+            'stok_tersedia' => 'nullable|integer|min:0',
             'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat,hilang',
             'lokasi_ruang' => 'nullable',
             'tahun_pengadaan' => 'nullable|digits:4',
@@ -112,23 +114,25 @@ class SaranaController extends Controller
         return back()->with('success', 'Sarana dikembalikan.');
     }
 
-public function storePemeliharaan(Request $request, SaranaPrasarana $sarana)
-{
-    $validated = $request->validate([
-        'tanggal_pemeliharaan' => 'required|date',
-        'keterangan' => 'nullable',
-        'teknisi' => 'nullable',
-    ]);
-    $validated['sarana_id'] = $sarana->id;
-    PemeliharaanSarana::create($validated);
-    return redirect()->route('sarana.pemeliharaan', $sarana)->with('success', 'Pemeliharaan dicatat.');
-}
+    public function pemeliharaan(SaranaPrasarana $sarana)
+    {
+        $pemeliharaan = PemeliharaanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pemeliharaan', 'desc')->paginate(10);
+        return view('sarana.pemeliharaan', compact('sarana', 'pemeliharaan'));
+    }
 
-
-public function pemeliharaan(SaranaPrasarana $sarana)
-{
-    $pemeliharaan = PemeliharaanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pemeliharaan', 'desc')->paginate(10);
-    return view('sarana.pemeliharaan', compact('sarana', 'pemeliharaan'));
-}
+    public function storePemeliharaan(Request $request, SaranaPrasarana $sarana)
+    {
+        $validated = $request->validate([
+            'tanggal_pemeliharaan' => 'required|date',
+            'biaya' => 'nullable|numeric|min:0',
+            'keterangan' => 'nullable',
+            'status' => 'nullable|in:proses,selesai',
+            'tanggal_selesai' => 'nullable|date',
+            'teknisi' => 'nullable',
+        ]);
+        $validated['sarana_id'] = $sarana->id;
+        PemeliharaanSarana::create($validated);
+        return redirect()->route('sarana.pemeliharaan', $sarana)->with('success', 'Pemeliharaan dicatat.');
+    }
 
 }

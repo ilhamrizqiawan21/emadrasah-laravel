@@ -10,10 +10,25 @@ class TahunPelajaran extends Model
     use HasFactory;
 
     protected $table = 'tahun_pelajaran';
+
     protected $fillable = ['kode', 'nama', 'is_aktif'];
+
+    protected $casts = [
+        'is_aktif' => 'boolean',
+    ];
 
     public function siswa()
     {
         return $this->hasMany(Siswa::class);
+    }
+
+    public function bebanMengajar()
+    {
+        return $this->hasMany(BebanMengajar::class);
+    }
+
+    public function raportNilai()
+    {
+        return $this->hasMany(RaportNilai::class);
     }
 }

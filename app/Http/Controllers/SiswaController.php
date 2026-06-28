@@ -74,6 +74,8 @@ class SiswaController extends Controller
             'tempat_lahir' => 'nullable',
             'tanggal_lahir' => 'nullable|date',
             'nisn' => 'nullable|unique:siswa,nisn,' . $siswa->id,
+            'nik' => 'nullable|unique:siswa,nik,' . $siswa->id,
+            'alamat' => 'nullable',
             'hp' => 'nullable',
             'status' => 'required|in:Aktif,Lulus,Pindah,Keluar',
         ]);

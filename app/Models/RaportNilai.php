@@ -10,10 +10,25 @@ class RaportNilai extends Model
     use HasFactory;
 
     protected $table = 'raport_nilai';
-    public $timestamps = false; // Karena di SQL tadi tidak ada created_at/updated_at di raport_nilai
 
     protected $fillable = [
-        'siswa_id', 'tahun_pelajaran_id', 'semester', 'mapel_id', 'nilai_akhir', 'capaian_kompetensi'
+        'siswa_id',
+        'tahun_pelajaran_id',
+        'semester',
+        'mapel_id',
+        'nilai_akhir',
+        'kktp',
+        'deskripsi',
+        'updated_by',
+        'nilai_ujian_madrasah',
+        'deskripsi_ujian',
+    ];
+
+    protected $casts = [
+        'semester' => 'integer',
+        'nilai_akhir' => 'integer',
+        'kktp' => 'integer',
+        'nilai_ujian_madrasah' => 'integer',
     ];
 
     public function siswa()
@@ -29,5 +44,10 @@ class RaportNilai extends Model
     public function tahunPelajaran()
     {
         return $this->belongsTo(TahunPelajaran::class);
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

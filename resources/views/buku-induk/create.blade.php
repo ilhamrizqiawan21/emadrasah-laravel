@@ -155,7 +155,7 @@
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
                         <label class="form-label">Lulusan Dari (SD/MI)</label>
-                        <input type="text" name="asal_sekolah" class="form-control" value="{{ old('asal_sekolah') }}">
+                        <input type="text" name="asal_madrasah" class="form-control" value="{{ old('asal_madrasah') }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">No. Ijazah</label>
