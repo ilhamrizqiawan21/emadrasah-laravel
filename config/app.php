@@ -36,6 +36,7 @@ return [
     | When your application is in debug mode, detailed error messages with
     | stack traces will be shown on every error that occurs within your
     | application. If disabled, a simple generic error page is shown.
+    | SECURITY: Must be false in production to prevent information disclosure
     |
     */
 
@@ -121,6 +122,23 @@ return [
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | File Upload Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Security settings for file uploads across the application.
+    | These values should be enforced in all upload validation rules.
+    |
+    */
+
+    'upload' => [
+        'max_size' => (int) env('UPLOAD_MAX_SIZE', 2048), // KB (default 2MB)
+        'allowed_image_types' => ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+        'allowed_document_types' => ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        'allowed_spreadsheet_types' => ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
     ],
 
 ];

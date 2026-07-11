@@ -24,8 +24,22 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:12|mixedCase|numbers|symbols',
+            'role' => 'nullable|in:superadmin,admin,guru,staff',
+            'is_active' => 'nullable|boolean',
+            'phone' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
         ]);
+
+        // Prevent mass assignment of role - only admins can set roles
+        if (auth()->user()->role !== 'superadmin') {
+            unset($validated['role']);
+        }
+        
+        // Set default role if not provided
+        $validated['role'] = $validated['role'] ?? 'staff';
+        $validated['is_active'] = $validated['is_active'] ?? true;
+        
         $validated['password'] = Hash::make($validated['password']);
         User::create($validated);
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
@@ -41,13 +55,29 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6',
+            'password' => 'nullable|min:12|mixedCase|numbers|symbols',
+            'role' => 'nullable|in:superadmin,admin,guru,staff',
+            'is_active' => 'nullable|boolean',
+            'phone' => 'nullable|string|max:20',
+            'alamat' => 'nullable|string',
         ]);
+        
+        // Prevent mass assignment of role - only superadmin can change roles
+        if (auth()->user()->role !== 'superadmin') {
+            unset($validated['role']);
+        }
+        
+        // Prevent user from deactivating themselves
+        if ($user->id === auth()->id() && isset($validated['is_active']) && !$validated['is_active']) {
+            return redirect()->route('users.index')->with('error', 'Anda tidak dapat menonaktifkan akun sendiri.');
+        }
+        
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($request->password);
         } else {
             unset($validated['password']);
         }
+        
         $user->update($validated);
         return redirect()->route('users.index')->with('success', 'User berhasil diupdate.');
     }

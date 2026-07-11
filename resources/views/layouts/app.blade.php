@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'e-Madrasah') — Sistem Informasi Madrasah</title>
-
+    
     <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    
+    <!-- Vite Assets - Bootstrap, Icons & Custom CSS bundled -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     @stack('styles')
 </head>
 <body class="em-body">
@@ -39,10 +39,7 @@
         <p>&copy; {{ date('Y') }} e-Madrasah — MTs Al-Ihsan Batujajar</p>
     </footer>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="{{ asset('js/app.js') }}"></script>
+    <!-- Scripts already loaded via @vite in head -->
     @stack('scripts')
 </body>
 </html>
