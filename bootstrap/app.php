@@ -12,7 +12,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Register custom middleware aliases
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'active' => \App\Http\Middleware\CheckActiveUserMiddleware::class,
+        ]);
+        
+        // Rate limiting configuration for API and auth routes
+        $middleware->throttleApi('api');
+        
+        // Add active user check to auth middleware group
+        $middleware->group('web', [
+            \App\Http\Middleware\CheckActiveUserMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
