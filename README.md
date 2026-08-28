@@ -59,8 +59,8 @@
 ### Langkah-langkah
 1. **Clone repositori:**
    ```bash
-   git clone <repository-url>
-   cd emadrasah2
+   git clone https://github.com/ilhamrizqiawan21/emadrasah-laravel.git
+   cd emadrasah-laravel
    ```
 
 2. **Instal dependensi PHP:**
