@@ -44,15 +44,41 @@
 @endsection
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h3 mb-1 fw-bold"><i class="fas fa-tasks me-2 text-primary"></i> Manajemen Tugas</h1>
-        <p class="text-muted">Drag & drop untuk mengubah status</p>
-    </div>
-    <a href="{{ route('tasks.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus me-1"></i> Tugas Baru
-    </a>
-</div>
+<x-page-header
+    title="Tugas TU"
+    subtitle="Kelola antrean, prioritas, penanggung jawab, dan progres tugas."
+    :create-route="route('tasks.create')"
+    create-label="Tugas Baru"
+/>
+
+<form method="GET" action="{{ route('tasks.index') }}" class="em-filter-bar">
+    <input type="search" name="search" class="form-control em-filter-search" placeholder="Cari judul atau deskripsi" value="{{ request('search') }}">
+    <select name="status" class="form-select" style="max-width: 180px;">
+        <option value="">Semua Status</option>
+        <option value="antrean" {{ request('status')=='antrean' ? 'selected' : '' }}>Antrean</option>
+        <option value="proses" {{ request('status')=='proses' ? 'selected' : '' }}>Proses</option>
+        <option value="selesai" {{ request('status')=='selesai' ? 'selected' : '' }}>Selesai</option>
+    </select>
+    <select name="prioritas" class="form-select" style="max-width: 180px;">
+        <option value="">Semua Prioritas</option>
+        <option value="rendah" {{ request('prioritas')=='rendah' ? 'selected' : '' }}>Rendah</option>
+        <option value="sedang" {{ request('prioritas')=='sedang' ? 'selected' : '' }}>Sedang</option>
+        <option value="tinggi" {{ request('prioritas')=='tinggi' ? 'selected' : '' }}>Tinggi</option>
+    </select>
+    <select name="assigned_to" class="form-select" style="max-width: 220px;">
+        <option value="">Semua Penanggung Jawab</option>
+        @foreach ($users as $user)
+            <option value="{{ $user->id }}" @selected((string) request('assigned_to') === (string) $user->id)>{{ $user->name }}</option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-filter"></i>
+        <span>Filter</span>
+    </button>
+    @if (request()->hasAny(['search', 'status', 'prioritas', 'assigned_to', 'sort']))
+        <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="row g-4" id="kanbanBoard">
     @php
@@ -82,7 +108,7 @@
                             </span>
                         </div>
                         <p class="card-text small text-muted mb-1">
-                            <i class="fas fa-user-circle me-1"></i> {{ $task->assigned_to ? \App\Models\User::find($task->assigned_to)->name ?? '-' : '-' }}
+                            <i class="fas fa-user-circle me-1"></i> {{ $task->assignedTo->name ?? '-' }}
                         </p>
                         @if($task->deadline)
                         <p class="card-text small mb-1">
@@ -99,8 +125,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <small><i class="fas fa-history"></i> {{ $task->created_at->diffForHumans() }}</small>
                                 <div>
-                                    <a href="{{ route('tasks.show', $task) }}" class="text-primary me-2" title="Detail"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('tasks.edit', $task) }}" class="text-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ route('tasks.show', $task) }}" class="text-primary me-2" title="Detail" aria-label="Detail tugas {{ $task->judul }}"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('tasks.edit', $task) }}" class="text-warning" title="Edit" aria-label="Edit tugas {{ $task->judul }}"><i class="fas fa-edit"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -122,32 +148,6 @@
 <form id="updateStatusForm" method="POST" style="display: none;">
     @csrf
     @method('PATCH')
-</form>
-
-<form method="GET" class="row g-2 mb-3">
-    <div class="col-auto">
-        <input type="text" name="search" class="form-control" placeholder="Cari judul..." value="{{ request('search') }}">
-    </div>
-    <div class="col-auto">
-        <select name="status" class="form-select">
-            <option value="">Semua Status</option>
-            <option value="antrean" {{ request('status')=='antrean' ? 'selected' : '' }}>Antrean</option>
-            <option value="proses" {{ request('status')=='proses' ? 'selected' : '' }}>Proses</option>
-            <option value="selesai" {{ request('status')=='selesai' ? 'selected' : '' }}>Selesai</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <select name="prioritas" class="form-select">
-            <option value="">Semua Prioritas</option>
-            <option value="rendah" {{ request('prioritas')=='rendah' ? 'selected' : '' }}>Rendah</option>
-            <option value="sedang" {{ request('prioritas')=='sedang' ? 'selected' : '' }}>Sedang</option>
-            <option value="tinggi" {{ request('prioritas')=='tinggi' ? 'selected' : '' }}>Tinggi</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="{{ route('tasks.index') }}" class="btn btn-secondary">Reset</a>
-    </div>
 </form>
 
 <script>

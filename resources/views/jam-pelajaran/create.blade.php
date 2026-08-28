@@ -43,12 +43,12 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Jam Mulai <span class="text-danger">*</span></label>
-                                <input type="time" name="jam_mulai" class="form-control @error('jam_mulai') is-invalid @enderror" value="{{ old('jam_mulai') }}" required>
+                                <input type="time" name="jam_mulai" class="form-control @error('jam_mulai') is-invalid @enderror" value="{{ old('jam_mulai') }}" required data-mask="time">
                                 @error('jam_mulai')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Jam Selesai <span class="text-danger">*</span></label>
-                                <input type="time" name="jam_selesai" class="form-control @error('jam_selesai') is-invalid @enderror" value="{{ old('jam_selesai') }}" required>
+                                <input type="time" name="jam_selesai" class="form-control @error('jam_selesai') is-invalid @enderror" value="{{ old('jam_selesai') }}" required data-mask="time">
                                 @error('jam_selesai')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                         </div>

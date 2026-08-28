@@ -20,7 +20,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Kode</label>
-                <input type="text" name="kode" value="{{ old('kode') }}" class="form-control" required>
+                <input type="text" name="kode" value="{{ old('kode') }}" class="form-control" required data-mask="year-code" inputmode="numeric" maxlength="9">
             </div>
 
             <div class="mb-3">

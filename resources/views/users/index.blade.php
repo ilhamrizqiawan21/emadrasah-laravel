@@ -19,7 +19,7 @@
             <div class="col-md-6">
                 <form method="GET" action="{{ route('users.index') }}" class="d-flex gap-2">
                     <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari nama atau email..." value="{{ request('search') }}">
-                    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+                    <button type="submit" class="btn btn-sm btn-primary" aria-label="Cari pengguna"><i class="fas fa-search"></i></button>
                     @if(request('search'))
                         <a href="{{ route('users.index') }}" class="btn btn-sm btn-secondary">Reset</a>
                     @endif

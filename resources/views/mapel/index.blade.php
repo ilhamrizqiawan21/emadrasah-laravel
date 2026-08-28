@@ -3,12 +3,23 @@
 @section('title', 'Mata Pelajaran')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Mata Pelajaran</h1>
-    <a href="{{ route('mapel.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tambah Mapel
-    </a>
-</div>
+<x-page-header
+    title="Mata Pelajaran"
+    subtitle="Kelola daftar mapel dan kelompok mapel."
+    :create-route="route('mapel.create')"
+    create-label="Tambah Mapel"
+/>
+
+<form method="GET" action="{{ route('mapel.index') }}" class="em-filter-bar">
+    <input type="search" name="search" value="{{ request('search') }}" class="form-control em-filter-search" placeholder="Cari mata pelajaran atau kelompok">
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-search"></i>
+        <span>Cari</span>
+    </button>
+    @if (request('search'))
+        <a href="{{ route('mapel.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -38,9 +49,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="3" class="text-center py-4">Belum ada data mata pelajaran</td>
-                    </tr>
+                    <x-empty-state colspan="3" title="Belum ada data mata pelajaran" description="Mata pelajaran yang cocok dengan filter akan tampil di sini." icon="fa-book-open" />
                     @endforelse
                 </tbody>
             </table>

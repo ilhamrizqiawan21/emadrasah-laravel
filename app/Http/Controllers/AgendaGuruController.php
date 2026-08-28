@@ -11,6 +11,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AgendaGuruController extends Controller
 {
@@ -39,21 +41,52 @@ class AgendaGuruController extends Controller
 
     // -------------------------------------------------------------------------
 
-    public function index()
+    public function index(Request $request): Response
     {
-        $tanggal = request('tanggal') ? Carbon::parse(request('tanggal')) : today();
+        $tanggal = $request->tanggal ? Carbon::parse($request->tanggal) : today();
         $gurus   = Guru::orderBy('nama')->get();
 
-        $existingAgendas = AgendaGuru::whereDate('tanggal', $tanggal)
+        $existingAgendas = AgendaGuru::with(['guruPengganti.guruPengganti'])
+            ->whereDate('tanggal', $tanggal)
             ->get()
             ->keyBy('guru_id');
 
-        $agendas = [];
-        foreach ($gurus as $guru) {
-            $agendas[$guru->id] = $existingAgendas[$guru->id] ?? null;
-        }
+        $rows = $gurus->map(function (Guru $guru) use ($existingAgendas) {
+            $agenda = $existingAgendas[$guru->id] ?? null;
+            $pengganti = $agenda?->guruPengganti->first();
 
-        return view('absensi.index', compact('tanggal', 'gurus', 'agendas'));
+            return [
+                'guru' => [
+                    'id' => $guru->id,
+                    'kode' => $guru->kode,
+                    'nama' => $guru->nama,
+                    'bidang_studi' => $guru->bidang_studi,
+                ],
+                'agenda' => $agenda ? [
+                    'id' => $agenda->id,
+                    'status' => $agenda->status,
+                    'keterangan' => $agenda->keterangan,
+                    'pengganti' => $pengganti ? [
+                        'id' => $pengganti->id,
+                        'guru_nama' => $pengganti->guruPengganti?->nama,
+                    ] : null,
+                ] : null,
+            ];
+        });
+
+        $summary = [
+            'total_guru' => $rows->count(),
+            'hadir' => $rows->filter(fn ($row) => ($row['agenda']['status'] ?? 'hadir') === 'hadir')->count(),
+            'izin' => $rows->filter(fn ($row) => ($row['agenda']['status'] ?? 'hadir') === 'izin')->count(),
+            'sakit' => $rows->filter(fn ($row) => ($row['agenda']['status'] ?? 'hadir') === 'sakit')->count(),
+            'alpha' => $rows->filter(fn ($row) => ($row['agenda']['status'] ?? 'hadir') === 'alpha')->count(),
+        ];
+
+        return Inertia::render('Absensi/Index', [
+            'tanggal' => $tanggal->format('Y-m-d'),
+            'rows' => $rows,
+            'summary' => $summary,
+        ]);
     }
 
     public function store(Request $request)
@@ -84,8 +117,9 @@ class AgendaGuruController extends Controller
 
     // -------------------------------------------------------------------------
 
-    public function pengganti(AgendaGuru $agenda)
+    public function pengganti(AgendaGuru $agenda): Response
     {
+        $agenda->load('guru');
         $tanggal  = $agenda->tanggal;
         $hariIndo = $this->hariIndo($tanggal); // ← pakai helper, konsisten
 
@@ -96,7 +130,33 @@ class AgendaGuruController extends Controller
             ->get(['guru_id', 'jam_mulai', 'jam_selesai'])
             ->groupBy('guru_id');
 
-        return view('absensi.pengganti', compact('agenda', 'jamList', 'guruPenggantiOptions', 'jadwalGuru'));
+        return Inertia::render('Absensi/Pengganti', [
+            'agenda' => [
+                'id' => $agenda->id,
+                'tanggal' => $agenda->tanggal->format('Y-m-d'),
+                'status' => $agenda->status,
+                'keterangan' => $agenda->keterangan,
+                'guru' => [
+                    'id' => $agenda->guru->id,
+                    'kode' => $agenda->guru->kode,
+                    'nama' => $agenda->guru->nama,
+                ],
+            ],
+            'jamList' => $jamList->map(fn (JamPelajaran $jam) => [
+                'id' => $jam->id,
+                'hari' => $jam->hari,
+                'sesi_ke' => $jam->sesi_ke,
+                'jam_mulai' => substr((string) $jam->jam_mulai, 0, 5),
+                'jam_selesai' => substr((string) $jam->jam_selesai, 0, 5),
+            ]),
+            'guruPenggantiOptions' => $guruPenggantiOptions->map(fn (Guru $guru) => [
+                'id' => $guru->id,
+                'kode' => $guru->kode,
+                'nama' => $guru->nama,
+                'bidang_studi' => $guru->bidang_studi,
+            ]),
+            'jadwalGuru' => $jadwalGuru,
+        ]);
     }
 
     public function storePengganti(Request $request, AgendaGuru $agenda)

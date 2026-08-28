@@ -3,12 +3,23 @@
 @section('title', 'Data Guru')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Data Guru</h1>
-    <a href="{{ route('guru.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tambah Guru
-    </a>
-</div>
+<x-page-header
+    title="Data Guru"
+    subtitle="Kelola identitas guru, NIP, dan beban mengajar."
+    :create-route="route('guru.create')"
+    create-label="Tambah Guru"
+/>
+
+<form method="GET" action="{{ route('guru.index') }}" class="em-filter-bar">
+    <input type="search" name="search" value="{{ request('search') }}" class="form-control em-filter-search" placeholder="Cari kode, NIP, nama, atau bidang studi">
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-search"></i>
+        <span>Cari</span>
+    </button>
+    @if (request('search'))
+        <a href="{{ route('guru.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -44,9 +55,7 @@
                         </td>
                     </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-4">Belum ada data guru</td>
-                        </tr>
+                        <x-empty-state colspan="6" title="Belum ada data guru" description="Data guru yang cocok dengan filter akan tampil di sini." icon="fa-chalkboard-user" />
                     @endforelse
                 </tbody>
             </table>

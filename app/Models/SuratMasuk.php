@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SuratMasuk extends Model
 {
-    use HasFactory;
+    use Auditable, HasFactory, SoftDeletes;
 
     protected $table = 'surat_masuk';
     protected $fillable = ['nomor_agenda', 'asal_surat', 'nomor_surat', 'perihal', 'tanggal_terima', 'tanggal_surat', 'disposisi', 'file_scan', 'status'];

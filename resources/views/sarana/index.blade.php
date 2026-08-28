@@ -3,8 +3,10 @@
 @section('title', 'Sarana Prasarana')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Sarana Prasarana</h1>
+<x-page-header
+    title="Sarana Prasarana"
+    subtitle="Kelola inventaris, kondisi, lokasi, dan stok tersedia."
+>
     <div>
         <a href="{{ route('kategori-sarana.index') }}" class="btn btn-info me-2">
             <i class="fas fa-tags"></i> Kelola Kategori
@@ -13,7 +15,30 @@
             <i class="fas fa-plus"></i> Tambah Sarana
         </a>
     </div>
-</div>
+</x-page-header>
+
+<form method="GET" action="{{ route('sarana.index') }}" class="em-filter-bar">
+    <input type="search" name="search" class="form-control em-filter-search" placeholder="Cari kode, nama, kategori, atau lokasi" value="{{ request('search') }}">
+    <select name="kategori_id" class="form-select" style="max-width: 200px;">
+        <option value="">Semua Kategori</option>
+        @foreach ($kategori as $item)
+            <option value="{{ $item->id }}" @selected((string) request('kategori_id') === (string) $item->id)>{{ $item->nama_kategori }}</option>
+        @endforeach
+    </select>
+    <select name="kondisi" class="form-select" style="max-width: 200px;">
+        <option value="">Semua Kondisi</option>
+        @foreach (['baik' => 'Baik', 'rusak_ringan' => 'Rusak Ringan', 'rusak_berat' => 'Rusak Berat', 'hilang' => 'Hilang'] as $value => $label)
+            <option value="{{ $value }}" @selected(request('kondisi') === $value)>{{ $label }}</option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-filter"></i>
+        <span>Filter</span>
+    </button>
+    @if (request()->hasAny(['search', 'kategori_id', 'kondisi', 'sort']))
+        <a href="{{ route('sarana.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -22,12 +47,12 @@
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Kode</th>
-                        <th>Nama Sarana</th>
-                        <th>Kategori</th>
-                        <th>Jumlah</th>
-                        <th>Kondisi</th>
-                        <th>Lokasi</th>
+                        <th><x-sort-link column="kode" label="Kode" /></th>
+                        <th><x-sort-link column="nama" label="Nama Sarana" /></th>
+                        <th><x-sort-link column="kategori" label="Kategori" /></th>
+                        <th><x-sort-link column="jumlah" label="Jumlah" /></th>
+                        <th><x-sort-link column="kondisi" label="Kondisi" /></th>
+                        <th><x-sort-link column="lokasi" label="Lokasi" /></th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -52,17 +77,15 @@
                         </td>
                         <td>{{ $item->lokasi_ruang ?? '-' }}</td>
                         <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="{{ route('sarana.edit', $item) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                <a href="{{ route('sarana.peminjaman', $item) }}" class="btn btn-info"><i class="fas fa-hand-holding"></i></a>
-                                <button class="btn btn-danger" onclick="confirmDelete('{{ route('sarana.destroy', $item) }}', '{{ $item->nama_sarana }}')"><i class="fas fa-trash"></i></button>
+                            <div class="em-table-actions justify-content-start">
+                                <a href="{{ route('sarana.edit', $item) }}" class="btn btn-sm btn-outline-warning" title="Edit" aria-label="Edit sarana {{ $item->nama_sarana }}"><i class="fas fa-edit"></i></a>
+                                <a href="{{ route('sarana.peminjaman', $item) }}" class="btn btn-sm btn-outline-info" title="Peminjaman" aria-label="Peminjaman sarana {{ $item->nama_sarana }}"><i class="fas fa-hand-holding"></i></a>
+                                <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('sarana.destroy', $item) }}', '{{ $item->nama_sarana }}')" title="Hapus" aria-label="Hapus sarana {{ $item->nama_sarana }}"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>
                     @empty
-                        <tr>
-                            <td colspan="8" class="text-center py-4">Belum ada data sarana</td>
-                        </tr>
+                        <x-empty-state colspan="8" title="Belum ada data sarana" description="Sarana yang cocok dengan filter akan tampil di sini." icon="fa-warehouse" />
                     @endforelse
                 </tbody>
             </table>

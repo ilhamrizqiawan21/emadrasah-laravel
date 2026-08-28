@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Permissions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,5 +43,26 @@ class User extends Authenticatable
     public function taskLogs()
     {
         return $this->hasMany(TaskLog::class);
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return Permissions::roleHasPermission($this->role, $permission);
+    }
+
+    public function hasAnyPermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($this->hasPermission($permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function permissions(): array
+    {
+        return Permissions::rolePermissions($this->role);
     }
 }

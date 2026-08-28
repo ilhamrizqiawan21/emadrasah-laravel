@@ -3,22 +3,16 @@
 @section('title', 'Tambah Siswa Baru')
 
 @section('content')
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="em-page-title">Tambah Siswa Baru</h2>
-        <p class="text-muted">Masukkan data lengkap siswa sesuai dengan dokumen resmi.</p>
-    </div>
-</div>
+<x-page-header
+    title="Tambah Siswa Baru"
+    subtitle="Masukkan data lengkap siswa sesuai dengan dokumen resmi."
+/>
 
-<form action="{{ route('siswa.store') }}" method="POST">
+<form action="{{ route('siswa.store') }}" method="POST" class="em-form-layout">
     @csrf
     <div class="row">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold text-primary">Informasi Pribadi</h5>
-                </div>
-                <div class="card-body">
+            <x-form-section title="Informasi Pribadi" subtitle="Identitas dasar siswa dan data kependudukan.">
                     <div class="row g-3">
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Nama Lengkap <span class="text-danger">*</span></label>
@@ -37,7 +31,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">NISN</label>
-                            <input type="text" name="nisn" class="form-control @error('nisn') is-invalid @enderror" value="{{ old('nisn') }}">
+                            <input type="text" name="nisn" class="form-control @error('nisn') is-invalid @enderror" value="{{ old('nisn') }}" data-mask="nisn" inputmode="numeric" maxlength="10">
                             @error('nisn') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
@@ -58,23 +52,19 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">NIK (No. KTP)</label>
-                            <input type="text" name="nik" class="form-control @error('nik') is-invalid @enderror" value="{{ old('nik') }}">
+                            <input type="text" name="nik" class="form-control @error('nik') is-invalid @enderror" value="{{ old('nik') }}" data-mask="nik" inputmode="numeric" maxlength="16">
+                            @error('nik') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-semibold">Alamat Lengkap</label>
                             <textarea name="alamat" class="form-control @error('alamat') is-invalid @enderror" rows="3">{{ old('alamat') }}</textarea>
                         </div>
                     </div>
-                </div>
-            </div>
+            </x-form-section>
         </div>
         
         <div class="col-lg-4">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header bg-white py-3">
-                    <h5 class="mb-0 fw-bold text-primary">Data Akademik</h5>
-                </div>
-                <div class="card-body">
+            <x-form-section title="Data Akademik" subtitle="Penempatan kelas, tahun pelajaran, dan status.">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Kelas <span class="text-danger">*</span></label>
                         <select name="kelas_id" class="form-select @error('kelas_id') is-invalid @enderror" required>
@@ -104,19 +94,16 @@
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-semibold">No. HP / WhatsApp</label>
-                        <input type="text" name="hp" class="form-control" value="{{ old('hp') }}">
+                        <input type="text" name="hp" class="form-control @error('hp') is-invalid @enderror" value="{{ old('hp') }}" data-mask="phone" inputmode="tel">
+                        @error('hp') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                </div>
-            </div>
+            </x-form-section>
             
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-3">
-                    <button type="submit" class="btn btn-primary w-100 mb-2 py-2 fw-bold">
-                        <i class="fas fa-save me-2"></i>Simpan Data Siswa
-                    </button>
-                    <a href="{{ route('siswa.index') }}" class="btn btn-light w-100 border py-2">Batal</a>
-                </div>
-            </div>
+            <x-form-actions
+                :back-url="route('siswa.index')"
+                submit-label="Simpan Data Siswa"
+                confirm="Simpan data siswa baru?"
+            />
         </div>
     </div>
 </form>

@@ -3,12 +3,23 @@
 @section('title', 'Data Kelas')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Data Kelas</h1>
-    <a href="{{ route('kelas.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tambah Kelas
-    </a>
-</div>
+<x-page-header
+    title="Data Kelas"
+    subtitle="Kelola rombel, wali kelas, ruangan, dan kapasitas."
+    :create-route="route('kelas.create')"
+    create-label="Tambah Kelas"
+/>
+
+<form method="GET" action="{{ route('kelas.index') }}" class="em-filter-bar">
+    <input type="search" name="search" value="{{ request('search') }}" class="form-control em-filter-search" placeholder="Cari kelas, tingkat, wali kelas, atau ruangan">
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-search"></i>
+        <span>Cari</span>
+    </button>
+    @if (request('search'))
+        <a href="{{ route('kelas.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -48,9 +59,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-4">Belum ada data kelas</td>
-                    </tr>
+                    <x-empty-state colspan="7" title="Belum ada data kelas" description="Data kelas yang cocok dengan filter akan tampil di sini." icon="fa-door-open" />
                     @endforelse
                 </tbody>
             </table>

@@ -17,6 +17,31 @@
     @stack('styles')
 </head>
 <body class="em-body">
+    @php
+        $routeName = request()->route()?->getName();
+        $routePrefix = \Illuminate\Support\Str::before((string) $routeName, '.');
+        $sections = [
+            'guru' => ['Master Data', 'Guru'],
+            'kelas' => ['Master Data', 'Kelas'],
+            'mapel' => ['Master Data', 'Mata Pelajaran'],
+            'jam-pelajaran' => ['Master Data', 'Jam Pelajaran'],
+            'tahun-pelajaran' => ['Master Data', 'Tahun Pelajaran'],
+            'siswa' => ['Akademik', 'Siswa'],
+            'buku-induk' => ['Akademik', 'Buku Induk'],
+            'raport' => ['Akademik', 'Raport'],
+            'jadwal' => ['Akademik', 'Jadwal'],
+            'absensi' => ['Akademik', 'Absensi Guru'],
+            'arsip-akademik' => ['Akademik', 'Arsip Akademik'],
+            'surat-masuk' => ['Administrasi', 'Surat Masuk'],
+            'surat-keluar' => ['Administrasi', 'Surat Keluar'],
+            'template-surat' => ['Administrasi', 'Template Surat'],
+            'tasks' => ['Administrasi', 'Tugas TU'],
+            'sarana' => ['Sarpras', 'Sarana'],
+            'kategori-sarana' => ['Sarpras', 'Kategori Sarana'],
+            'users' => ['Sistem', 'Pengguna'],
+        ];
+        $breadcrumb = $sections[$routePrefix] ?? null;
+    @endphp
 
     <div class="em-layout">
         <!-- Sidebar -->
@@ -25,6 +50,13 @@
         <!-- Main content -->
         <main class="em-main" id="emMain">
             <div class="container-fluid px-0">
+                @if ($breadcrumb)
+                    <nav class="em-breadcrumb" aria-label="Breadcrumb">
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
+                        <span>{{ $breadcrumb[0] }}</span>
+                        <span aria-current="page">{{ $breadcrumb[1] }}</span>
+                    </nav>
+                @endif
                 @include('components.alert')
                 @yield('content')
             </div>

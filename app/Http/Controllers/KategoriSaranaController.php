@@ -7,9 +7,14 @@ use Illuminate\Http\Request;
 
 class KategoriSaranaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kategori = KategoriSarana::orderBy('nama_kategori')->paginate(10);
+        $kategori = KategoriSarana::query()
+            ->when($request->search, fn ($query, string $search) => $query->where('nama_kategori', 'like', "%{$search}%"))
+            ->orderBy('nama_kategori')
+            ->paginate(10)
+            ->withQueryString();
+
         return view('kategori-sarana.index', compact('kategori'));
     }
 
@@ -24,6 +29,7 @@ class KategoriSaranaController extends Controller
             'nama_kategori' => 'required|unique:kategori_sarana',
         ]);
         KategoriSarana::create($request->only('nama_kategori'));
+
         return redirect()->route('kategori-sarana.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
@@ -35,9 +41,10 @@ class KategoriSaranaController extends Controller
     public function update(Request $request, KategoriSarana $kategori_sarana)
     {
         $request->validate([
-            'nama_kategori' => 'required|unique:kategori_sarana,nama_kategori,' . $kategori_sarana->id,
+            'nama_kategori' => 'required|unique:kategori_sarana,nama_kategori,'.$kategori_sarana->id,
         ]);
         $kategori_sarana->update($request->only('nama_kategori'));
+
         return redirect()->route('kategori-sarana.index')->with('success', 'Kategori berhasil diupdate.');
     }
 
@@ -47,6 +54,7 @@ class KategoriSaranaController extends Controller
             return redirect()->route('kategori-sarana.index')->with('error', 'Kategori tidak dapat dihapus karena masih digunakan.');
         }
         $kategori_sarana->delete();
+
         return redirect()->route('kategori-sarana.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }

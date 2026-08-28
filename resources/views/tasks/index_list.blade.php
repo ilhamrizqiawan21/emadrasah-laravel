@@ -30,7 +30,7 @@
                         <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari judul..." value="{{ request('search') }}">
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i></button>
+                        <button type="submit" class="btn btn-sm btn-primary" aria-label="Cari tugas"><i class="fas fa-search"></i></button>
                     </div>
                     @if(request('search') || request('status'))
                     <div class="col-auto">
@@ -87,9 +87,9 @@
                         </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{{ route('tasks.show', $task) }}" class="btn btn-outline-primary" title="Detail"><i class="fas fa-eye"></i></a>
-                                <a href="{{ route('tasks.edit', $task) }}" class="btn btn-outline-warning" title="Edit"><i class="fas fa-edit"></i></a>
-                                <button type="button" class="btn btn-outline-danger" onclick="confirmDelete('{{ route('tasks.destroy', $task) }}', '{{ $task->judul }}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                                <a href="{{ route('tasks.show', $task) }}" class="btn btn-outline-primary" title="Detail" aria-label="Detail tugas {{ $task->judul }}"><i class="fas fa-eye"></i></a>
+                                <a href="{{ route('tasks.edit', $task) }}" class="btn btn-outline-warning" title="Edit" aria-label="Edit tugas {{ $task->judul }}"><i class="fas fa-edit"></i></a>
+                                <button type="button" class="btn btn-outline-danger" onclick="confirmDelete('{{ route('tasks.destroy', $task) }}', '{{ $task->judul }}')" title="Hapus" aria-label="Hapus tugas {{ $task->judul }}"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>

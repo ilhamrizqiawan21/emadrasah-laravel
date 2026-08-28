@@ -46,16 +46,16 @@
                                 </span>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ route('buku-induk.show', $s) }}" class="btn btn-sm btn-info text-white" title="Lihat Profil">
+                                <a href="{{ route('buku-induk.show', $s) }}" class="btn btn-sm btn-info text-white" title="Lihat Profil" aria-label="Lihat profil {{ $s->nama_lengkap }}">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('buku-induk.edit', $s) }}" class="btn btn-sm btn-warning text-white" title="Edit">
+                                <a href="{{ route('buku-induk.edit', $s) }}" class="btn btn-sm btn-warning text-white" title="Edit" aria-label="Edit buku induk {{ $s->nama_lengkap }}">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="{{ route('buku-induk.destroy', $s) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus data ini?')" title="Hapus">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus data ini?')" title="Hapus" aria-label="Hapus buku induk {{ $s->nama_lengkap }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>

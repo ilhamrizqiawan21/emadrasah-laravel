@@ -27,6 +27,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('nilai_ujian_madrasah')->nullable()->comment('Khusus semester 6');
             $table->text('deskripsi_ujian')->nullable()->comment('Khusus semester 6');
             $table->timestamp('created_at')->useCurrent();
+            $table->softDeletes();
             $table->unique(['siswa_id', 'tahun_pelajaran_id', 'semester', 'mapel_id'], 'uq_raport_nilai');
         });
 
@@ -42,6 +43,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('urut')->default(99);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletes();
             $table->index(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'idx_ekskul_siswa');
         });
 
@@ -56,6 +58,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('tanpa_keterangan')->default(0)->comment('Jumlah hari alpha/tanpa keterangan');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletes();
             $table->unique(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'uq_kehadiran');
             $table->index('siswa_id', 'idx_kehadiran_siswa');
         });
@@ -72,6 +75,7 @@ return new class extends Migration
             $table->date('tgl_ijazah')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletes();
             $table->unique(['siswa_id', 'tahun_pelajaran_id'], 'uq_kelulusan');
         });
 
@@ -86,6 +90,7 @@ return new class extends Migration
             $table->string('tema_projek_3')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletes();
             $table->unique(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'uq_p5ppra');
         });
 
@@ -99,6 +104,7 @@ return new class extends Migration
             $table->string('sub_elemen')->nullable();
             $table->text('target_pencapaian')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->softDeletes();
             $table->index('p5ppra_id', 'idx_p5_header');
             $table->foreign('p5ppra_id', 'fk_p5detail_header')
                 ->references('id')->on('raport_p5ppra')->onDelete('cascade');
@@ -116,6 +122,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('urut')->default(99);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->softDeletes();
             $table->index(['siswa_id', 'tahun_pelajaran_id', 'semester'], 'idx_prestasi_siswa');
         });
     }

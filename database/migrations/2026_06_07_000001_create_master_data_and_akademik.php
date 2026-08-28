@@ -54,6 +54,7 @@ return new class extends Migration
             $table->string('bidang_studi')->nullable();
             $table->json('jam_tidak_tersedia')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->integer('beban_jp')->default(24)->comment('Kuota Jam Pelajaran per minggu');
             $table->index('user_id');
             $table->index('status');
@@ -215,6 +216,7 @@ return new class extends Migration
             $table->string('hobi_lain', 100)->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->unique('nis');
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
         });

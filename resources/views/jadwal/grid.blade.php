@@ -17,10 +17,10 @@
         <a href="{{ route('jadwal.index') }}" class="btn-kode">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>
-        <button type="button" class="btn-kode" data-bs-toggle="modal" data-bs-target="#guruListModal">
+        <button type="button" class="btn-kode" data-bs-toggle="modal" data-bs-target="#guruListModal" aria-label="Buka daftar kode guru">
             <i class="fas fa-id-card-alt" style="color:var(--g-primary)"></i> Daftar Kode
         </button>
-        <button class="btn-save" id="btnSaveAll" disabled>
+        <button class="btn-save" id="btnSaveAll" disabled aria-label="Simpan semua perubahan jadwal">
             <i class="fas fa-cloud-arrow-up"></i>
             <span>Simpan Semua</span>
             <span class="changes-pill" id="changesCount" style="display:none">0</span>
@@ -88,6 +88,7 @@
                                    data-original="{{ $kodeVal }}"
                                    value="{{ $kodeVal }}"
                                    placeholder="—"
+                                   aria-label="Kode guru kelas {{ $k->nama_kelas }} {{ $jam->hari }} sesi {{ $jam->sesi_ke }}"
                                    autocomplete="off">
                         </td>
                     @endforeach
@@ -102,7 +103,7 @@
         <div class="status-dot" id="statusDot"></div>
         <span id="statusMsg">Siap — klik sel untuk mulai mengisi</span>
     </div>
-    <button class="btn-save" id="btnSaveAllBottom" disabled>
+    <button class="btn-save" id="btnSaveAllBottom" disabled aria-label="Simpan semua perubahan jadwal">
         <i class="fas fa-cloud-arrow-up"></i> Simpan Semua
     </button>
 </div>
@@ -119,7 +120,7 @@
                 <h5 class="modal-title fw-bold">
                     <i class="fas fa-id-card-alt me-2"></i>Daftar Kode Guru
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup daftar kode guru"></button>
             </div>
             <div class="modal-body p-3">
                 <div class="input-group mb-3">

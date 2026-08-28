@@ -4,20 +4,12 @@
 
 @section('content')
 <div class="container-fluid px-0">
-    <!-- Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1 fw-bold">
-                <i class="fas fa-clock me-2 text-primary"></i> Jam Pelajaran
-            </h1>
-            <p class="text-muted mb-0">Kelola sesi dan waktu pelajaran per hari</p>
-        </div>
-        <div>
-            <a href="{{ route('jam-pelajaran.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Tambah Jam
-            </a>
-        </div>
-    </div>
+    <x-page-header
+        title="Jam Pelajaran"
+        subtitle="Kelola sesi dan waktu pelajaran per hari."
+        :create-route="route('jam-pelajaran.create')"
+        create-label="Tambah Jam"
+    />
 
     <!-- Statistik Ringkasan -->
     @php
@@ -93,17 +85,25 @@
         </div>
     </div>
 
+    <form method="GET" action="{{ route('jam-pelajaran.index') }}" class="em-filter-bar">
+        <input type="search" name="search" value="{{ request('search') }}" class="form-control em-filter-search" placeholder="Cari hari atau nomor sesi">
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="fas fa-search"></i>
+            <span>Cari</span>
+        </button>
+        @if (request('search'))
+            <a href="{{ route('jam-pelajaran.index') }}" class="btn btn-outline-secondary">Reset</a>
+        @endif
+    </form>
+
     <!-- Tabel Data -->
     <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
             <div class="row align-items-center">
-                <div class="col-md-6">
+                <div class="col-12">
                     <h5 class="mb-0 fw-semibold">
                         <i class="fas fa-table me-2 text-primary"></i> Daftar Sesi Pelajaran
                     </h5>
-                </div>
-                <div class="col-md-6">
-                    <input type="text" id="searchSesi" class="form-control form-control-sm" placeholder="Cari hari atau sesi...">
                 </div>
             </div>
         </div>
@@ -122,7 +122,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($jamPelajaran as $index => $j)
+                        @forelse($jamPelajaran as $index => $j)
                         <tr>
                             <td>{{ $index + 1 + ($jamPelajaran->currentPage() - 1) * $jamPelajaran->perPage() }}</td>
                             <td>
@@ -148,16 +148,18 @@
                             <td class="text-center">{{ $duration }} menit</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('jam-pelajaran.edit', $j->id) }}" class="btn btn-warning" data-bs-toggle="tooltip" title="Edit">
+                                    <a href="{{ route('jam-pelajaran.edit', $j->id) }}" class="btn btn-warning" data-bs-toggle="tooltip" title="Edit" aria-label="Edit jam pelajaran {{ $j->hari }} sesi {{ $j->sesi_ke }}">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" title="Hapus" onclick="confirmDelete('{{ route('jam-pelajaran.destroy', $j->id) }}', '{{ $j->hari }} Sesi {{ $j->sesi_ke }}')">
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" title="Hapus" onclick="confirmDelete('{{ route('jam-pelajaran.destroy', $j->id) }}', '{{ $j->hari }} Sesi {{ $j->sesi_ke }}')" aria-label="Hapus jam pelajaran {{ $j->hari }} sesi {{ $j->sesi_ke }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                            <x-empty-state colspan="7" title="Belum ada jam pelajaran" description="Sesi pelajaran yang cocok dengan filter akan tampil di sini." icon="fa-clock" />
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -180,16 +182,6 @@
             form.submit();
         }
     }
-
-    // Live search
-    document.getElementById('searchSesi').addEventListener('keyup', function() {
-        let search = this.value.toLowerCase();
-        let rows = document.querySelectorAll('#jamTable tbody tr');
-        rows.forEach(row => {
-            let text = row.innerText.toLowerCase();
-            row.style.display = text.includes(search) ? '' : 'none';
-        });
-    });
 
     // Tooltip
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

@@ -33,6 +33,7 @@ return new class extends Migration
             $table->year('tahun_pengadaan')->nullable();
             $table->string('foto')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('kategori_id')->references('id')->on('kategori_sarana')->onDelete('restrict');
         });
 
@@ -77,6 +78,7 @@ return new class extends Migration
             $table->string('file_scan')->nullable();
             $table->enum('status', ['diterima', 'diproses', 'selesai'])->default('diterima');
             $table->timestamps();
+            $table->softDeletes();
         });
 
         // 6. Surat Keluar
@@ -89,6 +91,7 @@ return new class extends Migration
             $table->string('lampiran')->nullable();
             $table->string('file_draft')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         // 7. Template Surat
@@ -111,7 +114,7 @@ return new class extends Migration
             $table->string('kategori', 100)->nullable();
             $table->string('attachment')->nullable();
             $table->integer('progress_persen')->default(0);
-            $table->bigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
             $table->foreign('assigned_to')->references('id')->on('users');
             $table->foreign('created_by')->references('id')->on('users');
@@ -150,6 +153,7 @@ return new class extends Migration
             $table->string('file_path');
             $table->enum('tipe', ['Leger', 'RDM', 'Lainnya'])->default('Leger');
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('tahun_pelajaran_id')->references('id')->on('tahun_pelajaran')->onDelete('cascade');
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
         });

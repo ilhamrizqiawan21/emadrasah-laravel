@@ -44,11 +44,11 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">NISN</label>
-                        <input type="text" name="nisn" class="form-control" value="{{ old('nisn', $siswa->nisn) }}">
+                        <input type="text" name="nisn" class="form-control" value="{{ old('nisn', $siswa->nisn) }}" data-mask="nisn" inputmode="numeric" maxlength="10">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">NIK</label>
-                        <input type="text" name="nik" class="form-control" maxlength="16" value="{{ old('nik', $siswa->nik) }}">
+                        <input type="text" name="nik" class="form-control" maxlength="16" value="{{ old('nik', $siswa->nik) }}" data-mask="nik" inputmode="numeric">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Jenis Kelamin</label>

@@ -197,6 +197,31 @@
                     /* Scroll ke field pertama yang invalid */
                     const first = form.querySelector('.is-invalid');
                     if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
+                const confirmButton = e.submitter?.dataset?.confirm;
+                const confirmMessage = confirmButton || form.dataset.confirm;
+                if (confirmMessage && form.dataset.confirmed !== 'true') {
+                    e.preventDefault();
+                    showConfirmDialog(confirmMessage, () => {
+                        form.dataset.confirmed = 'true';
+                        if (e.submitter) {
+                            form.requestSubmit(e.submitter);
+                        } else {
+                            form.requestSubmit();
+                        }
+                    });
+                    return;
+                }
+                delete form.dataset.confirmed;
+
+                if (form.classList.contains('em-filter-bar')) {
+                    $$('button[type="submit"]', form).forEach(button => {
+                        button.disabled = true;
+                        button.dataset.originalText = button.innerHTML;
+                        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span> Memuat</span>';
+                    });
                 }
             });
         });
@@ -207,6 +232,82 @@
         field.classList.toggle('is-invalid', !ok);
         field.classList.toggle('is-valid',   ok);
         return ok;
+    }
+
+    function showConfirmDialog(message, onConfirm) {
+        $('#em-action-confirm-modal')?.remove();
+
+        const wrap = document.createElement('div');
+        wrap.id = 'em-action-confirm-modal';
+        wrap.innerHTML = `
+            <div class="modal fade" tabindex="-1" id="emActionConfirmModalBs">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content border-0 shadow-lg" style="border-radius:16px;overflow:hidden;">
+                        <div class="modal-body p-4 text-center">
+                            <div style="width:54px;height:54px;border-radius:50%;background:#dbeafe;
+                                        display:flex;align-items:center;justify-content:center;
+                                        margin:0 auto 14px;">
+                                <i class="fas fa-circle-question text-primary" style="font-size:1.15rem;"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1" style="font-size:0.95rem;">Konfirmasi</h6>
+                            <p class="text-muted mb-0" style="font-size:0.82rem;">${escHtml(message)}</p>
+                        </div>
+                        <div class="modal-footer border-0 pt-0 pb-3 px-4 justify-content-center gap-2">
+                            <button class="btn btn-outline-secondary btn-sm px-4" data-bs-dismiss="modal">Batal</button>
+                            <button class="btn btn-primary btn-sm px-4" id="emActionConfirmOk">Lanjutkan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        document.body.appendChild(wrap);
+
+        const bsModal = new bootstrap.Modal($('#emActionConfirmModalBs'));
+        bsModal.show();
+
+        $('#emActionConfirmOk').addEventListener('click', () => {
+            bsModal.hide();
+            onConfirm();
+        });
+
+        $('#emActionConfirmModalBs').addEventListener('hidden.bs.modal', () => wrap.remove());
+    }
+
+    function initInputMasks() {
+        $$('[data-mask]').forEach(field => {
+            field.addEventListener('input', () => applyMask(field));
+            applyMask(field);
+        });
+    }
+
+    function applyMask(field) {
+        const mask = field.dataset.mask;
+        const digits = field.value.replace(/\D/g, '');
+
+        if (mask === 'nisn') {
+            field.value = digits.slice(0, 10);
+            return;
+        }
+
+        if (mask === 'nik') {
+            field.value = digits.slice(0, 16);
+            return;
+        }
+
+        if (mask === 'phone') {
+            field.value = digits.slice(0, 15);
+            return;
+        }
+
+        if (mask === 'year-code') {
+            const value = digits.slice(0, 8);
+            field.value = value.length > 4 ? `${value.slice(0, 4)}/${value.slice(4)}` : value;
+            return;
+        }
+
+        if (mask === 'time') {
+            const value = digits.slice(0, 4);
+            field.value = value.length > 2 ? `${value.slice(0, 2)}:${value.slice(2)}` : value;
+        }
     }
 
     /* ================================================================
@@ -349,6 +450,7 @@
         initTooltips();
         initAlerts();
         initForms();
+        initInputMasks();
         initFadeIn();
     });
 

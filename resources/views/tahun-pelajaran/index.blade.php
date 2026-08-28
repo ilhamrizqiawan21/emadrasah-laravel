@@ -3,13 +3,23 @@
 @section('title', 'Tahun Pelajaran')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="em-page-title">Tahun Pelajaran</h2>
-        <p class="text-muted">Kelola daftar tahun pelajaran untuk sistem rapor dan arsip.</p>
-    </div>
-    <a href="{{ route('tahun-pelajaran.create') }}" class="btn btn-primary">Tambah Tahun Pelajaran</a>
-</div>
+<x-page-header
+    title="Tahun Pelajaran"
+    subtitle="Kelola daftar tahun pelajaran untuk rapor, jadwal, dan arsip."
+    :create-route="route('tahun-pelajaran.create')"
+    create-label="Tambah Tahun Pelajaran"
+/>
+
+<form method="GET" action="{{ route('tahun-pelajaran.index') }}" class="em-filter-bar">
+    <input type="search" name="search" value="{{ request('search') }}" class="form-control em-filter-search" placeholder="Cari kode atau nama tahun pelajaran">
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-search"></i>
+        <span>Cari</span>
+    </button>
+    @if (request('search'))
+        <a href="{{ route('tahun-pelajaran.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
@@ -24,7 +34,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($tahunPelajaran as $item)
+                    @forelse($tahunPelajaran as $item)
                     <tr>
                         <td>{{ $item->kode }}</td>
                         <td>{{ $item->nama }}</td>
@@ -38,7 +48,9 @@
                             </form>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                        <x-empty-state colspan="4" title="Belum ada tahun pelajaran" description="Tahun pelajaran yang cocok dengan filter akan tampil di sini." icon="fa-calendar" />
+                    @endforelse
                 </tbody>
             </table>
         </div>

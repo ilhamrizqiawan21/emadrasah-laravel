@@ -3,43 +3,54 @@
 @section('title', 'Data Siswa')
 
 @section('content')
-<div class="row mb-4 align-items-center">
-    <div class="col-md-6">
-        <h2 class="em-page-title">Data Siswa</h2>
-        <p class="text-muted">Kelola data seluruh siswa MTs Al-Ihsan Batujajar.</p>
-    </div>
-    <div class="col-md-6 text-end">
-        <a href="{{ route('siswa.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Tambah Siswa
-        </a>
-    </div>
-</div>
+<x-page-header
+    title="Data Siswa"
+    subtitle="Kelola data seluruh siswa MTs Al-Ihsan Batujajar."
+    :create-route="route('siswa.create')"
+    create-label="Tambah Siswa"
+/>
+
+<form action="{{ route('siswa.index') }}" method="GET" class="em-filter-bar">
+    <input type="search" name="search" class="form-control em-filter-search" placeholder="Cari NIS, NISN, atau nama" value="{{ request('search') }}">
+    <select name="status" class="form-select" style="max-width: 180px;">
+        <option value="">Semua Status</option>
+        @foreach (['Aktif', 'Lulus', 'Pindah', 'Keluar'] as $status)
+            <option value="{{ $status }}" @selected(request('status') === $status)>{{ $status }}</option>
+        @endforeach
+    </select>
+    <select name="kelas_id" class="form-select" style="max-width: 180px;">
+        <option value="">Semua Kelas</option>
+        @foreach ($kelas as $item)
+            <option value="{{ $item->id }}" @selected((string) request('kelas_id') === (string) $item->id)>{{ $item->nama_kelas }}</option>
+        @endforeach
+    </select>
+    <select name="tahun_pelajaran_id" class="form-select" style="max-width: 220px;">
+        <option value="">Semua Tahun</option>
+        @foreach ($tahunPelajaran as $item)
+            <option value="{{ $item->id }}" @selected((string) request('tahun_pelajaran_id') === (string) $item->id)>{{ $item->kode }}</option>
+        @endforeach
+    </select>
+    <button type="submit" class="btn btn-outline-primary">
+        <i class="fas fa-filter"></i>
+        <span>Filter</span>
+    </button>
+    @if (request()->hasAny(['search', 'status', 'kelas_id', 'tahun_pelajaran_id', 'sort']))
+        <a href="{{ route('siswa.index') }}" class="btn btn-outline-secondary">Reset</a>
+    @endif
+</form>
 
 <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white py-3">
-        <form action="{{ route('siswa.index') }}" method="GET" class="row g-2">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
-                    <input type="text" name="search" class="form-control bg-light border-start-0" placeholder="Cari NIS, NISN, atau Nama..." value="{{ request('search') }}">
-                </div>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-secondary w-100">Filter</button>
-            </div>
-        </form>
-    </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4" style="width: 60px;">No</th>
-                        <th>NIS / NISN</th>
-                        <th>Nama Lengkap</th>
-                        <th>Kelas</th>
+                        <th><x-sort-link column="nis" label="NIS / NISN" /></th>
+                        <th><x-sort-link column="nama" label="Nama Lengkap" /></th>
+                        <th><x-sort-link column="kelas" label="Kelas" /></th>
                         <th>L/P</th>
-                        <th>Status</th>
+                        <th><x-sort-link column="status" label="Status" /></th>
                         <th class="text-end pe-4">Aksi</th>
                     </tr>
                 </thead>
@@ -64,19 +75,17 @@
                         </td>
                         <td class="text-end pe-4">
                             <div class="btn-group">
-                                <a href="{{ route('siswa.edit', $s) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <a href="{{ route('siswa.edit', $s) }}" class="btn btn-sm btn-outline-primary" title="Edit" aria-label="Edit siswa {{ $s->nama_lengkap }}">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('siswa.destroy', $s) }}', '{{ $s->nama_lengkap }}')" title="Hapus">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('siswa.destroy', $s) }}', '{{ $s->nama_lengkap }}')" title="Hapus" aria-label="Hapus siswa {{ $s->nama_lengkap }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">Data siswa tidak ditemukan.</td>
-                    </tr>
+                    <x-empty-state colspan="7" title="Data siswa tidak ditemukan" description="Ubah filter atau tambahkan siswa baru." icon="fa-user-graduate" />
                     @endforelse
                 </tbody>
             </table>
