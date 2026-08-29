@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\KategoriSarana;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class KategoriSaranaController extends Controller
 {
@@ -15,12 +16,15 @@ class KategoriSaranaController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('kategori-sarana.index', compact('kategori'));
+        return Inertia::render('KategoriSarana/Index', [
+            'kategori' => $kategori,
+            'filters' => $request->only(['search']),
+        ]);
     }
 
     public function create()
     {
-        return view('kategori-sarana.create');
+        return Inertia::render('KategoriSarana/Form');
     }
 
     public function store(Request $request)
@@ -35,7 +39,9 @@ class KategoriSaranaController extends Controller
 
     public function edit(KategoriSarana $kategori_sarana)
     {
-        return view('kategori-sarana.edit', compact('kategori_sarana'));
+        return Inertia::render('KategoriSarana/Form', [
+            'kategoriSarana' => $kategori_sarana,
+        ]);
     }
 
     public function update(Request $request, KategoriSarana $kategori_sarana)

@@ -127,8 +127,8 @@ Tujuan: menyelesaikan migrasi bertahap dari Blade ke Inertia React TypeScript ta
 - [x] Migrasikan absensi dan guru pengganti.
 - [x] Migrasikan surat masuk, surat keluar, dan template surat.
 - [x] Migrasikan tasks.
-- [ ] Migrasikan sarana, kategori sarana, peminjaman, dan pemeliharaan.
-- [ ] Migrasikan arsip akademik.
+- [x] Migrasikan sarana, kategori sarana, peminjaman, dan pemeliharaan.
+- [x] Migrasikan arsip akademik.
 
 ### Frontend Quality
 

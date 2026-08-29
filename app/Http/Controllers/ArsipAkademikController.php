@@ -6,6 +6,8 @@ use App\Models\ArsipAkademik;
 use App\Models\Kelas;
 use App\Models\TahunPelajaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class ArsipAkademikController extends Controller
 {
@@ -33,7 +35,29 @@ class ArsipAkademikController extends Controller
         $kelas = Kelas::orderBy('tingkat')->orderBy('nama_kelas')->get();
         $tahunPelajaran = TahunPelajaran::orderBy('kode')->get();
 
-        return view('arsip-akademik.index', compact('arsip', 'kelas', 'tahunPelajaran'));
+        return Inertia::render('ArsipAkademik/Index', [
+            'arsip' => $arsip->through(fn (ArsipAkademik $item) => [
+                'id' => $item->id,
+                'nama_arsip' => $item->nama_arsip,
+                'tipe' => $item->tipe,
+                'semester' => $item->semester,
+                'file_path' => $item->file_path,
+                'file_name' => basename($item->file_path),
+                'file_url' => Storage::url($item->file_path),
+                'created_at' => $item->created_at,
+                'kelas' => $item->kelas ? [
+                    'id' => $item->kelas->id,
+                    'nama_kelas' => $item->kelas->nama_kelas,
+                ] : null,
+                'tahun_pelajaran' => $item->tahunPelajaran ? [
+                    'id' => $item->tahunPelajaran->id,
+                    'kode' => $item->tahunPelajaran->kode,
+                ] : null,
+            ]),
+            'kelas' => $kelas,
+            'tahunPelajaran' => $tahunPelajaran,
+            'filters' => $request->only(['search', 'tipe', 'kelas_id', 'tahun_pelajaran_id', 'semester', 'sort', 'direction']),
+        ]);
     }
 
     public function store(Request $request)

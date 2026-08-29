@@ -8,7 +8,9 @@ use App\Models\PeminjamanSarana;
 use App\Models\SaranaPrasarana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class SaranaController extends Controller
 {
@@ -42,14 +44,36 @@ class SaranaController extends Controller
             ->withQueryString();
         $kategori = KategoriSarana::orderBy('nama_kategori')->get();
 
-        return view('sarana.index', compact('sarana', 'kategori'));
+        return Inertia::render('Sarana/Index', [
+            'sarana' => $sarana->through(fn (SaranaPrasarana $item) => [
+                'id' => $item->id,
+                'kode_sarana' => $item->kode_sarana,
+                'nama_sarana' => $item->nama_sarana,
+                'kategori_id' => $item->kategori_id,
+                'kategori' => $item->kategori ? [
+                    'id' => $item->kategori->id,
+                    'nama_kategori' => $item->kategori->nama_kategori,
+                ] : null,
+                'spesifikasi' => $item->spesifikasi,
+                'jumlah' => $item->jumlah,
+                'stok_tersedia' => $item->stok_tersedia,
+                'kondisi' => $item->kondisi,
+                'lokasi_ruang' => $item->lokasi_ruang,
+                'tahun_pengadaan' => $item->tahun_pengadaan,
+                'foto_url' => $item->foto ? Storage::url($item->foto) : null,
+            ]),
+            'kategori' => $kategori,
+            'filters' => $request->only(['search', 'kategori_id', 'kondisi', 'sort', 'direction']),
+        ]);
     }
 
     public function create()
     {
         $kategori = KategoriSarana::all();
 
-        return view('sarana.create', compact('kategori'));
+        return Inertia::render('Sarana/Form', [
+            'kategori' => $kategori,
+        ]);
     }
 
     public function store(Request $request)
@@ -91,7 +115,22 @@ class SaranaController extends Controller
     {
         $kategori = KategoriSarana::all();
 
-        return view('sarana.edit', compact('sarana', 'kategori'));
+        return Inertia::render('Sarana/Form', [
+            'sarana' => [
+                'id' => $sarana->id,
+                'kode_sarana' => $sarana->kode_sarana,
+                'nama_sarana' => $sarana->nama_sarana,
+                'kategori_id' => $sarana->kategori_id,
+                'spesifikasi' => $sarana->spesifikasi,
+                'jumlah' => $sarana->jumlah,
+                'stok_tersedia' => $sarana->stok_tersedia,
+                'kondisi' => $sarana->kondisi,
+                'lokasi_ruang' => $sarana->lokasi_ruang,
+                'tahun_pengadaan' => $sarana->tahun_pengadaan,
+                'foto_url' => $sarana->foto ? Storage::url($sarana->foto) : null,
+            ],
+            'kategori' => $kategori,
+        ]);
     }
 
     public function update(Request $request, SaranaPrasarana $sarana)
@@ -140,7 +179,18 @@ class SaranaController extends Controller
     {
         $peminjaman = PeminjamanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pinjam', 'desc')->paginate(10);
 
-        return view('sarana.peminjaman', compact('sarana', 'peminjaman'));
+        return Inertia::render('Sarana/Peminjaman', [
+            'sarana' => [
+                'id' => $sarana->id,
+                'kode_sarana' => $sarana->kode_sarana,
+                'nama_sarana' => $sarana->nama_sarana,
+                'jumlah' => $sarana->jumlah,
+                'stok_tersedia' => $sarana->stok_tersedia,
+                'kondisi' => $sarana->kondisi,
+                'lokasi_ruang' => $sarana->lokasi_ruang,
+            ],
+            'peminjaman' => $peminjaman,
+        ]);
     }
 
     public function storePeminjaman(Request $request, SaranaPrasarana $sarana)
@@ -201,7 +251,18 @@ class SaranaController extends Controller
     {
         $pemeliharaan = PemeliharaanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pemeliharaan', 'desc')->paginate(10);
 
-        return view('sarana.pemeliharaan', compact('sarana', 'pemeliharaan'));
+        return Inertia::render('Sarana/Pemeliharaan', [
+            'sarana' => [
+                'id' => $sarana->id,
+                'kode_sarana' => $sarana->kode_sarana,
+                'nama_sarana' => $sarana->nama_sarana,
+                'jumlah' => $sarana->jumlah,
+                'stok_tersedia' => $sarana->stok_tersedia,
+                'kondisi' => $sarana->kondisi,
+                'lokasi_ruang' => $sarana->lokasi_ruang,
+            ],
+            'pemeliharaan' => $pemeliharaan,
+        ]);
     }
 
     public function storePemeliharaan(Request $request, SaranaPrasarana $sarana)
