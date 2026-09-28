@@ -48,7 +48,7 @@ public function index(Request $request)
             'status' => 'required|in:antrean,proses,selesai',
             'kategori' => 'nullable|string|max:50',
             'progress_persen' => 'nullable|integer|min:0|max:100',
-            'attachment' => 'nullable|file|max:5120',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,zip|max:5120',
         ]);
 
         if ($request->hasFile('attachment')) {
@@ -93,7 +93,7 @@ public function index(Request $request)
             'status' => 'required|in:antrean,proses,selesai',
             'kategori' => 'nullable|string|max:50',
             'progress_persen' => 'nullable|integer|min:0|max:100',
-            'attachment' => 'nullable|file|max:5120',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,zip|max:5120',
         ]);
 
         if ($request->hasFile('attachment')) {

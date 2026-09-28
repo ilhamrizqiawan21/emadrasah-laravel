@@ -17,6 +17,7 @@
     </div>
 
     {{-- ── Navigation ── --}}
+    @php($canManage = in_array(auth()->user()?->role, ['admin', 'operator'], true))
     <div class="em-sidebar__inner">
         <nav class="em-nav">
 
@@ -30,6 +31,7 @@
                 </a>
             </div>
 
+            @if($canManage)
             <div class="em-nav__group">
                 <span class="em-nav__label">Master Data</span>
                 <a href="{{ route('guru.index') }}"
@@ -63,9 +65,11 @@
                     <span class="em-nav__text">Tahun Pelajaran</span>
                 </a>
             </div>
+            @endif
 
             <div class="em-nav__group">
                 <span class="em-nav__label">Akademik</span>
+                @if($canManage)
                 {{-- ── MANAJEMEN SISWA (dropdown) ── --}}
                 <div class="em-nav__dropdown" id="dropdown-kesiswaan-parent">
                     <div class="em-nav__dropdown-toggle" data-dropdown="kesiswaan">
@@ -98,20 +102,24 @@
                     <span class="em-nav__icon"><i class="fas fa-calendar-days"></i></span>
                     <span class="em-nav__text">Jadwal Pelajaran</span>
                 </a>
+                @endif
                 <a href="{{ route('absensi.index') }}"
                    class="em-nav__link {{ request()->routeIs('absensi.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Absensi Guru">
                     <span class="em-nav__icon"><i class="fas fa-fingerprint"></i></span>
                     <span class="em-nav__text">Absensi Guru</span>
                 </a>
+                @if($canManage)
                 <a href="{{ route('arsip-akademik.index') }}"
                    class="em-nav__link {{ request()->routeIs('arsip-akademik.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Arsip Akademik">
                     <span class="em-nav__icon"><i class="fas fa-archive"></i></span>
                     <span class="em-nav__text">Arsip Akademik</span>
                 </a>
+                @endif
             </div>
 
+            @if($canManage)
             <div class="em-nav__group">
                 <span class="em-nav__label">Lainnya</span>
                 <a href="{{ route('surat-masuk.index') }}"
@@ -150,13 +158,16 @@
                     <span class="em-nav__icon"><i class="fas fa-tags"></i></span>
                     <span class="em-nav__text">Kategori Sarana</span>
                 </a>
+                @if(auth()->user()?->role === 'admin')
                 <a href="{{ route('users.index') }}"
                    class="em-nav__link {{ request()->routeIs('users.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Manajemen Pengguna">
                     <span class="em-nav__icon"><i class="fas fa-user-cog"></i></span>
                     <span class="em-nav__text">Pengguna</span>
                 </a>
+                @endif
             </div>
+            @endif
 
         </nav>
     </div>

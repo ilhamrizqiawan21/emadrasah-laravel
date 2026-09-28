@@ -34,6 +34,7 @@ class BukuIndukController extends Controller
             'nis' => 'required|unique:siswa,nis',
             'nisn' => 'nullable|unique:siswa,nisn',
             'nik' => 'nullable|unique:siswa,nik|digits:16',
+            'dokumen.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
         DB::beginTransaction();
@@ -95,6 +96,7 @@ class BukuIndukController extends Controller
             'nis' => 'required|unique:siswa,nis,' . $siswa->id,
             'nisn' => 'nullable|unique:siswa,nisn,' . $siswa->id,
             'nik' => 'nullable|unique:siswa,nik,' . $siswa->id . '|digits:16',
+            'dokumen.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
         DB::beginTransaction();

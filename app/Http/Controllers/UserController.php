@@ -25,6 +25,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
+            'role' => 'required|in:admin,guru,wali_murid,siswa,operator',
         ]);
         $validated['password'] = Hash::make($validated['password']);
         User::create($validated);
@@ -42,7 +43,13 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6',
+            'role' => 'required|in:admin,guru,wali_murid,siswa,operator',
         ]);
+
+        if ($user->id === auth()->id() && $validated['role'] !== 'admin') {
+            return back()->withInput()->with('error', 'Anda tidak dapat mengubah role akun sendiri keluar dari admin.');
+        }
+
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($request->password);
         } else {
