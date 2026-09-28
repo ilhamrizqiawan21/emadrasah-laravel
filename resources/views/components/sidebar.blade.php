@@ -150,12 +150,14 @@
                     <span class="em-nav__icon"><i class="fas fa-tags"></i></span>
                     <span class="em-nav__text">Kategori Sarana</span>
                 </a>
+                @if(auth()->user()?->role === 'admin')
                 <a href="{{ route('users.index') }}"
                    class="em-nav__link {{ request()->routeIs('users.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Manajemen Pengguna">
                     <span class="em-nav__icon"><i class="fas fa-user-cog"></i></span>
                     <span class="em-nav__text">Pengguna</span>
                 </a>
+                @endif
             </div>
 
         </nav>

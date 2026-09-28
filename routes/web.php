@@ -30,7 +30,7 @@ use App\Http\Controllers\SiswaController;
 
 // ==================== GUEST ROUTES (TIDAK PERLU LOGIN) ====================
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:5,1');
 // Logout akan di dalam grup auth (karena butuh login dulu)
 
 
@@ -91,8 +91,10 @@ Route::resource('arsip-akademik', ArsipAkademikController::class);
     //Kategori Sarana
     Route::resource('kategori-sarana', KategoriSaranaController::class);
 
-    // ========== USER MANAGEMENT ==========
-    Route::resource('users', UserController::class);
+    // ========== USER MANAGEMENT (khusus admin) ==========
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('users', UserController::class);
+    });
 
     //Siswa
     Route::get('buku-induk/{siswa}/export-pdf', [BukuIndukController::class, 'exportPdf'])->name('buku-induk.export-pdf');
