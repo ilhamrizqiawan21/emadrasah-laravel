@@ -4,10 +4,18 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Daftar Tugas</h1>
-    <a href="{{ route('tasks.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus me-1"></i> Tugas Baru
-    </a>
+    <div>
+        <h1 class="h3 mb-1 fw-bold"><i class="fas fa-list-check me-2 text-primary"></i> Daftar Tugas</h1>
+        <p class="text-muted mb-0">Tampilan tabel daftar tugas administrasi TU</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ route('tasks.index') }}" class="btn btn-outline-primary">
+            <i class="fas fa-columns me-1"></i> Tampilan Kanban
+        </a>
+        <a href="{{ route('tasks.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Tugas Baru
+        </a>
+    </div>
 </div>
 
 <div class="card shadow-sm">
@@ -17,7 +25,8 @@
                 <h5 class="mb-0 fw-semibold"><i class="fas fa-list-ul me-2 text-primary"></i> Semua Tugas</h5>
             </div>
             <div class="col-md-8">
-                <form method="GET" action="{{ route('tasks.index.list') }}" class="row g-2">
+                <form method="GET" action="{{ route('tasks.index') }}" class="row g-2">
+                    <input type="hidden" name="view" value="list">
                     <div class="col-auto">
                         <select name="status" class="form-select form-select-sm">
                             <option value="">Semua Status</option>
@@ -34,7 +43,7 @@
                     </div>
                     @if(request('search') || request('status'))
                     <div class="col-auto">
-                        <a href="{{ route('tasks.index.list') }}" class="btn btn-sm btn-secondary">Reset</a>
+                        <a href="{{ route('tasks.index', ['view' => 'list']) }}" class="btn btn-sm btn-secondary">Reset</a>
                     </div>
                     @endif
                 </form>

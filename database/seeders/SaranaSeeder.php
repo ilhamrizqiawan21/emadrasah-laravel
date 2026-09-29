@@ -22,19 +22,21 @@ class SaranaSeeder extends Seeder
         ];
 
         foreach ($sarana as $s) {
-            DB::table('sarana_prasarana')->insert([
-                'kode_sarana' => $s['kode_sarana'],
-                'nama_sarana' => $s['nama_sarana'],
-                'kategori_id' => $kategori[$s['kategori']],
-                'spesifikasi' => null,
-                'jumlah' => $s['jumlah'],
-                'kondisi' => $s['kondisi'],
-                'lokasi_ruang' => $s['lokasi'],
-                'tahun_pengadaan' => null,
-                'foto' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            DB::table('sarana_prasarana')->updateOrInsert(
+                ['kode_sarana' => $s['kode_sarana']],
+                [
+                    'nama_sarana' => $s['nama_sarana'],
+                    'kategori_id' => $kategori[$s['kategori']] ?? 1,
+                    'spesifikasi' => null,
+                    'jumlah' => $s['jumlah'],
+                    'kondisi' => $s['kondisi'],
+                    'lokasi_ruang' => $s['lokasi'],
+                    'tahun_pengadaan' => null,
+                    'foto' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
         }
     }
 }

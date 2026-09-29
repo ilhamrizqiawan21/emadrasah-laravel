@@ -49,9 +49,14 @@
         <h1 class="h3 mb-1 fw-bold"><i class="fas fa-tasks me-2 text-primary"></i> Manajemen Tugas</h1>
         <p class="text-muted">Drag & drop untuk mengubah status</p>
     </div>
-    <a href="{{ route('tasks.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus me-1"></i> Tugas Baru
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ route('tasks.index', ['view' => 'list']) }}" class="btn btn-outline-primary">
+            <i class="fas fa-list me-1"></i> Tampilan Tabel
+        </a>
+        <a href="{{ route('tasks.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Tugas Baru
+        </a>
+    </div>
 </div>
 
 <div class="row g-4" id="kanbanBoard">

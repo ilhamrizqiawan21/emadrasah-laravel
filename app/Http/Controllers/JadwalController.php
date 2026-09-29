@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use App\Models\Guru;
 use App\Models\Mapel;
 use App\Models\JamPelajaran;
+use App\Models\TahunPelajaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -87,6 +88,8 @@ public function index()
             return back()->withErrors(['guru_id' => 'Guru sudah memiliki jadwal di waktu tersebut.'])->withInput();
         }
 
+        $tpKode = TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026';
+
         // Simpan
         Jadwal::create([
             'kelas_id' => $validated['kelas_id'],
@@ -97,6 +100,7 @@ public function index()
             'jam_mulai' => $jamMulai,
             'jam_selesai' => $jamSelesai,
             'ruang' => $validated['ruang'],
+            'tahun_pelajaran_kode' => $tpKode,
         ]);
 
         return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil ditambahkan.');
@@ -241,6 +245,7 @@ public function gridStore(Request $request)
             'mapel_id' => $request->mapel_id,
             'jam_mulai' => $sesi->jam_mulai,
             'jam_selesai' => $sesi->jam_selesai,
+            'tahun_pelajaran_kode' => TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026',
         ]
     );
 

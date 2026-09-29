@@ -105,7 +105,7 @@ return new class extends Migration
             $table->time('jam_selesai');
             $table->string('ruang')->nullable();
             $table->unsignedTinyInteger('semester')->default(1);
-            $table->string('tahun_pelajaran_kode', 9);
+            $table->string('tahun_pelajaran_kode', 9)->default('2025/2026');
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');

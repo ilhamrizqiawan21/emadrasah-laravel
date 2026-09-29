@@ -11,6 +11,8 @@ class TahunPelajaran extends Model
 
     protected $table = 'tahun_pelajaran';
 
+    const UPDATED_AT = null;
+
     protected $fillable = ['kode', 'nama', 'is_aktif'];
 
     protected $casts = [

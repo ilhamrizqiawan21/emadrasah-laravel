@@ -111,7 +111,7 @@ return new class extends Migration
             $table->string('kategori', 100)->nullable();
             $table->string('attachment')->nullable();
             $table->integer('progress_persen')->default(0);
-            $table->bigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
             $table->foreign('assigned_to')->references('id')->on('users');
             $table->foreign('created_by')->references('id')->on('users');

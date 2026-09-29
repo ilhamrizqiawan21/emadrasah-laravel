@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
 
         // ========== MASTER DATA ==========
         Route::resource('guru', GuruController::class);
-        Route::resource('kelas', KelasController::class);
+        Route::resource('kelas', KelasController::class)->parameters(['kelas' => 'kelas']);
         Route::resource('mapel', MapelController::class);
         Route::resource('jam-pelajaran', JamPelajaranController::class);
         Route::resource('tahun-pelajaran', TahunPelajaranController::class);
@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
         //Siswa
         Route::get('buku-induk/{siswa}/export-pdf', [BukuIndukController::class, 'exportPdf'])->name('buku-induk.export-pdf');
         Route::resource('siswa', SiswaController::class);
-        Route::resource('buku-induk', BukuIndukController::class);
+        Route::resource('buku-induk', BukuIndukController::class)->parameters(['buku-induk' => 'siswa']);
 
         // ========== RAPORT / ARSIP NILAI ==========
         Route::get('raport', [RaportController::class, 'index'])->name('raport.index');

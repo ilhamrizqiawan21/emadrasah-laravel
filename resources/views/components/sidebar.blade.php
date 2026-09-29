@@ -180,7 +180,7 @@
             </div>
             <div class="em-user-details">
                 <span class="em-user-name">{{ Auth::user()->name ?? 'Admin' }}</span>
-                <span class="em-user-role">Administrator</span>
+                <span class="em-user-role">{{ ucfirst(str_replace('_', ' ', Auth::user()->role ?? 'Admin')) }}</span>
             </div>
             <form method="POST" action="{{ route('logout') }}" class="em-logout-form">
                 @csrf

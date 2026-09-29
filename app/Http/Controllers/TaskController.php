@@ -12,7 +12,7 @@ class TaskController extends Controller
 {
 public function index(Request $request)
 {
-    $query = Task::orderByRaw("FIELD(status, 'antrean', 'proses', 'selesai')");
+    $query = Task::with('assignedTo')->orderByRaw("CASE status WHEN 'antrean' THEN 1 WHEN 'proses' THEN 2 WHEN 'selesai' THEN 3 ELSE 4 END");
     
     if ($request->filled('status')) {
         $query->where('status', $request->status);
@@ -28,6 +28,9 @@ public function index(Request $request)
     }
     
     $tasks = $query->paginate(15);
+    if ($request->get('view') === 'list') {
+        return view('tasks.index_list', compact('tasks'));
+    }
     return view('tasks.index', compact('tasks'));
 }
 

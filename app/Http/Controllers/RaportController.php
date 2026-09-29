@@ -54,7 +54,8 @@ class RaportController extends Controller
         $pdf = Pdf::loadView('raport.pdf', compact('siswa', 'mapels', 'nilai', 'tahunPelajaran', 'semester'))
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('Raport_' . $siswa->nis . '_' . ($tahunPelajaran?->kode ?? $selectedTp) . '_S' . $semester . '.pdf');
+        $tpKode = str_replace(['/', '\\'], '-', $tahunPelajaran?->kode ?? (string)$selectedTp);
+        return $pdf->stream('Raport_' . $siswa->nis . '_' . $tpKode . '_S' . $semester . '.pdf');
     }
 
     public function store(Request $request, Siswa $siswa)

@@ -1,0 +1,52 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        // Default Admin User
+        User::firstOrCreate(
+            ['email' => 'admin@madrasah.id'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+                'is_active' => true,
+            ]
+        );
+
+        // Kategori Sarana
+        $kategoriList = ['Elektronik', 'Furniture', 'Alat Peraga', 'Olahraga'];
+        foreach ($kategoriList as $nama) {
+            DB::table('kategori_sarana')->updateOrInsert(
+                ['nama_kategori' => $nama],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
+        }
+
+        // Tahun Pelajaran Default Aktif
+        DB::table('tahun_pelajaran')->updateOrInsert(
+            ['kode' => '2025/2026'],
+            [
+                'nama' => 'Tahun Ajaran 2025/2026',
+                'is_aktif' => true,
+                'created_at' => now(),
+            ]
+        );
+
+        $this->call([
+            SaranaSeeder::class,
+            DummyDataSeeder::class,
+        ]);
+    }
+}
