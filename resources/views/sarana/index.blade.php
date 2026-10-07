@@ -18,7 +18,7 @@
 <div class="card shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table data-hide-sm="1 2 4 5 7" class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
@@ -55,7 +55,7 @@
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('sarana.edit', $item) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
                                 <a href="{{ route('sarana.peminjaman', $item) }}" class="btn btn-info"><i class="fas fa-hand-holding"></i></a>
-                                <button class="btn btn-danger" onclick="confirmDelete('{{ route('sarana.destroy', $item) }}', '{{ $item->nama_sarana }}')"><i class="fas fa-trash"></i></button>
+                                <button class="btn btn-danger" onclick="confirmDelete('{{ route('sarana.destroy', $item) }}', {{ Js::from($item->nama_sarana) }})"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>

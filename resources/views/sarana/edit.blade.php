@@ -63,7 +63,7 @@
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Foto Saat Ini</label>
                             @if($sarana->foto)
-                                <div><img src="{{ asset('storage/'.$sarana->foto) }}" width="150" class="img-thumbnail mb-2"></div>
+                                <div><img src="{{ route('files.show', ['path' => $sarana->foto]) }}" width="150" class="img-thumbnail mb-2"></div>
                             @endif
                             <input type="file" name="foto" class="form-control" accept="image/*">
                             <small class="text-muted">Kosongkan jika tidak ingin mengubah foto</small>

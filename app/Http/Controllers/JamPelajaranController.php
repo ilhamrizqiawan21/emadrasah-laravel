@@ -22,9 +22,9 @@ class JamPelajaranController extends Controller
     {
         $validated = $request->validate([
             'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
-            'sesi_ke' => 'required|integer',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required',
+            'sesi_ke' => 'required|integer|min:1',
+            'jam_mulai' => 'required|date_format:H:i,H:i:s',
+            'jam_selesai' => 'required|date_format:H:i,H:i:s|after:jam_mulai',
         ]);
         JamPelajaran::create($validated);
         return redirect()->route('jam-pelajaran.index')->with('success', 'Jam pelajaran berhasil ditambahkan.');
@@ -39,9 +39,9 @@ class JamPelajaranController extends Controller
     {
         $validated = $request->validate([
             'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
-            'sesi_ke' => 'required|integer',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required',
+            'sesi_ke' => 'required|integer|min:1',
+            'jam_mulai' => 'required|date_format:H:i,H:i:s',
+            'jam_selesai' => 'required|date_format:H:i,H:i:s|after:jam_mulai',
         ]);
         $jamPelajaran->update($validated);
         return redirect()->route('jam-pelajaran.index')->with('success', 'Jam pelajaran berhasil diupdate.');

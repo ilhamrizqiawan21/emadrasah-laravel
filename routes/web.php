@@ -21,6 +21,7 @@ use App\Http\Controllers\ArsipAkademikController;
 use App\Http\Controllers\RaportController;
 use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\FileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
 
     // ========== ABSENSI GURU & GURU PENGGANTI ==========
     // Menu ini dapat diakses guru untuk mengisi absensi sendiri, selain admin/operator.
-    Route::prefix('absensi')->name('absensi.')->group(function () {
+    Route::prefix('absensi')->name('absensi.')->middleware('role:admin,operator,guru')->group(function () {
         Route::get('/', [AgendaGuruController::class, 'index'])->name('index');
         Route::post('/', [AgendaGuruController::class, 'store'])->name('store');
         Route::get('rekap', [AgendaGuruController::class, 'rekap'])->name('rekap');
@@ -57,6 +58,9 @@ Route::middleware(['auth'])->group(function () {
 
     // ========== MENU MANAJEMEN (khusus admin & operator) ==========
     Route::middleware('role:admin,operator')->group(function () {
+
+        // ========== BERKAS UPLOAD (privat, wajib login) ==========
+        Route::get('files/{path}', [FileController::class, 'show'])->where('path', '.*')->name('files.show');
 
         // ========== MASTER DATA ==========
         Route::resource('guru', GuruController::class);

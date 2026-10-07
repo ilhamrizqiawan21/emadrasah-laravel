@@ -23,10 +23,12 @@
         const overlay = $('#sidebarOverlay');
         if (!sidebar) return;
 
-        /* ── Restore collapsed state di desktop ── */
-        if (isDesktop() && localStorage.getItem(LS_KEY) === 'true') {
-            sidebar.classList.add('is-collapsed');
+        /* ── Sinkronkan keadaan ciut: hanya berlaku di desktop; di ponsel selalu lebar penuh ── */
+        const wantsCollapsed = () => { try { return localStorage.getItem(LS_KEY) === 'true'; } catch (e) { return false; } };
+        function syncCollapsed() {
+            sidebar.classList.toggle('is-collapsed', isDesktop() && wantsCollapsed());
         }
+        syncCollapsed();
 
         /* ── Desktop toggle ── */
         const btnDesktop = $('#sidebarToggleDesktop');
@@ -34,7 +36,8 @@
             btnDesktop.addEventListener('click', () => {
                 if (!isDesktop()) return;
                 const nowCollapsed = sidebar.classList.toggle('is-collapsed');
-                localStorage.setItem(LS_KEY, nowCollapsed);
+                try { localStorage.setItem(LS_KEY, nowCollapsed); } catch (e) {}
+                btnDesktop.setAttribute('aria-expanded', String(!nowCollapsed));
                 
                 /* Refresh tooltips because their visibility might change */
                 initTooltips();
@@ -69,7 +72,30 @@
                 if (overlay) overlay.classList.remove('is-visible');
                 document.body.style.overflow = '';
             }
+            syncCollapsed();      /* ciut hanya di desktop; kembali ke ukuran penuh di ponsel */
+            initTooltips();
         }, 150));
+
+        /* ── Tombol tutup (ponsel) ── */
+        const btnClose = $('#sidebarClose');
+        if (btnClose) btnClose.addEventListener('click', closeMobile);
+
+        /* ── Posisi sidebar: pulihkan gulir & pastikan menu aktif terlihat ── */
+        const inner = $('.em-sidebar__inner', sidebar);
+        if (inner) {
+            try {
+                const saved = parseInt(sessionStorage.getItem('em_sb_scroll') || '', 10);
+                if (!Number.isNaN(saved)) inner.scrollTop = saved;
+            } catch (e) {}
+            const active = $('.em-nav__link.is-active', sidebar);
+            if (active) {
+                const a = active.getBoundingClientRect(), b = inner.getBoundingClientRect();
+                if (a.top < b.top || a.bottom > b.bottom) active.scrollIntoView({ block: 'nearest' });
+            }
+            window.addEventListener('pagehide', () => {
+                try { sessionStorage.setItem('em_sb_scroll', String(inner.scrollTop)); } catch (e) {}
+            });
+        }
 
         /* ── Tutup sidebar mobile saat klik nav link (UX nyaman) ── */
         $$('.em-nav__link', sidebar).forEach(link => {
@@ -80,13 +106,34 @@
 
         /* ── Sidebar Dropdowns ── */
         $$('.em-nav__dropdown-toggle', sidebar).forEach(toggle => {
+            const parent = toggle.closest('.em-nav__dropdown');
+            const menu = parent && $('.em-nav__dropdown-menu', parent);
+            const syncAria = () => toggle.setAttribute('aria-expanded', String(parent.classList.contains('is-open')));
+            syncAria();
+
             toggle.addEventListener('click', (e) => {
                 e.preventDefault();
-                const parent = toggle.closest('.em-nav__dropdown');
-                if (parent) {
-                    parent.classList.toggle('is-open');
-                }
+                if (parent) { parent.classList.toggle('is-open'); syncAria(); }
             });
+            toggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); }
+                if (e.key === 'Escape') { toggle.blur(); }
+            });
+
+            /* Saat sidebar ciut, submenu tampil sebagai flyout di samping ikon: tentukan posisi vertikalnya */
+            const placeFlyout = () => {
+                if (!isDesktop() || !sidebar.classList.contains('is-collapsed') || !menu) return;
+                const top = toggle.getBoundingClientRect().top;
+                parent.style.setProperty('--em-flyout-top', top + 'px');
+                requestAnimationFrame(() => {
+                    const max = window.innerHeight - menu.offsetHeight - 12;
+                    if (top > max) parent.style.setProperty('--em-flyout-top', Math.max(12, max) + 'px');
+                });
+            };
+            if (parent) {
+                parent.addEventListener('mouseenter', placeFlyout);
+                parent.addEventListener('focusin', placeFlyout);
+            }
         });
 
         function openMobile() {
@@ -330,6 +377,27 @@
     }
 
     /* ================================================================
+       Label ⇄ input: sambungkan <label> tanpa atribut for ke input terdekat,
+       sehingga klik label memfokuskan input dan pembaca layar membacanya.
+       ================================================================ */
+    function initLabels() {
+        let n = 0;
+        const FIELD = 'input:not([type=hidden]):not([type=submit]):not([type=button]),select,textarea';
+        $$('label:not([for])').forEach(label => {
+            if (label.querySelector(FIELD)) return;           /* sudah membungkus input */
+            let el = label.nextElementSibling;
+            while (el && !el.matches(FIELD)) {
+                const inner = el.querySelector ? el.querySelector(FIELD) : null;
+                if (inner) { el = inner; break; }
+                el = el.nextElementSibling;
+            }
+            if (!el || !el.matches(FIELD)) return;
+            if (!el.id) el.id = 'f_' + (el.name || 'field').replace(/[^\w-]/g, '_') + '_' + (++n);
+            label.setAttribute('for', el.id);
+        });
+    }
+
+    /* ================================================================
        Utility: debounce
        ================================================================ */
     function debounce(fn, delay) {
@@ -346,10 +414,18 @@
     document.addEventListener('DOMContentLoaded', () => {
         initSidebar();
         initActiveNav();
+        /* Sinkronkan aria-expanded setelah menu aktif dibuka oleh initActiveNav */
+        $$('.em-nav__dropdown').forEach(d => {
+            const t = $('.em-nav__dropdown-toggle', d);
+            if (t) t.setAttribute('aria-expanded', String(d.classList.contains('is-open')));
+        });
         initTooltips();
         initAlerts();
         initForms();
         initFadeIn();
+        initLabels();
+        /* Render pertama selesai -> aktifkan kembali transisi */
+        requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.remove('em-preload')));
     });
 
 })();

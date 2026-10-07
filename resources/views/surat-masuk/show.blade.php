@@ -65,7 +65,7 @@
                         <th width="150">File Scan</th>
                         <td>: 
                             @if($suratMasuk->file_scan)
-                                <a href="{{ asset('storage/' . $suratMasuk->file_scan) }}" target="_blank" class="btn btn-sm btn-info">
+                                <a href="{{ route('files.show', ['path' => $suratMasuk->file_scan]) }}" target="_blank" class="btn btn-sm btn-info">
                                     <i class="fas fa-file-pdf"></i> Lihat File
                                 </a>
                             @else

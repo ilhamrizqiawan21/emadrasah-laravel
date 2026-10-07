@@ -20,7 +20,7 @@
             <div class="card border-0 shadow-sm text-center p-4 mb-4">
                 <div class="mb-3">
                     @if($siswa->foto)
-                        <img src="{{ asset('storage/'.$siswa->foto) }}" class="rounded shadow-sm" style="width: 150px; height: 200px; object-fit: cover;">
+                        <img src="{{ route('files.show', ['path' => $siswa->foto]) }}" class="rounded shadow-sm" style="width: 150px; height: 200px; object-fit: cover;">
                     @else
                         <div class="bg-light d-inline-block rounded shadow-sm" style="width: 150px; height: 200px; line-height: 200px;">
                             <i class="fas fa-user-tie fa-4x text-muted"></i>
@@ -39,7 +39,7 @@
             <div class="card border-0 shadow-sm p-4">
                 <h5 class="text-primary border-bottom pb-2 mb-3">Informasi Utama</h5>
                 <table class="table table-sm table-borderless mb-4">
-                    <tr><th width="30%">Tempat, Tgl Lahir</th><td>{{ $siswa->tempat_lahir ?? '-' }}, {{ $siswa->tanggal_lahir ? $siswa->tanggal_lahir->format('d F Y') : '-' }}</td></tr>
+                    <tr><th width="30%">Tempat, Tgl Lahir</th><td>{{ $siswa->tempat_lahir ?? '-' }}, {{ $siswa->tanggal_lahir ? $siswa->tanggal_lahir->translatedFormat('d F Y') : '-' }}</td></tr>
                     <tr><th>Jenis Kelamin</th><td>{{ $siswa->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td></tr>
                     <tr><th>Agama</th><td>{{ $siswa->agama ?? 'Islam' }}</td></tr>
                     <tr><th>Alamat</th><td>{{ $siswa->alamat ?? '-' }} (RT {{ $siswa->rt ?? '0' }}/RW {{ $siswa->rw ?? '0' }}) {{ $siswa->desa_kelurahan }}, {{ $siswa->kecamatan }}</td></tr>
@@ -66,7 +66,7 @@
                         <div class="border rounded p-2 text-center bg-light">
                             <i class="fas fa-file-pdf fa-2x text-danger mb-2"></i>
                             <div class="small fw-bold">{{ $dok->jenis_dokumen }}</div>
-                            <a href="{{ asset('storage/' . $dok->file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2 py-0">Buka File</a>
+                            <a href="{{ route('files.show', ['path' => $dok->file_path]) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2 py-0">Buka File</a>
                         </div>
                     </div>
                     @empty

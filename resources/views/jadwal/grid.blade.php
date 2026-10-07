@@ -10,7 +10,7 @@
             <i class="fas fa-table-cells me-2" style="color:var(--em-primary)"></i>Input Jadwal
         </div>
         <div class="page-subtitle">
-            Ketik kode guru pada sel · Enter untuk pindah · Esc untuk batal · <kbd style="font-size:0.72rem;padding:1px 5px;border:1px solid #d1d5db;border-radius:4px;">Del</kbd> untuk hapus
+            Ketik kode guru pada sel · Enter untuk pindah · Esc untuk batal · <kbd style="font-size:.75rem;padding:1px 5px;border:1px solid #d1d5db;border-radius:4px;">Del</kbd> untuk hapus
         </div>
     </div>
     <div class="page-actions">
@@ -147,7 +147,7 @@
                                 <td class="text-muted small">{{ $g->bidang_studi ?? '–' }}</td>
                                 <td>
                                     <button class="btn btn-xs btn-outline-success py-0 px-2"
-                                            onclick="insertKode('{{ $g->kode }}')"
+                                            onclick="insertKode({{ Js::from($g->kode) }})"
                                             title="Sisipkan kode ini">
                                         <i class="fas fa-arrow-left"></i>
                                     </button>

@@ -52,7 +52,7 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table data-hide-sm="1 3 5" class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
                         <th>No</th>
@@ -98,7 +98,7 @@
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('tasks.show', $task) }}" class="btn btn-outline-primary" title="Detail"><i class="fas fa-eye"></i></a>
                                 <a href="{{ route('tasks.edit', $task) }}" class="btn btn-outline-warning" title="Edit"><i class="fas fa-edit"></i></a>
-                                <button type="button" class="btn btn-outline-danger" onclick="confirmDelete('{{ route('tasks.destroy', $task) }}', '{{ $task->judul }}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                                <button type="button" class="btn btn-outline-danger" onclick="confirmDelete('{{ route('tasks.destroy', $task) }}', {{ Js::from($task->judul) }})" title="Hapus"><i class="fas fa-trash"></i></button>
                             </div>
                         </td>
                     </tr>

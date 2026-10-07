@@ -29,7 +29,7 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table data-hide-sm="1 3 5" class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
                         <th width="50">No</th>
@@ -53,7 +53,7 @@
                         <td>
                             <div class="btn-group btn-group-sm">
                                 <a href="{{ route('users.edit', $user) }}" class="btn btn-warning"><i class="fas fa-edit"></i></a>
-                                <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('users.destroy', $user) }}', '{{ $user->name }}')">
+                                <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('users.destroy', $user) }}', {{ Js::from($user->name) }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>

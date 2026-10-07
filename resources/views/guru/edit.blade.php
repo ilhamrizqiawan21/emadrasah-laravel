@@ -74,7 +74,7 @@
             <div class="card-body">
                 <h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> Zona Berbahaya</h6>
                 <p class="small">Menghapus guru akan menghapus semua jadwal dan riwayat absensi terkait.</p>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('guru.destroy', $guru) }}', '{{ $guru->nama }}')">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('guru.destroy', $guru) }}', {{ Js::from($guru->nama) }})">
                     <i class="fas fa-trash"></i> Hapus Guru Ini
                 </button>
             </div>

@@ -81,7 +81,7 @@
     const jamPelajaranData = @json($jamPelajaran);
     const currentJamMulai = "{{ substr($jadwal->jam_mulai,0,5) }}";
     const currentJamSelesai = "{{ substr($jadwal->jam_selesai,0,5) }}";
-    const currentHari = "{{ $jadwal->hari }}";
+    const currentHari = {{ Js::from($jadwal->hari) }};
 
     const hariSelect = document.getElementById('hari_select');
     const sesiSelect = document.getElementById('sesi_select');

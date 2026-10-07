@@ -29,7 +29,7 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table data-hide-sm="1 3 4 6 8" class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
                         <th width="50">No</th>
@@ -66,7 +66,7 @@
                         </td>
                         <td>
                             @if($item->file_scan)
-                                <a href="{{ asset('storage/' . $item->file_scan) }}" target="_blank" class="btn btn-sm btn-info">
+                                <a href="{{ route('files.show', ['path' => $item->file_scan]) }}" target="_blank" class="btn btn-sm btn-info">
                                     <i class="fas fa-file-pdf"></i> Lihat
                                 </a>
                             @else

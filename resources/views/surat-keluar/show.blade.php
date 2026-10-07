@@ -48,7 +48,7 @@
                         <th width="150">File Draft</th>
                         <td>: 
                             @if($suratKeluar->file_draft)
-                                <a href="{{ asset('storage/' . $suratKeluar->file_draft) }}" target="_blank" class="btn btn-sm btn-info">
+                                <a href="{{ route('files.show', ['path' => $suratKeluar->file_draft]) }}" target="_blank" class="btn btn-sm btn-info">
                                     <i class="fas fa-file-word"></i> Lihat Draft
                                 </a>
                             @else

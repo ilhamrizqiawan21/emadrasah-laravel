@@ -140,7 +140,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
+                <table data-hide-sm="1 7 8" class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
                             <th width="50">No</th>

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | e-Madrasah v2.0</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +15,7 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') . '?v=' . filemtime(public_path('css/custom.css')) }}">
     <style>
         :root {
             --login-bg: #f8fafc;
@@ -126,23 +128,22 @@
             <form action="{{ route('login') }}" method="POST">
                 @csrf
                 <div class="form-floating mb-3">
-                    <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required value="{{ old('email') }}">
-                    <label for="email"><i class="fas fa-envelope me-2"></i>Username</label>
+                    <input type="email" name="email" class="form-control" id="email" placeholder="nama@email.com" autocomplete="username" required value="{{ old('email') }}">
+                    <label for="email"><i class="fas fa-envelope me-2"></i>Email</label>
                 </div>
                 
                 <div class="form-floating mb-3">
-                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" autocomplete="current-password" required>
                     <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4 px-1">
+                <div class="d-flex justify-content-start align-items-center mb-4 px-1">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
                         <label class="form-check-label small text-muted" for="remember">
                             Ingat Saya
                         </label>
                     </div>
-                    <a href="#" class="small text-primary fw-bold">Lupa Password?</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-login w-100 shadow-sm">

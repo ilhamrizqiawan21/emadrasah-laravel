@@ -37,7 +37,7 @@
                     <div class="col-md-4">
                         <label class="fw-semibold text-muted small">Deadline</label>
                         <div class="{{ $task->deadline && $task->deadline->isPast() && $task->status != 'selesai' ? 'text-danger fw-bold' : '' }}">
-                            {{ $task->deadline ? $task->deadline->format('d F Y') : '-' }}
+                            {{ $task->deadline ? $task->deadline->translatedFormat('d F Y') : '-' }}
                             @if($task->deadline && $task->deadline->isPast() && $task->status != 'selesai')
                             <i class="fas fa-exclamation-triangle ms-1"></i>
                             @endif

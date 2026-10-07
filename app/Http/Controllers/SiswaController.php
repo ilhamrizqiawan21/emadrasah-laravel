@@ -44,9 +44,10 @@ class SiswaController extends Controller
             'alamat' => 'nullable',
             'hp' => 'nullable',
             'status' => 'required|in:Aktif,Lulus,Pindah,Keluar',
+            'tahun_pelajaran_id' => 'nullable|exists:tahun_pelajaran,id',
         ]);
 
-        Siswa::create($validated + ['tahun_pelajaran_id' => $request->tahun_pelajaran_id]);
+        Siswa::create($validated);
 
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil ditambahkan.');
     }
@@ -78,9 +79,10 @@ class SiswaController extends Controller
             'alamat' => 'nullable',
             'hp' => 'nullable',
             'status' => 'required|in:Aktif,Lulus,Pindah,Keluar',
+            'tahun_pelajaran_id' => 'nullable|exists:tahun_pelajaran,id',
         ]);
 
-        $siswa->update($validated + ['tahun_pelajaran_id' => $request->tahun_pelajaran_id]);
+        $siswa->update($validated);
 
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diperbarui.');
     }

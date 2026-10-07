@@ -19,7 +19,7 @@
                     </h4>
                     <p class="text-muted mb-0 mt-1">
                         Guru: <strong>{{ $agenda->guru->nama }}</strong> ({{ $agenda->guru->kode }})<br>
-                        Tanggal: <strong>{{ $agenda->tanggal->format('d F Y') }}</strong>
+                        Tanggal: <strong>{{ $agenda->tanggal->translatedFormat('d F Y') }}</strong>
                     </p>
                 </div>
                 <div class="card-body">

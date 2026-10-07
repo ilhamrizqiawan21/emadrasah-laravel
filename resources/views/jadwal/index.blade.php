@@ -2,7 +2,7 @@
 
 @section('title', 'Jadwal Pelajaran')
 
-@section('styles')
+@push('styles')
 <style>
     .jadwal-container {
         overflow-x: auto;
@@ -33,6 +33,7 @@
         position: sticky;
         top: 0;
     }
+    .jadwal-table thead th.sesi-cell { background: #1a6b4a; color: #fff; }
     .jadwal-table .sesi-cell {
         background: #f0fdf4;
         font-weight: 600;
@@ -48,7 +49,7 @@
     .jadwal-table .sesi-cell small {
         font-weight: normal;
         color: #4b5563;
-        font-size: 0.7rem;
+        font-size: .75rem;
     }
     .cell-content {
         display: flex;
@@ -66,12 +67,12 @@
         color: #1a6b4a;
     }
     .guru-nama {
-        font-size: 0.7rem;
+        font-size: .75rem;
         font-weight: 500;
         color: #1f2937;
     }
     .mapel-name {
-        font-size: 0.65rem;
+        font-size: .75rem;
         color: #6b7280;
         margin-top: 2px;
     }
@@ -89,7 +90,7 @@
         transition: background 0.2s;
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">

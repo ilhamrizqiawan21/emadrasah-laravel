@@ -7,6 +7,7 @@ use App\Models\KategoriSarana;
 use App\Models\PeminjamanSarana;
 use App\Models\PemeliharaanSarana;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SaranaController extends Controller
 {
@@ -30,7 +31,7 @@ class SaranaController extends Controller
             'kategori_id' => 'required|exists:kategori_sarana,id',
             'spesifikasi' => 'nullable',
             'jumlah' => 'required|integer|min:1',
-            'stok_tersedia' => 'nullable|integer|min:0',
+            'stok_tersedia' => 'nullable|integer|min:0|lte:jumlah',
             'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat,hilang',
             'lokasi_ruang' => 'nullable',
             'tahun_pengadaan' => 'nullable|digits:4',
@@ -38,10 +39,8 @@ class SaranaController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('sarana', $filename, 'public');
-            $validated['foto'] = $path;
+            $validated['foto'] = $request->file('foto')->store('sarana', 'local');
+            
         }
 
         SaranaPrasarana::create($validated);
@@ -62,7 +61,7 @@ class SaranaController extends Controller
             'kategori_id' => 'required|exists:kategori_sarana,id',
             'spesifikasi' => 'nullable',
             'jumlah' => 'required|integer|min:1',
-            'stok_tersedia' => 'nullable|integer|min:0',
+            'stok_tersedia' => 'nullable|integer|min:0|lte:jumlah',
             'kondisi' => 'required|in:baik,rusak_ringan,rusak_berat,hilang',
             'lokasi_ruang' => 'nullable',
             'tahun_pengadaan' => 'nullable|digits:4',
@@ -70,10 +69,10 @@ class SaranaController extends Controller
         ]);
 
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('sarana', $filename, 'public');
-            $validated['foto'] = $path;
+            $validated['foto'] = $request->file('foto')->store('sarana', 'local');
+            if ($sarana->foto) {
+                Storage::disk('local')->delete($sarana->foto);
+            }
         }
 
         $sarana->update($validated);
@@ -82,6 +81,9 @@ class SaranaController extends Controller
 
     public function destroy(SaranaPrasarana $sarana)
     {
+        if ($sarana->foto) {
+            Storage::disk('local')->delete($sarana->foto);
+        }
         $sarana->delete();
         return redirect()->route('sarana.index')->with('success', 'Sarana berhasil dihapus.');
     }
@@ -95,7 +97,7 @@ class SaranaController extends Controller
     public function storePeminjaman(Request $request, SaranaPrasarana $sarana)
     {
         $validated = $request->validate([
-            'peminjam' => 'required',
+            'peminjam' => 'required|string|max:255',
             'tipe_peminjam' => 'required|in:guru,siswa',
             'tanggal_pinjam' => 'required|date',
         ]);
@@ -107,6 +109,10 @@ class SaranaController extends Controller
 
     public function kembalikan(PeminjamanSarana $peminjaman)
     {
+        if ($peminjaman->status === 'dikembalikan') {
+            return back()->with('error', 'Sarana ini sudah dikembalikan sebelumnya.');
+        }
+
         $peminjaman->update([
             'tanggal_kembali' => today(),
             'status' => 'dikembalikan',

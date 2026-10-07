@@ -10,6 +10,7 @@ use App\Models\PerkembanganSiswa;
 use App\Models\SiswaDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class BukuIndukController extends Controller
@@ -60,12 +61,12 @@ class BukuIndukController extends Controller
             if ($request->hasFile('dokumen')) {
                 foreach ($request->file('dokumen') as $jenis => $file) {
                     if ($file) {
-                        $filename = time() . '_' . str_replace(' ', '_', $jenis) . '_' . $siswa->nis . '.' . $file->getClientOriginalExtension();
-                        $path = $file->storeAs('siswa-dokumen', $filename, 'public');
+                        // Nama file acak di disk privat; $jenis hanya disimpan sebagai label di DB.
+                        $path = $file->store('siswa-dokumen', 'local');
                         
                         SiswaDokumen::create([
                             'siswa_id' => $siswa->id,
-                            'jenis_dokumen' => $jenis,
+                            'jenis_dokumen' => mb_substr((string) $jenis, 0, 100),
                             'file_path' => $path,
                             'nama_file' => $file->getClientOriginalName()
                         ]);
@@ -77,7 +78,8 @@ class BukuIndukController extends Controller
             return redirect()->route('buku-induk.index')->with('success', 'Data Buku Induk Siswa berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            report($e);
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Silakan periksa isian dan coba lagi.');
         }
     }
 
@@ -118,9 +120,13 @@ class BukuIndukController extends Controller
             if ($request->hasFile('dokumen')) {
                 foreach ($request->file('dokumen') as $jenis => $file) {
                     if ($file) {
-                        $filename = time() . '_' . str_replace(' ', '_', $jenis) . '_' . $siswa->nis . '.' . $file->getClientOriginalExtension();
-                        $path = $file->storeAs('siswa-dokumen', $filename, 'public');
+                        $jenis = mb_substr((string) $jenis, 0, 100);
+                        $path  = $file->store('siswa-dokumen', 'local');
+                        $lama  = $siswa->dokumen()->where('jenis_dokumen', $jenis)->value('file_path');
                         $siswa->dokumen()->updateOrCreate(['jenis_dokumen' => $jenis], ['file_path' => $path, 'nama_file' => $file->getClientOriginalName()]);
+                        if ($lama) {
+                            Storage::disk('local')->delete($lama);
+                        }
                     }
                 }
             }
@@ -129,7 +135,8 @@ class BukuIndukController extends Controller
             return redirect()->route('buku-induk.index')->with('success', 'Data Buku Induk Siswa berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            report($e);
+            return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Silakan periksa isian dan coba lagi.');
         }
     }
 
@@ -141,7 +148,9 @@ class BukuIndukController extends Controller
 
     public function destroy(Siswa $siswa)
     {
+        $paths = $siswa->dokumen()->pluck('file_path')->filter()->all();
         $siswa->delete();
+        Storage::disk('local')->delete($paths);
         return redirect()->route('buku-induk.index')->with('success', 'Data siswa berhasil dihapus.');
     }
 

@@ -31,7 +31,7 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table data-hide-sm="1 4 5 6" class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4" style="width: 60px;">No</th>
@@ -67,7 +67,7 @@
                                 <a href="{{ route('siswa.edit', $s) }}" class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('siswa.destroy', $s) }}', '{{ $s->nama_lengkap }}')" title="Hapus">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('siswa.destroy', $s) }}', {{ Js::from($s->nama_lengkap) }})" title="Hapus">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>

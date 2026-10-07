@@ -61,13 +61,20 @@ class RaportController extends Controller
     public function store(Request $request, Siswa $siswa)
     {
         $request->validate([
-            'tahun_pelajaran_id' => 'required',
-            'semester' => 'required',
+            'tahun_pelajaran_id' => 'required|exists:tahun_pelajaran,id',
+            'semester' => 'required|in:1,2',
             'nilai' => 'required|array',
+            'nilai.*.angka' => 'nullable|numeric|between:0,100',
+            'nilai.*.capaian' => 'nullable|string|max:1000',
         ]);
 
+        $mapelIds = Mapel::pluck('id')->all();
+
         foreach ($request->nilai as $mapelId => $data) {
-            if (isset($data['angka'])) {
+            if (! in_array((int) $mapelId, $mapelIds, true)) {
+                continue; // abaikan mapel yang tidak ada (hindari error FK)
+            }
+            if (isset($data['angka']) && $data['angka'] !== '') {
                 RaportNilai::updateOrCreate(
                     [
                         'siswa_id' => $siswa->id,

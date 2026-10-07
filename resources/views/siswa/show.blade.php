@@ -31,7 +31,7 @@
             <div class="card border-0 shadow-sm text-center p-4">
                 <div class="mb-3">
                     @if($siswa->foto)
-                        <img src="{{ asset('storage/' . $siswa->foto) }}" class="rounded shadow-sm" style="width: 140px; height: 180px; object-fit: cover;">
+                        <img src="{{ route('files.show', ['path' => $siswa->foto]) }}" class="rounded shadow-sm" style="width: 140px; height: 180px; object-fit: cover;">
                     @else
                         <div class="bg-light d-inline-flex align-items-center justify-content-center rounded shadow-sm" style="width: 140px; height: 180px;">
                             <i class="fas fa-user-graduate fa-4x text-muted"></i>

@@ -31,11 +31,10 @@ public function index()
             ->get();
             
         foreach ($jadwals as $j) {
-            // Cari jam pelajaran yang cocok
-            $jam = JamPelajaran::where('hari', $j->hari)
-                ->where('jam_mulai', $j->jam_mulai)
-                ->where('jam_selesai', $j->jam_selesai)
-                ->first();
+            // Cari jam pelajaran yang cocok (dari koleksi yang sudah dimuat, bukan query per baris)
+            $jam = $jamPelajaran->first(fn ($jp) => $jp->hari === $j->hari
+                && $jp->jam_mulai == $j->jam_mulai
+                && $jp->jam_selesai == $j->jam_selesai);
             if ($jam) {
                 $key = $selectedKelas->id . '_' . $j->hari . '_' . $jam->sesi_ke;
                 $jadwalGrid[$key] = [
@@ -66,8 +65,8 @@ public function index()
             'kelas_id' => 'required|exists:kelas,id',
             'guru_id' => 'required|exists:gurus,id',
             'mapel_id' => 'required|exists:mapels,id',
-            'hari' => 'required',
-            'ruang' => 'nullable',
+            'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
+            'ruang' => 'nullable|string|max:100',
             'sesi_id' => 'required|exists:jam_pelajaran,id',
         ]);
 
@@ -79,10 +78,9 @@ public function index()
         // Conflict check
         $conflict = Jadwal::where('guru_id', $validated['guru_id'])
             ->where('hari', $validated['hari'])
-            ->where(function($q) use ($jamMulai, $jamSelesai) {
-                $q->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])
-                  ->orWhereBetween('jam_selesai', [$jamMulai, $jamSelesai]);
-            })->exists();
+            ->where('jam_mulai', '<', $jamSelesai)
+            ->where('jam_selesai', '>', $jamMulai)
+            ->exists();
 
         if ($conflict) {
             return back()->withErrors(['guru_id' => 'Guru sudah memiliki jadwal di waktu tersebut.'])->withInput();
@@ -121,8 +119,8 @@ public function index()
             'kelas_id' => 'required|exists:kelas,id',
             'guru_id' => 'required|exists:gurus,id',
             'mapel_id' => 'required|exists:mapels,id',
-            'hari' => 'required',
-            'ruang' => 'nullable',
+            'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
+            'ruang' => 'nullable|string|max:100',
             'sesi_id' => 'required|exists:jam_pelajaran,id',
         ]);
 
@@ -134,10 +132,9 @@ public function index()
         $conflict = Jadwal::where('guru_id', $validated['guru_id'])
             ->where('hari', $validated['hari'])
             ->where('id', '!=', $jadwal->id)
-            ->where(function($q) use ($jamMulai, $jamSelesai) {
-                $q->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])
-                  ->orWhereBetween('jam_selesai', [$jamMulai, $jamSelesai]);
-            })->exists();
+            ->where('jam_mulai', '<', $jamSelesai)
+            ->where('jam_selesai', '>', $jamMulai)
+            ->exists();
 
         if ($conflict) {
             return back()->withErrors(['guru_id' => 'Guru sudah memiliki jadwal di waktu tersebut.'])->withInput();
@@ -212,22 +209,27 @@ public function grid()
 public function gridStore(Request $request)
 {
     $request->validate([
-        'kelas_id' => 'required|integer',
-        'hari' => 'required|string',
-        'jam_id' => 'required|integer',
-        'guru_id' => 'required|integer',
-        'mapel_id' => 'required|integer',
+        'kelas_id' => 'required|integer|exists:kelas,id',
+        'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
+        'jam_id' => 'required|integer|exists:jam_pelajaran,id',
+        'guru_id' => 'required|integer|exists:gurus,id',
+        'mapel_id' => 'required|integer|exists:mapels,id',
     ]);
 
     $sesi = JamPelajaran::findOrFail($request->jam_id);
 
     // Cek konflik guru
+    // Slot yang sedang ditimpa (kelas+hari+jam sama) tidak dihitung sebagai bentrok dengan dirinya sendiri.
     $conflict = Jadwal::where('guru_id', $request->guru_id)
         ->where('hari', $request->hari)
-        ->where(function($q) use ($sesi) {
-            $q->whereBetween('jam_mulai', [$sesi->jam_mulai, $sesi->jam_selesai])
-              ->orWhereBetween('jam_selesai', [$sesi->jam_mulai, $sesi->jam_selesai]);
-        })->exists();
+        ->where(function ($q) use ($request) {
+            $q->where('kelas_id', '!=', $request->kelas_id)
+              ->orWhere('jam_pelajaran_id', '!=', $request->jam_id)
+              ->orWhereNull('jam_pelajaran_id');
+        })
+        ->where('jam_mulai', '<', $sesi->jam_selesai)
+        ->where('jam_selesai', '>', $sesi->jam_mulai)
+        ->exists();
 
     if ($conflict) {
         return response()->json(['status' => 'error', 'message' => 'Guru sudah memiliki jadwal di waktu tersebut.'], 422);

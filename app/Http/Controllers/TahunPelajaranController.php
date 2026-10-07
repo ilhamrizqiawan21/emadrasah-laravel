@@ -26,11 +26,12 @@ class TahunPelajaranController extends Controller
             'is_aktif' => 'sometimes|boolean',
         ]);
 
-        TahunPelajaran::create([
+        $tp = TahunPelajaran::create([
             'kode' => $validated['kode'],
             'nama' => $validated['nama'],
             'is_aktif' => $request->has('is_aktif'),
         ]);
+        $this->hanyaSatuAktif($tp);
 
         return redirect()->route('tahun-pelajaran.index')->with('success', 'Tahun pelajaran berhasil ditambahkan.');
     }
@@ -53,8 +54,17 @@ class TahunPelajaranController extends Controller
             'nama' => $validated['nama'],
             'is_aktif' => $request->has('is_aktif'),
         ]);
+        $this->hanyaSatuAktif($tahunPelajaran);
 
         return redirect()->route('tahun-pelajaran.index')->with('success', 'Tahun pelajaran berhasil diupdate.');
+    }
+
+    /** Jadwal & raport memakai tahun pelajaran aktif pertama; pastikan hanya ada satu. */
+    private function hanyaSatuAktif(TahunPelajaran $tp): void
+    {
+        if ($tp->is_aktif) {
+            TahunPelajaran::where('id', '!=', $tp->id)->update(['is_aktif' => false]);
+        }
     }
 
     public function destroy(TahunPelajaran $tahunPelajaran)

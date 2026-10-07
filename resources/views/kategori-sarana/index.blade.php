@@ -31,7 +31,7 @@
                                 <a href="{{ route('kategori-sarana.edit', $item->id) }}" class="btn btn-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('kategori-sarana.destroy', $item->id) }}', '{{ $item->nama_kategori }}')">
+                                <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ route('kategori-sarana.destroy', $item->id) }}', {{ Js::from($item->nama_kategori) }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>

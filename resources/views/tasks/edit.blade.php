@@ -79,7 +79,7 @@
                     <input type="file" name="attachment" class="form-control @error('attachment') is-invalid @enderror">
                     @if($task->attachment)
                         <div class="mt-1 small">
-                            <a href="{{ asset('storage/' . $task->attachment) }}" target="_blank" class="text-primary"><i class="fas fa-file-download me-1"></i> Lihat file saat ini</a>
+                            <a href="{{ route('files.show', ['path' => $task->attachment]) }}" target="_blank" class="text-primary"><i class="fas fa-file-download me-1"></i> Lihat file saat ini</a>
                         </div>
                     @endif
                     @error('attachment')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -100,7 +100,7 @@
         <div class="card-body">
             <h6 class="text-danger fw-semibold"><i class="fas fa-exclamation-triangle me-1"></i> Zona Berbahaya</h6>
             <p class="small text-muted">Menghapus tugas akan menghapus semua log aktivitas terkait.</p>
-            <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('tasks.destroy', $task) }}', '{{ $task->judul }}')">
+            <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('tasks.destroy', $task) }}', {{ Js::from($task->judul) }})">
                 <i class="fas fa-trash me-1"></i> Hapus Tugas Ini
             </button>
         </div>

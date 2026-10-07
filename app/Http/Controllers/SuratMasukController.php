@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SuratMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class SuratMasukController extends Controller
 {
@@ -32,26 +32,26 @@ class SuratMasukController extends Controller
             'file_scan'      => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        // Handle upload sebelum masuk transaksi
+        // Upload ke disk privat dengan nama acak (ekstensi ditentukan dari isi file,
+        // bukan dari nama yang dikirim klien). Disajikan lewat route files.show.
         if ($request->hasFile('file_scan')) {
-            $file     = $request->file('file_scan');
-            $safeName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
-                        . '.' . $file->getClientOriginalExtension();
-            $validated['file_scan'] = $file->storeAs('surat-masuk', $safeName, 'public');
+            $validated['file_scan'] = $request->file('file_scan')->store('surat-masuk', 'local');
         }
 
-        // FIX POIN 2 — bungkus di dalam DB::transaction + lockForUpdate()
-        // agar tidak ada dua request yang mengambil count() yang sama secara
-        // bersamaan (race condition) dan menghasilkan nomor agenda duplikat.
+        // Nomor agenda diambil dari nomor TERBESAR yang sudah ada (bukan count()),
+        // supaya tidak bentrok dengan kolom unik nomor_agenda setelah ada surat yang dihapus.
+        // lockForUpdate() menahan request lain sampai transaksi selesai.
         $nomorAgenda = DB::transaction(function () use ($validated, $request) {
-            $tahun = date('Y', strtotime($request->tanggal_terima));
+            $tahun  = date('Y', strtotime($request->tanggal_terima));
+            $prefix = 'SM-' . $tahun . '-';
 
-            // lockForUpdate() menahan row lain sampai transaksi selesai
-            $lastNumber = SuratMasuk::whereYear('tanggal_terima', $tahun)
+            $lastNumber = SuratMasuk::where('nomor_agenda', 'like', $prefix . '%')
                 ->lockForUpdate()
-                ->count();
+                ->pluck('nomor_agenda')
+                ->map(fn ($n) => (int) substr($n, strlen($prefix)))
+                ->max() ?? 0;
 
-            $nomorAgenda = 'SM-' . $tahun . '-' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $nomorAgenda = $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
 
             SuratMasuk::create(array_merge($validated, [
                 'nomor_agenda' => $nomorAgenda,
@@ -90,10 +90,10 @@ class SuratMasukController extends Controller
         ]);
 
         if ($request->hasFile('file_scan')) {
-            $file     = $request->file('file_scan');
-            $safeName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
-                        . '.' . $file->getClientOriginalExtension();
-            $validated['file_scan'] = $file->storeAs('surat-masuk', $safeName, 'public');
+            $validated['file_scan'] = $request->file('file_scan')->store('surat-masuk', 'local');
+            if ($suratMasuk->file_scan) {
+                Storage::disk('local')->delete($suratMasuk->file_scan);
+            }
         }
 
         $suratMasuk->update($validated);
@@ -105,6 +105,9 @@ class SuratMasukController extends Controller
 
     public function destroy(SuratMasuk $suratMasuk)
     {
+        if ($suratMasuk->file_scan) {
+            Storage::disk('local')->delete($suratMasuk->file_scan);
+        }
         $suratMasuk->delete();
 
         return redirect()

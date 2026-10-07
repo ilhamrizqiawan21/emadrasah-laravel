@@ -6,6 +6,7 @@ use App\Models\ArsipAkademik;
 use App\Models\Kelas;
 use App\Models\TahunPelajaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ArsipAkademikController extends Controller
 {
@@ -20,18 +21,16 @@ class ArsipAkademikController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tahun_pelajaran_id' => 'required',
-            'kelas_id' => 'required',
+            'tahun_pelajaran_id' => 'required|exists:tahun_pelajaran,id',
+            'kelas_id' => 'required|exists:kelas,id',
             'semester' => 'required|in:1,2',
-            'nama_arsip' => 'required',
+            'nama_arsip' => 'required|string|max:255',
             'file_arsip' => 'required|file|mimes:pdf,xlsx,xls,zip|max:5120',
             'tipe' => 'required|in:Leger,RDM,Lainnya',
         ]);
 
         if ($request->hasFile('file_arsip')) {
-            $file = $request->file('file_arsip');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('arsip-akademik', $filename, 'public');
+            $path = $request->file('file_arsip')->store('arsip-akademik', 'local');
 
             ArsipAkademik::create([
                 'tahun_pelajaran_id' => $request->tahun_pelajaran_id,
@@ -48,6 +47,9 @@ class ArsipAkademikController extends Controller
 
     public function destroy(ArsipAkademik $arsipAkademik)
     {
+        if ($arsipAkademik->file_path) {
+            Storage::disk('local')->delete($arsipAkademik->file_path);
+        }
         $arsipAkademik->delete();
         return redirect()->back()->with('success', 'Arsip berhasil dihapus.');
     }

@@ -32,7 +32,7 @@
     background: rgba(255,255,255,.04);
 }
 .dash-greeting__label {
-    font-size: .7rem;
+    font-size: .75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.2px;
@@ -68,7 +68,7 @@
     border: 1px solid rgba(255,255,255,.2);
     border-radius: var(--em-r-full);
     color: rgba(255,255,255,.85);
-    font-size: .73rem;
+    font-size: .75rem;
     font-weight: 600;
     backdrop-filter: blur(4px);
     white-space: nowrap;
@@ -96,6 +96,7 @@
     opacity: 0;
     transition: opacity .2s;
 }
+.em-stat { height: 100%; } /* kartu dalam satu baris sama tinggi */
 .em-stat:hover { transform: translateY(-4px); box-shadow: var(--em-shadow-md); }
 .em-stat:hover::after { opacity: 1; }
 
@@ -110,7 +111,7 @@
 }
 .em-stat__body { flex: 1; min-width: 0; }
 .em-stat__label {
-    font-size: .68rem;
+    font-size: .75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .7px;
@@ -126,12 +127,10 @@
     line-height: 1.1;
 }
 .em-stat__sub {
-    font-size: .7rem;
+    font-size: .75rem;
     color: var(--em-text-muted);
     margin-top: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
 }
 
 /* Chart card */
@@ -164,7 +163,7 @@
 .chart-legend { display: flex; gap: 12px; flex-wrap: wrap; }
 .chart-legend__item {
     display: flex; align-items: center; gap: 5px;
-    font-size: .72rem; font-weight: 600; color: var(--em-gray-600);
+    font-size: .75rem; font-weight: 600; color: var(--em-gray-600);
 }
 .chart-legend__dot {
     width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
@@ -222,7 +221,7 @@
     text-overflow: ellipsis;
 }
 .em-activity-item__meta {
-    font-size: .72rem;
+    font-size: .75rem;
     color: var(--em-text-muted);
     display: flex;
     align-items: center;
@@ -241,7 +240,7 @@
 .em-prio {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 2px 8px; border-radius: var(--em-r-sm);
-    font-size: .67rem; font-weight: 700; flex-shrink: 0;
+    font-size: .75rem; font-weight: 700; flex-shrink: 0;
 }
 .em-prio-tinggi  { background: #fee2e2; color: #991b1b; }
 .em-prio-sedang  { background: #fef3c7; color: #92400e; }
@@ -251,7 +250,7 @@
 .em-status {
     display: inline-block;
     padding: 2px 8px; border-radius: var(--em-r-sm);
-    font-size: .67rem; font-weight: 700;
+    font-size: .75rem; font-weight: 700;
 }
 .em-status-diterima  { background: #dbeafe; color: #1e40af; }
 .em-status-diproses  { background: #fef3c7; color: #92400e; }
@@ -300,7 +299,7 @@
 
 /* Section label */
 .em-section-label {
-    font-size: .68rem;
+    font-size: .75rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .9px;
@@ -338,7 +337,7 @@
     </div>
     <div class="d-flex flex-column align-items-end gap-2">
         <div class="dash-greeting__badge">
-            <i class="fas fa-circle-dot" style="color:#34d399; font-size:.6rem;"></i>
+            <i class="fas fa-circle-dot" style="color:#34d399; font-size:.75rem;"></i>
             Sistem Online
         </div>
         <div class="dash-greeting__badge">
@@ -358,16 +357,6 @@
                 <div class="em-stat__label">Total Siswa</div>
                 <div class="em-stat__value">{{ $totalSiswa }}</div>
                 <div class="em-stat__sub">Siswa terdaftar</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="em-stat" style="--em-stat-color:#0ea5e9;">
-            <div class="em-stat__icon"><i class="fas fa-book-bookmark"></i></div>
-            <div class="em-stat__body">
-                <div class="em-stat__label">Buku Induk</div>
-                <div class="em-stat__value">{{ $persenLengkap }}%</div>
-                <div class="em-stat__sub">Data sudah lengkap</div>
             </div>
         </div>
     </div>
@@ -403,7 +392,7 @@
     </div>
 </div>
 
-{{-- ── Row 2: 2 Stat Cards Sekunder ── --}}
+{{-- ── Row 2: Stat Cards Sekunder + Kehadiran ── --}}
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <div class="em-stat" style="--em-stat-color:#10b981;">
@@ -425,12 +414,22 @@
             </div>
         </div>
     </div>
+    <div class="col-6 col-md-3">
+        <div class="em-stat" style="--em-stat-color:#0ea5e9;">
+            <div class="em-stat__icon"><i class="fas fa-book-bookmark"></i></div>
+            <div class="em-stat__body">
+                <div class="em-stat__label">Buku Induk</div>
+                <div class="em-stat__value">{{ $persenLengkap }}%</div>
+                <div class="em-stat__sub">Data sudah lengkap</div>
+            </div>
+        </div>
+    </div>
     {{-- Kehadiran hari ini: progress bar mini --}}
-    <div class="col-12 col-md-6">
+    <div class="col-6 col-md-3">
         <div class="em-stat" style="--em-stat-color:#1a7a52; flex-direction:column; align-items:flex-start; gap:10px;">
             <div class="d-flex align-items-center justify-content-between w-100">
                 <div>
-                    <div class="em-stat__label" style="margin-bottom:2px;">Tingkat Kehadiran Hari Ini</div>
+                    <div class="em-stat__label" style="margin-bottom:2px;white-space:normal;">Kehadiran Hari Ini</div>
                     @php
                         $pct = $totalGuru > 0 ? round(($guruHadirHariIni / $totalGuru) * 100) : 0;
                     @endphp
@@ -443,8 +442,8 @@
                     <div style="height:100%;width:{{ $pct }}%;background:linear-gradient(90deg,#22a06b,#1a7a52);border-radius:99px;transition:width .6s ease;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;margin-top:4px;">
-                    <span style="font-size:.68rem;color:var(--em-text-muted);">{{ $guruHadirHariIni }} hadir</span>
-                    <span style="font-size:.68rem;color:var(--em-text-muted);">{{ $totalGuru - $guruHadirHariIni }} tidak hadir</span>
+                    <span style="font-size:.75rem;color:var(--em-text-muted);">{{ $guruHadirHariIni }} hadir</span>
+                    <span style="font-size:.75rem;color:var(--em-text-muted);">{{ $totalGuru - $guruHadirHariIni }} tidak hadir</span>
                 </div>
             </div>
         </div>
@@ -506,7 +505,7 @@
                     <i class="fas fa-list-check" style="color:#f59e0b;"></i>
                     Tugas Belum Selesai
                 </h5>
-                <a href="{{ route('tasks.index') }}" class="btn btn-sm btn-outline-secondary" style="font-size:.72rem;padding:3px 10px;border-radius:6px;">
+                <a href="{{ route('tasks.index') }}" class="btn btn-sm btn-outline-secondary" style="font-size:.75rem;padding:3px 10px;border-radius:6px;">
                     Lihat Semua
                 </a>
             </div>
@@ -519,8 +518,8 @@
                 <div class="em-activity-item__body">
                     <div class="em-activity-item__title">{{ $task->judul }}</div>
                     <div class="em-activity-item__meta">
-                        <i class="fas fa-calendar-xmark" style="font-size:.65rem;"></i>
-                        {{ $task->deadline ? $task->deadline->format('d M Y') : 'Tanpa deadline' }}
+                        <i class="fas fa-calendar-xmark" style="font-size:.75rem;"></i>
+                        {{ $task->deadline ? $task->deadline->translatedFormat('d M Y') : 'Tanpa deadline' }}
                     </div>
                 </div>
                 <span class="em-prio em-prio-{{ $task->prioritas }}">
@@ -544,7 +543,7 @@
                     <i class="fas fa-envelope" style="color:#8b5cf6;"></i>
                     Surat Masuk Terbaru
                 </h5>
-                <a href="{{ route('surat-masuk.index') }}" class="btn btn-sm btn-outline-secondary" style="font-size:.72rem;padding:3px 10px;border-radius:6px;">
+                <a href="{{ route('surat-masuk.index') }}" class="btn btn-sm btn-outline-secondary" style="font-size:.75rem;padding:3px 10px;border-radius:6px;">
                     Lihat Semua
                 </a>
             </div>
@@ -561,7 +560,7 @@
                             {{ $surat->perihal }}
                         </span>
                         <span>·</span>
-                        {{ $surat->tanggal_terima->format('d M Y') }}
+                        {{ $surat->tanggal_terima->translatedFormat('d M Y') }}
                     </div>
                 </div>
                 @php

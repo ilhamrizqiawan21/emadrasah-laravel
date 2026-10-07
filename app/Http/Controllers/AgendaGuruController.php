@@ -37,10 +37,26 @@ class AgendaGuruController extends Controller
         return $this->hariMap[$tanggal->format('l')];
     }
 
+    /**
+     * ID guru milik user yang login, jika role-nya guru. Admin/operator → null
+     * (boleh mengelola semua). Guru tanpa data guru terkait → 403.
+     */
+    private function guruIdTerbatas(): ?int
+    {
+        $user = auth()->user();
+        if ($user->role !== 'guru') {
+            return null;
+        }
+        $id = Guru::where('user_id', $user->id)->value('id');
+        abort_if($id === null, 403, 'Akun Anda belum terhubung dengan data guru.');
+        return (int) $id;
+    }
+
     // -------------------------------------------------------------------------
 
     public function index()
     {
+        request()->validate(['tanggal' => 'nullable|date']);
         $tanggal = request('tanggal') ? Carbon::parse(request('tanggal')) : today();
         $gurus   = Guru::orderBy('nama')->get();
 
@@ -63,10 +79,20 @@ class AgendaGuruController extends Controller
             'status'        => 'required|array',
             'status.*'      => 'in:hadir,izin,sakit,alpha',
             'keterangan'    => 'nullable|array',
+            'keterangan.*'  => 'nullable|string|max:255',
         ]);
 
-        DB::transaction(function () use ($request) {
+        // Hanya ID guru yang benar-benar ada; guru biasa hanya boleh mengisi dirinya sendiri.
+        $guruIds = Guru::whereIn('id', array_keys($request->status))->pluck('id')->all();
+        if (($sendiri = $this->guruIdTerbatas()) !== null) {
+            $guruIds = array_intersect($guruIds, [$sendiri]);
+        }
+
+        DB::transaction(function () use ($request, $guruIds) {
             foreach ($request->status as $guruId => $status) {
+                if (! in_array((int) $guruId, array_map('intval', $guruIds), true)) {
+                    continue;
+                }
                 AgendaGuru::updateOrCreate(
                     ['tanggal' => $request->tanggal, 'guru_id' => $guruId],
                     [
@@ -82,10 +108,17 @@ class AgendaGuruController extends Controller
             ->with('success', 'Absensi berhasil disimpan.');
     }
 
+    private function pastikanBolehKelola(AgendaGuru $agenda): void
+    {
+        $sendiri = $this->guruIdTerbatas();
+        abort_if($sendiri !== null && (int) $agenda->guru_id !== $sendiri, 403, 'Anda hanya dapat mengelola absensi Anda sendiri.');
+    }
+
     // -------------------------------------------------------------------------
 
     public function pengganti(AgendaGuru $agenda)
     {
+        $this->pastikanBolehKelola($agenda);
         $tanggal  = $agenda->tanggal;
         $hariIndo = $this->hariIndo($tanggal); // ← pakai helper, konsisten
 
@@ -101,10 +134,11 @@ class AgendaGuruController extends Controller
 
     public function storePengganti(Request $request, AgendaGuru $agenda)
     {
+        $this->pastikanBolehKelola($agenda);
         $request->validate([
             'jam_pelajaran_id'   => 'required|exists:jam_pelajaran,id',
             'guru_pengganti_id'  => 'required|exists:gurus,id',
-            'keterangan'         => 'nullable',
+            'keterangan'         => 'nullable|string|max:255',
         ]);
 
         $jam      = JamPelajaran::find($request->jam_pelajaran_id);
@@ -118,15 +152,8 @@ class AgendaGuruController extends Controller
         // 1. Cek konflik jadwal tetap guru pengganti di hari & jam yang sama
         $jadwalConflict = Jadwal::where('guru_id', $request->guru_pengganti_id)
             ->where('hari', $hariIndo)
-            ->where(function ($q) use ($jam) {
-                // Overlap: jam mulai pengganti ada di antara jam sesi ini
-                $q->whereBetween('jam_mulai', [$jam->jam_mulai, $jam->jam_selesai])
-                  ->orWhereBetween('jam_selesai', [$jam->jam_mulai, $jam->jam_selesai])
-                  ->orWhere(function ($q2) use ($jam) {
-                      $q2->where('jam_mulai', '<=', $jam->jam_mulai)
-                         ->where('jam_selesai', '>=', $jam->jam_selesai);
-                  });
-            })
+            ->where('jam_mulai', '<', $jam->jam_selesai)
+            ->where('jam_selesai', '>', $jam->jam_mulai)
             ->exists();
 
         if ($jadwalConflict) {
@@ -166,8 +193,9 @@ class AgendaGuruController extends Controller
 
     public function rekap(Request $request)
     {
-        $bulan = $request->bulan ?? now()->month;
-        $tahun = $request->tahun ?? now()->year;
+        $request->validate(['bulan' => 'nullable|integer|between:1,12', 'tahun' => 'nullable|integer|between:2000,2100']);
+        $bulan = (int) ($request->bulan ?? now()->month);
+        $tahun = (int) ($request->tahun ?? now()->year);
 
         $rekap = AgendaGuru::with('guru')
             ->whereYear('tanggal', $tahun)
@@ -194,8 +222,9 @@ class AgendaGuruController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $bulan = $request->bulan ?? now()->month;
-        $tahun = $request->tahun ?? now()->year;
+        $request->validate(['bulan' => 'nullable|integer|between:1,12', 'tahun' => 'nullable|integer|between:2000,2100']);
+        $bulan = (int) ($request->bulan ?? now()->month);
+        $tahun = (int) ($request->tahun ?? now()->year);
 
         $rekap = AgendaGuru::with('guru')
             ->whereYear('tanggal', $tahun)

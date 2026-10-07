@@ -18,7 +18,7 @@
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table data-hide-sm="1 3 5" class="table table-hover align-middle mb-0">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4" style="width: 60px;">No</th>
@@ -51,10 +51,10 @@
                         <td><span class="badge bg-light text-dark border">{{ $item->tahunPelajaran->kode }}</span></td>
                         <td class="text-end pe-4">
                             <div class="btn-group">
-                                <a href="{{ asset('storage/' . $item->file_path) }}" target="_blank" class="btn btn-sm btn-outline-info" title="Download / Lihat">
+                                <a href="{{ route('files.show', ['path' => $item->file_path]) }}" target="_blank" class="btn btn-sm btn-outline-info" title="Download / Lihat">
                                     <i class="fas fa-download"></i>
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('arsip-akademik.destroy', $item) }}', '{{ $item->nama_arsip }}')" title="Hapus">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="confirmDelete('{{ route('arsip-akademik.destroy', $item) }}', {{ Js::from($item->nama_arsip) }})" title="Hapus">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>

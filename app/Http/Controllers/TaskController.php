@@ -7,6 +7,7 @@ use App\Models\TaskLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -55,8 +56,7 @@ public function index(Request $request)
         ]);
 
         if ($request->hasFile('attachment')) {
-            $path = $request->file('attachment')->store('task-attachments', 'public');
-            $validated['attachment'] = $path;
+            $validated['attachment'] = $request->file('attachment')->store('task-attachments', 'local');
         }
 
         $validated['created_by'] = Auth::id();
@@ -100,8 +100,10 @@ public function index(Request $request)
         ]);
 
         if ($request->hasFile('attachment')) {
-            $path = $request->file('attachment')->store('task-attachments', 'public');
-            $validated['attachment'] = $path;
+            $validated['attachment'] = $request->file('attachment')->store('task-attachments', 'local');
+            if ($task->attachment) {
+                Storage::disk('local')->delete($task->attachment);
+            }
         }
 
         $task->update($validated);
@@ -142,6 +144,9 @@ public function index(Request $request)
 
     public function destroy(Task $task)
     {
+        if ($task->attachment) {
+            Storage::disk('local')->delete($task->attachment);
+        }
         $task->delete();
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus.');
     }

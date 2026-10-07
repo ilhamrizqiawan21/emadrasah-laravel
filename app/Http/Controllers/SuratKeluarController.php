@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SuratKeluar;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SuratKeluarController extends Controller
 {
@@ -32,10 +33,8 @@ class SuratKeluarController extends Controller
         ]);
 
         if ($request->hasFile('file_draft')) {
-            $file = $request->file('file_draft');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('surat-keluar', $filename, 'public');
-            $validated['file_draft'] = $path;
+            $validated['file_draft'] = $request->file('file_draft')->store('surat-keluar', 'local');
+            
         }
 
         SuratKeluar::create($validated);
@@ -64,10 +63,10 @@ class SuratKeluarController extends Controller
         ]);
 
         if ($request->hasFile('file_draft')) {
-            $file = $request->file('file_draft');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('surat-keluar', $filename, 'public');
-            $validated['file_draft'] = $path;
+            $validated['file_draft'] = $request->file('file_draft')->store('surat-keluar', 'local');
+            if ($suratKeluar->file_draft) {
+                Storage::disk('local')->delete($suratKeluar->file_draft);
+            }
         }
 
         $suratKeluar->update($validated);
@@ -76,6 +75,9 @@ class SuratKeluarController extends Controller
 
     public function destroy(SuratKeluar $suratKeluar)
     {
+        if ($suratKeluar->file_draft) {
+            Storage::disk('local')->delete($suratKeluar->file_draft);
+        }
         $suratKeluar->delete();
         return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil dihapus.');
     }

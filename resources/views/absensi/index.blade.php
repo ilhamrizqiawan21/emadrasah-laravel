@@ -107,7 +107,7 @@
             <form method="GET" action="{{ route('absensi.index') }}" class="row g-3 align-items-end">
                 <div class="col-md-4">
                     <label class="form-label fw-semibold"><i class="fas fa-calendar-alt me-1"></i> Tanggal</label>
-                    <input type="hidden" name="tanggal" value="{{ $tanggal->format('Y-m-d') }}">
+                    <input type="date" name="tanggal" class="form-control" value="{{ $tanggal->format('Y-m-d') }}" max="{{ today()->format('Y-m-d') }}" required>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">
@@ -115,7 +115,7 @@
                     </button>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <span class="badge bg-secondary p-2">
+                    <span class="badge bg-secondary p-2 text-wrap text-start" style="line-height:1.4;">
                         <i class="fas fa-info-circle me-1"></i> Status "Tidak Hadir" membutuhkan penunjukan guru pengganti
                     </span>
                 </div>
@@ -132,12 +132,12 @@
             <div class="card-header bg-white py-3">
                 <h5 class="mb-0 fw-semibold">
                     <i class="fas fa-calendar-check me-2 text-primary"></i> 
-                    Absensi Tanggal: <span class="text-primary">{{ $tanggal->format('d F Y') }}</span>
+                    Absensi Tanggal: <span class="text-primary">{{ $tanggal->translatedFormat('d F Y') }}</span>
                 </h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table data-hide-sm="1 2" class="table table-stack-sm table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th width="50" class="text-center">No</th>
@@ -160,7 +160,7 @@
                                 <td class="text-center">{{ $index + 1 }}</td>
                                 <td><span class="badge bg-secondary">{{ $guru->kode }}</span></td>
                                 <td class="fw-semibold">{{ $guru->nama }}</td>
-                                <td>
+                                <td data-label="Status">
                                     <select name="status[{{ $guru->id }}]" class="form-select form-select-sm status-select" data-guru-id="{{ $guru->id }}">
                                         <option value="hadir" {{ $status=='hadir' ? 'selected' : '' }} data-bg="success">✅ Hadir</option>
                                         <option value="izin" {{ $status=='izin' ? 'selected' : '' }} data-bg="warning">📝 Izin</option>
@@ -168,10 +168,10 @@
                                         <option value="alpha" {{ $status=='alpha' ? 'selected' : '' }} data-bg="danger">❌ Alpha</option>
                                     </select>
                                 </td>
-                                <td>
+                                <td data-label="Keterangan">
                                     <input type="text" name="keterangan[{{ $guru->id }}]" class="form-control form-control-sm" value="{{ old("keterangan.$guru->id", $keterangan) }}" placeholder="Opsional">
                                 </td>
-                                <td class="text-center">
+                                <td data-label="Guru Pengganti" class="text-center">
                                     @if($status != 'hadir')
                                         @if($agenda && $agenda->id)
                                             <a href="{{ route('absensi.pengganti', $agenda->id) }}" class="btn btn-sm btn-info mb-1" data-bs-toggle="tooltip" title="Tunjuk guru pengganti">

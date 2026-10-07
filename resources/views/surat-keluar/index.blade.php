@@ -29,7 +29,7 @@
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table data-hide-sm="1 3 5 6 7" class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
                         <th width="50">No</th>
@@ -55,7 +55,7 @@
                         <td>{{ $item->lampiran ?? '-' }}</td>
                         <td>
                             @if($item->file_draft)
-                                <a href="{{ asset('storage/' . $item->file_draft) }}" target="_blank" class="btn btn-sm btn-info">
+                                <a href="{{ route('files.show', ['path' => $item->file_draft]) }}" target="_blank" class="btn btn-sm btn-info">
                                     <i class="fas fa-file-word"></i> Draft
                                 </a>
                             @else

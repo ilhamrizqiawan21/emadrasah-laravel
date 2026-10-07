@@ -1,0 +1,21 @@
+# eMadrasah dilayani dari subfolder /emadrasah; kode aplikasi tidak diekspos.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /emadrasah/
+
+    # Authorization header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # File statis yang ada di public/ (css, js, images, storage)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}/emadrasah/public/$1 -f
+    RewriteRule ^(.+)$ public/$1 [L]
+
+    # Jangan jadikan file/folder asli di luar public/ bisa diakses
+    RewriteCond %{REQUEST_URI} !^/emadrasah/public/
+    RewriteRule ^(\.|vendor/|storage/|database/|app/|config/|routes/|bootstrap/|tests/|resources/|scripts/|artisan|composer|package|phpunit|README) - [F,L]
+
+    # Sisanya ke front controller
+    RewriteRule ^ index.php [L]
+</IfModule>

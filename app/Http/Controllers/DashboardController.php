@@ -21,7 +21,7 @@ class DashboardController extends Controller
         $totalGuru = Guru::count();
         $totalKelas = Kelas::count();
         $taskPending = Task::where('status', '!=', 'selesai')->count();
-        $suratMasukBulanIni = SuratMasuk::whereMonth('tanggal_terima', now()->month)->count();
+        $suratMasukBulanIni = SuratMasuk::whereYear('tanggal_terima', now()->year)->whereMonth('tanggal_terima', now()->month)->count();
         $guruHadirHariIni = AgendaGuru::whereDate('tanggal', today())->where('status', 'hadir')->count();
         $saranaRusak = SaranaPrasarana::whereIn('kondisi', ['rusak_berat', 'rusak_ringan'])->count();
 
@@ -44,7 +44,7 @@ class DashboardController extends Controller
 
         // Tugas pending (5 terbaru)
         $pendingTasks = Task::where('status', '!=', 'selesai')
-            ->orderBy('prioritas', 'desc')
+            ->orderByRaw("CASE prioritas WHEN 'tinggi' THEN 1 WHEN 'sedang' THEN 2 WHEN 'rendah' THEN 3 ELSE 4 END")
             ->orderBy('deadline', 'asc')
             ->limit(5)
             ->get();

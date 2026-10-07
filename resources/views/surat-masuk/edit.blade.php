@@ -57,7 +57,7 @@
                     <label class="form-label">File Scan</label>
                     @if($suratMasuk->file_scan)
                         <div class="mb-2">
-                            <a href="{{ asset('storage/' . $suratMasuk->file_scan) }}" target="_blank" class="btn btn-sm btn-info">
+                            <a href="{{ route('files.show', ['path' => $suratMasuk->file_scan]) }}" target="_blank" class="btn btn-sm btn-info">
                                 <i class="fas fa-download"></i> Lihat File Saat Ini
                             </a>
                         </div>

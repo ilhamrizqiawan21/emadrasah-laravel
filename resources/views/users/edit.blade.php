@@ -67,7 +67,7 @@
             <div class="card-body">
                 <h6 class="text-danger"><i class="fas fa-exclamation-triangle"></i> Zona Berbahaya</h6>
                 <p class="small">Menghapus user akan menghapus semua data terkait (log aktivitas, tugas yang dibuat, dll).</p>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('users.destroy', $user) }}', '{{ $user->name }}')">
+                <button class="btn btn-danger btn-sm" onclick="confirmDelete('{{ route('users.destroy', $user) }}', {{ Js::from($user->name) }})">
                     <i class="fas fa-trash"></i> Hapus User Ini
                 </button>
             </div>

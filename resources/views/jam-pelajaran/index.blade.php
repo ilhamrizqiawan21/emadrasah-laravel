@@ -109,7 +109,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0" id="jamTable">
+                <table data-hide-sm="1 6" class="table table-hover align-middle mb-0" id="jamTable">
                     <thead class="table-light">
                         <tr>
                             <th width="50">No</th>
@@ -151,7 +151,7 @@
                                     <a href="{{ route('jam-pelajaran.edit', $j->id) }}" class="btn btn-warning" data-bs-toggle="tooltip" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" title="Hapus" onclick="confirmDelete('{{ route('jam-pelajaran.destroy', $j->id) }}', '{{ $j->hari }} Sesi {{ $j->sesi_ke }}')">
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="tooltip" title="Hapus" onclick="confirmDelete('{{ route('jam-pelajaran.destroy', $j->id) }}', {{ Js::from($j->hari . ' Sesi ' . $j->sesi_ke) }})">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>

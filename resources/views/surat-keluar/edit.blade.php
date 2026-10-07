@@ -48,7 +48,7 @@
                     <label class="form-label">File Draft</label>
                     @if($suratKeluar->file_draft)
                         <div class="mb-2">
-                            <a href="{{ asset('storage/' . $suratKeluar->file_draft) }}" target="_blank" class="btn btn-sm btn-info">
+                            <a href="{{ route('files.show', ['path' => $suratKeluar->file_draft]) }}" target="_blank" class="btn btn-sm btn-info">
                                 <i class="fas fa-download"></i> File Saat Ini
                             </a>
                         </div>

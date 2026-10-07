@@ -78,7 +78,7 @@ public function destroy($id)
         }
     } catch (\Exception $e) {
         \Log::error('Hapus kelas gagal: ' . $e->getMessage());
-        return redirect()->route('kelas.index')->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        return redirect()->route('kelas.index')->with('error', 'Kelas tidak dapat dihapus karena masih dipakai data lain (mis. siswa).');
     }
 }
 }

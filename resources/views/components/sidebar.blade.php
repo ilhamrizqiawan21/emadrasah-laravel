@@ -11,8 +11,11 @@
                 <span class="em-brand__sub">MTs Al-Ihsan</span>
             </div>
         </div>
-        <button class="em-sidebar-toggle" id="sidebarToggleDesktop" aria-label="Toggle sidebar">
+        <button type="button" class="em-sidebar-toggle" id="sidebarToggleDesktop" aria-label="Ciutkan atau lebarkan menu" title="Ciutkan / lebarkan menu">
             <i class="fas fa-chevron-left"></i>
+        </button>
+        <button type="button" class="em-sidebar__close d-lg-none" id="sidebarClose" aria-label="Tutup menu">
+            <i class="fas fa-xmark"></i>
         </button>
     </div>
 
@@ -71,13 +74,14 @@
                 <span class="em-nav__label">Akademik</span>
                 @if($canManage)
                 {{-- ── MANAJEMEN SISWA (dropdown) ── --}}
-                <div class="em-nav__dropdown" id="dropdown-kesiswaan-parent">
-                    <div class="em-nav__dropdown-toggle" data-dropdown="kesiswaan">
+                <div class="em-nav__dropdown {{ request()->routeIs('siswa.*', 'buku-induk.*', 'raport.*') ? 'is-open' : '' }}" id="dropdown-kesiswaan-parent">
+                    <div class="em-nav__dropdown-toggle" data-dropdown="kesiswaan" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
                         <span class="em-nav__icon"><i class="fas fa-user-graduate"></i></span>
                         <span class="em-nav__text">Kesiswaan</span>
                         <i class="fas fa-chevron-down em-dropdown-icon"></i>
                     </div>
                     <div class="em-nav__dropdown-menu">
+                        <div class="em-nav__flyout-title">Kesiswaan</div>
                         <a href="{{ route('siswa.index') }}"
                            class="em-nav__link em-nav__link--sub {{ request()->routeIs('siswa.*') ? 'is-active' : '' }}">
                             <span class="em-nav__icon"><i class="fas fa-users"></i></span>
@@ -184,7 +188,7 @@
             </div>
             <form method="POST" action="{{ route('logout') }}" class="em-logout-form">
                 @csrf
-                <button type="submit" class="em-logout-btn" title="Logout">
+                <button type="submit" class="em-logout-btn" title="Keluar" aria-label="Keluar dari akun">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </form>
@@ -194,7 +198,10 @@
 
 </aside>
 
-{{-- Mobile FAB toggle — hanya tampil di layar < 992px --}}
-<button class="em-mobile-menu-btn d-lg-none" id="sidebarToggleMobile" aria-label="Buka menu">
-    <i class="fas fa-bars"></i>
-</button>
+{{-- Bar atas ponsel (< 992px): tombol menu + nama aplikasi, tidak menutupi konten --}}
+<header class="em-topbar d-lg-none">
+    <button type="button" class="em-mobile-menu-btn" id="sidebarToggleMobile" aria-label="Buka menu">
+        <i class="fas fa-bars"></i>
+    </button>
+    <span class="em-topbar__title">e-Madrasah</span>
+</header>

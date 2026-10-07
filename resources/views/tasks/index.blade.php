@@ -2,7 +2,7 @@
 
 @section('title', 'Manajemen Tugas - Kanban')
 
-@section('styles')
+@push('styles')
 <style>
     .kanban-column {
         background: #f8fafc;
@@ -29,7 +29,7 @@
         border-left-color: #f59e0b;
     }
     .priority-badge {
-        font-size: 0.7rem;
+        font-size: .75rem;
         padding: 0.2rem 0.5rem;
         border-radius: 20px;
     }
@@ -37,11 +37,11 @@
         border-top: 1px solid #e2e8f0;
         margin-top: 0.5rem;
         padding-top: 0.5rem;
-        font-size: 0.7rem;
+        font-size: .75rem;
         color: #64748b;
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -58,6 +58,32 @@
         </a>
     </div>
 </div>
+
+<form method="GET" class="row g-2 mb-4 align-items-center">
+    <div class="col-12 col-sm-auto">
+        <input type="text" name="search" class="form-control" placeholder="Cari judul..." value="{{ request('search') }}">
+    </div>
+    <div class="col-12 col-sm-auto">
+        <select name="status" class="form-select">
+            <option value="">Semua Status</option>
+            <option value="antrean" {{ request('status')=='antrean' ? 'selected' : '' }}>Antrean</option>
+            <option value="proses" {{ request('status')=='proses' ? 'selected' : '' }}>Proses</option>
+            <option value="selesai" {{ request('status')=='selesai' ? 'selected' : '' }}>Selesai</option>
+        </select>
+    </div>
+    <div class="col-12 col-sm-auto">
+        <select name="prioritas" class="form-select">
+            <option value="">Semua Prioritas</option>
+            <option value="rendah" {{ request('prioritas')=='rendah' ? 'selected' : '' }}>Rendah</option>
+            <option value="sedang" {{ request('prioritas')=='sedang' ? 'selected' : '' }}>Sedang</option>
+            <option value="tinggi" {{ request('prioritas')=='tinggi' ? 'selected' : '' }}>Tinggi</option>
+        </select>
+    </div>
+    <div class="col-12 col-sm-auto">
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{{ route('tasks.index') }}" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
 
 <div class="row g-4" id="kanbanBoard">
     @php
@@ -129,32 +155,6 @@
     @method('PATCH')
 </form>
 
-<form method="GET" class="row g-2 mb-3">
-    <div class="col-auto">
-        <input type="text" name="search" class="form-control" placeholder="Cari judul..." value="{{ request('search') }}">
-    </div>
-    <div class="col-auto">
-        <select name="status" class="form-select">
-            <option value="">Semua Status</option>
-            <option value="antrean" {{ request('status')=='antrean' ? 'selected' : '' }}>Antrean</option>
-            <option value="proses" {{ request('status')=='proses' ? 'selected' : '' }}>Proses</option>
-            <option value="selesai" {{ request('status')=='selesai' ? 'selected' : '' }}>Selesai</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <select name="prioritas" class="form-select">
-            <option value="">Semua Prioritas</option>
-            <option value="rendah" {{ request('prioritas')=='rendah' ? 'selected' : '' }}>Rendah</option>
-            <option value="sedang" {{ request('prioritas')=='sedang' ? 'selected' : '' }}>Sedang</option>
-            <option value="tinggi" {{ request('prioritas')=='tinggi' ? 'selected' : '' }}>Tinggi</option>
-        </select>
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Filter</button>
-        <a href="{{ route('tasks.index') }}" class="btn btn-secondary">Reset</a>
-    </div>
-</form>
-
 <script>
     let dragSrc = null;
     document.querySelectorAll('.task-card').forEach(card => {
@@ -178,7 +178,7 @@
             const newStatus = column.dataset.status;
             if (taskId && newStatus) {
                 const form = document.getElementById('updateStatusForm');
-                form.action = `/tasks/${taskId}/status`;
+                form.action = "{{ route('tasks.status', ['task' => '__ID__']) }}".replace('__ID__', encodeURIComponent(taskId));
                 const input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'status';
