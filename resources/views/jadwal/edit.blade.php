@@ -3,14 +3,13 @@
 @section('title', 'Edit Jadwal')
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('jadwal.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
-</div>
+<x-page-header title="Edit Jadwal">
+    <x-slot:actions>
+        <a href="{{ route('jadwal.index') }}" class="btn btn-light border">Kembali</a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
-    <div class="card-header">
-        <h5>Edit Jadwal</h5>
-    </div>
     <div class="card-body">
         <form method="POST" action="{{ route('jadwal.update', $jadwal) }}">
             @csrf @method('PUT')

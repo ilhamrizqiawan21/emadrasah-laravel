@@ -21,7 +21,7 @@ class Siswa extends Model
         'no_telepon', 'hp', 'bertempat_tinggal_pada', 'jarak_ke_madrasah', 'moda_transportasi',
         'golongan_darah', 'penyakit_pernah_diderita', 'kelainan_jasmani', 'tinggi_badan_awal', 'berat_badan_awal',
         'hobi_kesenian', 'hobi_olahraga', 'hobi_organisasi', 'hobi_lain',
-        'foto', 'kelas_id', 'tahun_pelajaran_id', 'status'
+        'foto', 'kelas_id', 'tahun_pelajaran_id', 'status',
     ];
 
     protected $casts = [

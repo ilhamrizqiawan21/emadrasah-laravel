@@ -1,0 +1,36 @@
+// ---------------------------------------------------------------------------
+// e-Madrasah stylesheet entry
+//   1. Bootstrap variable overrides (theme tokens live here)
+//   2. Bootstrap
+//   3. Application theme (custom)
+// ---------------------------------------------------------------------------
+
+@import 'bootstrap/scss/functions';
+
+// 1. Theme tokens -----------------------------------------------------------
+$primary:   #047857;
+$success:   #059669;
+$info:      #0ea5e9;
+$warning:   #f59e0b;
+$danger:    #ef4444;
+
+$font-family-sans-serif: 'DM Sans Variable', 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+$headings-font-family:   'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
+
+$enable-shadows: false;
+$enable-negative-margins: false;
+
+// 2. Bootstrap --------------------------------------------------------------
+@import 'bootstrap/scss/bootstrap';
+
+// 3. Application theme ------------------------------------------------------
+@import 'custom';
+
+// 4. Page-specific styles ---------------------------------------------------
+@import "pages/login";
+@import "pages/dashboard";
+@import "pages/tasks";
+@import "pages/jadwal";
+@import "pages/buku-induk";
+@import "pages/pengaturan";
+@import "pages/absensi";

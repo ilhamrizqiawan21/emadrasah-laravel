@@ -3,12 +3,13 @@
 @section('title', 'Surat Keluar')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Surat Keluar</h1>
-    <a href="{{ route('surat-keluar.create') }}" class="btn btn-primary">
+<x-page-header title="Surat Keluar">
+    <x-slot:actions>
+        <a href="{{ route('surat-keluar.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah Surat Keluar
-    </a>
-</div>
+        </a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
     <div class="card-header">
@@ -77,9 +78,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="8" class="text-center py-4">Belum ada data surat keluar</td>
-                    </tr>
+                    <x-empty-row :colspan="8" icon="fa-folder-open">Belum ada data surat keluar</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

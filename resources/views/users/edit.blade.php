@@ -3,18 +3,15 @@
 @section('title', 'Edit User')
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('users.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-page-header :title="'Edit User: '.($user->name)">
+    <x-slot:actions>
+        <a href="{{ route('users.index') }}" class="btn btn-light border">Kembali</a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="row">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header">
-                <h5>Edit User: {{ $user->name }}</h5>
-            </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('users.update', $user) }}">
                     @csrf

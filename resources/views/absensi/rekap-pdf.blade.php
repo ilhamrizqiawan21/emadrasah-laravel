@@ -15,6 +15,7 @@
     </style>
 </head>
 <body>
+    @include('partials.pdf-kop')
     <div class="header">
         <h1>Rekap Absensi Guru</h1>
         <p>Bulan: {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y') }}</p>
@@ -44,5 +45,7 @@
             @endforeach
         </tbody>
     </table>
+
+    @include('partials.pdf-ttd')
 </body>
 </html>

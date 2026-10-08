@@ -3,12 +3,13 @@
 @section('title', 'Manajemen User')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Manajemen User</h1>
-    <a href="{{ route('users.create') }}" class="btn btn-primary">
+<x-page-header title="Manajemen User">
+    <x-slot:actions>
+        <a href="{{ route('users.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah User
-    </a>
-</div>
+        </a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
     <div class="card-header">
@@ -60,9 +61,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-4">Belum ada user</td>
-                    </tr>
+                    <x-empty-row :colspan="6" icon="fa-folder-open">Belum ada user</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

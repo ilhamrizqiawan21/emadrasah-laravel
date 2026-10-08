@@ -62,9 +62,7 @@
                             </td>
                         </tr>
                         @empty
-                        <tr>
-                            <td colspan="7" class="text-center py-5">Belum ada data siswa.</td>
-                        </tr>
+                        <x-empty-row :colspan="7" icon="fa-folder-open">Belum ada data siswa.</x-empty-row>
                         @endforelse
                     </tbody>
                 </table>

@@ -3,17 +3,14 @@
 @section('title', 'Arsip Akademik')
 
 @section('content')
-<div class="row mb-4 align-items-center">
-    <div class="col-md-6">
-        <h2 class="em-page-title">Arsip Administrasi Akademik</h2>
-        <p class="text-muted">Penyimpanan digital untuk dokumen administrasi TU.</p>
-    </div>
-    <div class="col-md-6 text-end">
+<x-page-header title="Arsip Administrasi Akademik">
+    Penyimpanan digital untuk dokumen administrasi TU.
+    <x-slot:actions>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
-            <i class="fas fa-upload me-2"></i>Upload Arsip Baru
+        <i class="fas fa-upload me-2"></i>Upload Arsip Baru
         </button>
-    </div>
-</div>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
@@ -61,12 +58,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="fas fa-archive fa-3x mb-3 opacity-25"></i>
-                            <p>Belum ada arsip akademik yang diunggah.</p>
-                        </td>
-                    </tr>
+                    <x-empty-row :colspan="6" icon="fa-archive">Belum ada arsip akademik yang diunggah.</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

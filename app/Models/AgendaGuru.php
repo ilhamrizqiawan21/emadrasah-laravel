@@ -10,9 +10,11 @@ class AgendaGuru extends Model
     use HasFactory;
 
     protected $table = 'agenda_guru';
+
     protected $fillable = ['tanggal', 'guru_id', 'status', 'keterangan'];
+
     protected $casts = [
-    'tanggal' => 'date',
+        'tanggal' => 'date',
     ];
 
     public function guru()

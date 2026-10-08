@@ -3,18 +3,15 @@
 @section('title', 'Edit Template Surat')
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('template-surat.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-page-header :title="'Edit Template: '.($templateSurat->nama_template)">
+    <x-slot:actions>
+        <a href="{{ route('template-surat.index') }}" class="btn btn-light border">Kembali</a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="row">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header">
-                <h5>Edit Template: {{ $templateSurat->nama_template }}</h5>
-            </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('template-surat.update', $templateSurat) }}">
                     @csrf

@@ -1,0 +1,48 @@
+// Halaman Pengaturan (identitas & tampilan madrasah)
+
+.em-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.em-swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    background: var(--swatch);
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, .18);
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    &.is-selected {
+        box-shadow: 0 0 0 2px var(--swatch);
+    }
+}
+
+.em-brand-preview {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid var(--em-border);
+    background: #fff;
+    padding: 6px;
+}
+
+.em-favicon-preview {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.em-color-preview {
+    border: 1px dashed var(--em-border);
+    border-radius: 12px;
+    padding: 16px;
+}

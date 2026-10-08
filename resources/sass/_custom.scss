@@ -12,9 +12,9 @@
     --em-green-700: #047857;   /* primary */
     --em-green-600: #059669;
     --em-green-500: #10b981;
-    --em-green-200: #a7f3d0;
-    --em-green-100: #d1fae5;
-    --em-green-50 : #f0fdf4;
+    --em-green-200: var(--em-green-200);
+    --em-green-100: var(--em-green-100);
+    --em-green-50 : var(--em-green-50);
 
     --em-gold      : #b45309;
     --em-gold-light: #fef3c7;
@@ -61,7 +61,7 @@
 
 /* Base Styles */
 body {
-    font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'DM Sans Variable', 'DM Sans', 'Segoe UI', system-ui, sans-serif;
     background: var(--em-bg);
     color: var(--em-text);
     font-size: 0.9rem;
@@ -70,7 +70,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
 }
 
@@ -458,7 +458,7 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--em-primary);
     color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(4, 120, 87, 0.4);
+    box-shadow: 0 4px 15px rgba(var(--em-green-700-rgb), 0.4);
     z-index: 1050;
     display: flex;
     align-items: center;
@@ -498,7 +498,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .em-topbar .em-mobile-menu-btn:hover { transform: none; }
 .em-topbar__title {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
     font-weight: 800;
     color: var(--em-green-800);
 }
@@ -571,39 +571,39 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Samakan warna "primary" Bootstrap dengan hijau brand (sebelumnya biru bawaan) */
 :root {
-    --bs-primary: #047857;
-    --bs-primary-rgb: 4, 120, 87;
-    --bs-link-color: #047857;
+    --bs-primary: var(--em-green-700);
+    --bs-primary-rgb: var(--em-green-700-rgb);
+    --bs-link-color: var(--em-green-700);
     --bs-link-color-rgb: 4, 120, 87;
-    --bs-link-hover-color: #065f46;
+    --bs-link-hover-color: var(--em-green-800);
     --bs-link-hover-color-rgb: 6, 95, 70;
 }
 .btn-outline-primary {
-    --bs-btn-color: #047857;
-    --bs-btn-border-color: #047857;
-    --bs-btn-hover-bg: #047857;
-    --bs-btn-hover-border-color: #047857;
-    --bs-btn-active-bg: #065f46;
-    --bs-btn-active-border-color: #065f46;
-    --bs-btn-disabled-color: #047857;
-    --bs-btn-disabled-border-color: #047857;
+    --bs-btn-color: var(--em-green-700);
+    --bs-btn-border-color: var(--em-green-700);
+    --bs-btn-hover-bg: var(--em-green-700);
+    --bs-btn-hover-border-color: var(--em-green-700);
+    --bs-btn-active-bg: var(--em-green-800);
+    --bs-btn-active-border-color: var(--em-green-800);
+    --bs-btn-disabled-color: var(--em-green-700);
+    --bs-btn-disabled-border-color: var(--em-green-700);
 }
 .form-control:focus,
 .form-select:focus,
 .form-check-input:focus {
-    border-color: #34d399;
-    box-shadow: 0 0 0 .25rem rgba(4, 120, 87, .2);
+    border-color: var(--em-green-500);
+    box-shadow: 0 0 0 .25rem rgba(var(--em-green-700-rgb), .2);
 }
 .form-check-input:checked {
-    background-color: #047857;
-    border-color: #047857;
+    background-color: var(--em-green-700);
+    border-color: var(--em-green-700);
 }
 .pagination {
-    --bs-pagination-color: #047857;
-    --bs-pagination-hover-color: #065f46;
-    --bs-pagination-active-bg: #047857;
-    --bs-pagination-active-border-color: #047857;
-    --bs-pagination-focus-color: #065f46;
+    --bs-pagination-color: var(--em-green-700);
+    --bs-pagination-hover-color: var(--em-green-800);
+    --bs-pagination-active-bg: var(--em-green-700);
+    --bs-pagination-active-border-color: var(--em-green-700);
+    --bs-pagination-focus-color: var(--em-green-800);
 }
 
 /* Bar simpan yang tetap terlihat saat daftar panjang di-scroll */
@@ -621,12 +621,12 @@ h1, h2, h3, h4, h5, h6 {
     border: none;
     padding: 8px 20px;
     font-weight: 600;
-    box-shadow: 0 4px 10px rgba(4, 120, 87, 0.2);
+    box-shadow: 0 4px 10px rgba(var(--em-green-700-rgb), 0.2);
 }
 
 .btn-primary:hover {
     background: var(--em-primary-dark);
-    box-shadow: 0 6px 15px rgba(4, 120, 87, 0.3);
+    box-shadow: 0 6px 15px rgba(var(--em-green-700-rgb), 0.3);
 }
 
 /* Utils */
@@ -744,7 +744,7 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--em-white);
     z-index: 2;
     position: relative;
-    box-shadow: 0 0 10px rgba(4, 120, 87, 0.1);
+    box-shadow: 0 0 10px rgba(var(--em-green-700-rgb), 0.1);
 }
 
 .grid-input.has-value {
@@ -806,14 +806,14 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--em-r-md);
     font-weight: 700;
     color: var(--em-white);
-    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2);
+    box-shadow: 0 4px 12px rgba(var(--em-green-700-rgb), 0.2);
     transition: all 0.2s;
 }
 
 .btn-save:not(:disabled):hover {
     background: var(--em-primary-dark);
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3);
+    box-shadow: 0 6px 16px rgba(var(--em-green-700-rgb), 0.3);
 }
 
 .btn-save:disabled {
@@ -965,7 +965,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 html { scroll-behavior: smooth; }
-::selection { background: rgba(16, 185, 129, .25); }
+::selection { background: rgba(var(--em-green-500-rgb), .25); }
 * { scrollbar-width: thin; scrollbar-color: var(--em-gray-300) transparent; }
 
 @keyframes em-fade-up   { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
@@ -974,7 +974,7 @@ html { scroll-behavior: smooth; }
 @keyframes em-grow      { from { transform: scaleY(0); }                    to { transform: scaleY(1); } }
 
 /* ── Masuknya konten halaman: muncul bertahap ── */
-.em-main .container-fluid > * { animation: em-fade-up .45s var(--em-ease-out) backwards; }
+.em-main .container-fluid > * { animation: em-fade-up .28s var(--em-ease-out) backwards; }
 .em-main .container-fluid > :nth-child(2) { animation-delay: .04s; }
 .em-main .container-fluid > :nth-child(3) { animation-delay: .08s; }
 .em-main .container-fluid > :nth-child(4) { animation-delay: .12s; }
@@ -982,14 +982,14 @@ html { scroll-behavior: smooth; }
 .em-main .container-fluid > :nth-child(n+6) { animation-delay: .2s; }
 
 /* Kartu statistik di dashboard muncul berurutan */
-.em-stat { animation: em-fade-up .5s var(--em-ease-out) backwards; }
+.em-stat { animation: em-fade-up .3s var(--em-ease-out) backwards; }
 .row > :nth-child(2) .em-stat { animation-delay: .05s; }
 .row > :nth-child(3) .em-stat { animation-delay: .10s; }
 .row > :nth-child(4) .em-stat { animation-delay: .15s; }
 
 /* ── Fokus keyboard yang jelas ── */
 a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
-    outline: 2px solid rgba(4, 120, 87, .6);
+    outline: 2px solid rgba(var(--em-green-700-rgb), .6);
     outline-offset: 2px;
 }
 .form-control:focus-visible, .form-select:focus-visible { outline: none; }
@@ -1002,7 +1002,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
 /* ── Tabel: bersih, mudah dipindai, hover lembut ── */
 .table {
     --bs-table-bg: transparent;
-    --bs-table-hover-bg: rgba(4, 120, 87, .05);
+    --bs-table-hover-bg: rgba(var(--em-green-700-rgb), .05);
     --bs-table-color: var(--em-text);
     margin-bottom: 0;
 }
@@ -1046,7 +1046,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
 .btn:hover:not(:disabled):not(.disabled) { transform: translateY(-1px); }
 .btn:active:not(:disabled):not(.disabled) { transform: translateY(0) scale(.98); }
 .btn-group > .btn:hover:not(:disabled) { transform: none; }
-.btn:focus-visible { outline: none; box-shadow: 0 0 0 .22rem rgba(4, 120, 87, .28); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 .22rem rgba(var(--em-green-700-rgb), .28); }
 
 /* ── Form ── */
 .form-control, .form-select {
@@ -1073,7 +1073,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
     transition: background-color var(--em-dur-fast), color var(--em-dur-fast), box-shadow var(--em-dur-base), transform var(--em-dur-fast);
 }
 .page-link:hover { transform: translateY(-1px); }
-.page-item.active .page-link { box-shadow: 0 4px 10px rgba(4, 120, 87, .25); }
+.page-item.active .page-link { box-shadow: 0 4px 10px rgba(var(--em-green-700-rgb), .25); }
 
 /* ── Modal & dropdown ── */
 .modal.fade .modal-dialog { transform: translateY(14px) scale(.98); transition: transform .3s var(--em-ease-out); }
@@ -1133,34 +1133,13 @@ small, .small { font-size: max(.78rem, .875em); }   /* jangan menyusut di bawah 
     .table > :not(caption) > * > * { padding: .65rem .6rem; }
     table[data-hide-sm] td { overflow-wrap: anywhere; }   /* email/nomor panjang turun baris agar tabel muat */
 
-    /* Sembunyikan kolom yang kurang penting: <table data-hide-sm="1 5 6"> (nomor kolom, mulai dari 1).
-       Baris pesan "data kosong" (td[colspan]) tetap tampil. */
-    table[data-hide-sm~="1"] :is(th, td):nth-child(1):not([colspan]),
-    table[data-hide-sm~="2"] :is(th, td):nth-child(2):not([colspan]),
-    table[data-hide-sm~="3"] :is(th, td):nth-child(3):not([colspan]),
-    table[data-hide-sm~="4"] :is(th, td):nth-child(4):not([colspan]),
-    table[data-hide-sm~="5"] :is(th, td):nth-child(5):not([colspan]),
-    table[data-hide-sm~="6"] :is(th, td):nth-child(6):not([colspan]),
-    table[data-hide-sm~="7"] :is(th, td):nth-child(7):not([colspan]),
-    table[data-hide-sm~="8"] :is(th, td):nth-child(8):not([colspan]),
-    table[data-hide-sm~="9"] :is(th, td):nth-child(9):not([colspan]) { display: none; }
-
-    /* Kolom terakhir (umumnya Aksi) menempel di kanan agar tombol selalu terlihat saat tabel digeser */
-    table[data-hide-sm]:not(.table-stack-sm) > :is(thead, tbody) > tr > :is(th, td):last-child:not([colspan]) {
-        position: sticky;
-        right: 0;
-        z-index: 1;
-        background: #fff;
-        box-shadow: -8px 0 8px -8px rgba(15, 23, 42, .22);
-    }
-    table[data-hide-sm]:not(.table-stack-sm) > thead > tr > th:last-child { background: var(--em-gray-50) !important; }
-    .table-hover > tbody > tr:hover > td:last-child { background: #f3faf6; }
-
+    /* Tabel daftar (table[data-hide-sm]) dan tabel berisi input (.table-stack-sm): di HP tiap baris
+       menjadi kartu berisi SEMUA kolom. Label diisi otomatis dari judul kolom oleh app.js. */
     /* Tabel berisi input (raport, absensi): tiap baris ditumpuk jadi kartu kecil */
-    .table-stack-sm thead { display: none; }
-    .table-stack-sm > tbody > tr { display: block; padding: .75rem 1rem; border-bottom: 1px solid var(--em-gray-100); }
-    .table-stack-sm > tbody > tr > td { display: block; width: 100% !important; border: 0; padding: .25rem 0 !important; text-align: left !important; }
-    .table-stack-sm > tbody > tr > td[data-label]::before {
+    :is(.table-stack-sm, table[data-hide-sm]) thead { display: none; }
+    :is(.table-stack-sm, table[data-hide-sm]) > tbody > tr:not(:has(> td[colspan])) { display: block; padding: .75rem 1rem; border-bottom: 1px solid var(--em-gray-100); }
+    :is(.table-stack-sm, table[data-hide-sm]) > tbody > tr > td:not([colspan]) { display: block; width: 100% !important; border: 0; padding: .25rem 0 !important; text-align: left !important; }
+    :is(.table-stack-sm, table[data-hide-sm]) > tbody > tr > td[data-label]::before {
         content: attr(data-label);
         display: block;
         margin-bottom: 2px;
@@ -1170,6 +1149,10 @@ small, .small { font-size: max(.78rem, .875em); }   /* jangan menyusut di bawah 
         letter-spacing: .04em;
         color: var(--em-text-soft);
     }
+    :is(.table-stack-sm, table[data-hide-sm]) > tbody > tr > td[data-stack-hide],
+    :is(.table-stack-sm, table[data-hide-sm]) > tbody > tr > td[data-label="Aksi"]::before { display: none; }
+    :is(.table-stack-sm, table[data-hide-sm]) > tbody > tr > td[data-label="Aksi"] { padding-top: .5rem !important; }
+    table[data-hide-sm] { overflow-wrap: anywhere; }
 }
 
 /* ── Hormati preferensi "kurangi gerakan" ── */
@@ -1197,7 +1180,7 @@ small, .small { font-size: max(.78rem, .875em); }   /* jangan menyusut di bawah 
 }
 
 /* Judul bertipografi seragam (kelas .h1–.h6 Bootstrap bawaan hanya berbobot 500) */
-.h1, .h2, .h3, .h4, .h5, .h6 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; }
+.h1, .h2, .h3, .h4, .h5, .h6 { font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif; font-weight: 700; }
 
 /* Tombol aksi di tabel: gaya "soft" (latar tipis + ikon berwarna) agar konsisten dan tidak berat */
 table .btn-warning, .btn-group .btn-warning {

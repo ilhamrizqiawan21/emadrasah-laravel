@@ -29,3 +29,7 @@ Thumbs.db
 *.sql
 *.sqlite
 *.sqlite3
+
+/test-results
+/playwright-report
+/tests/e2e/.auth

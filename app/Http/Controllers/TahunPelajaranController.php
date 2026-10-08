@@ -10,6 +10,7 @@ class TahunPelajaranController extends Controller
     public function index()
     {
         $tahunPelajaran = TahunPelajaran::orderBy('kode')->paginate(20);
+
         return view('tahun-pelajaran.index', compact('tahunPelajaran'));
     }
 
@@ -44,7 +45,7 @@ class TahunPelajaranController extends Controller
     public function update(Request $request, TahunPelajaran $tahunPelajaran)
     {
         $validated = $request->validate([
-            'kode' => 'required|string|max:50|unique:tahun_pelajaran,kode,' . $tahunPelajaran->id,
+            'kode' => 'required|string|max:50|unique:tahun_pelajaran,kode,'.$tahunPelajaran->id,
             'nama' => 'required|string|max:255',
             'is_aktif' => 'sometimes|boolean',
         ]);
@@ -70,6 +71,7 @@ class TahunPelajaranController extends Controller
     public function destroy(TahunPelajaran $tahunPelajaran)
     {
         $tahunPelajaran->delete();
+
         return redirect()->route('tahun-pelajaran.index')->with('success', 'Tahun pelajaran berhasil dihapus.');
     }
 }

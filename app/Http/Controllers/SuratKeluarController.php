@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SuratKeluar;
 use App\Models\Siswa;
+use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,12 +12,14 @@ class SuratKeluarController extends Controller
     public function index()
     {
         $surat = SuratKeluar::orderBy('tanggal_kirim', 'desc')->paginate(15);
+
         return view('surat-keluar.index', compact('surat'));
     }
 
     public function create()
     {
         $siswa = Siswa::select('id', 'nama_lengkap', 'nis', 'nisn')->get();
+
         return view('surat-keluar.create', compact('siswa'));
     }
 
@@ -34,10 +36,11 @@ class SuratKeluarController extends Controller
 
         if ($request->hasFile('file_draft')) {
             $validated['file_draft'] = $request->file('file_draft')->store('surat-keluar', 'local');
-            
+
         }
 
         SuratKeluar::create($validated);
+
         return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil disimpan.');
     }
 
@@ -54,7 +57,7 @@ class SuratKeluarController extends Controller
     public function update(Request $request, SuratKeluar $suratKeluar)
     {
         $validated = $request->validate([
-            'nomor_surat' => 'required|unique:surat_keluar,nomor_surat,' . $suratKeluar->id,
+            'nomor_surat' => 'required|unique:surat_keluar,nomor_surat,'.$suratKeluar->id,
             'tujuan' => 'required',
             'perihal' => 'required',
             'tanggal_kirim' => 'required|date',
@@ -70,6 +73,7 @@ class SuratKeluarController extends Controller
         }
 
         $suratKeluar->update($validated);
+
         return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil diupdate.');
     }
 
@@ -79,6 +83,7 @@ class SuratKeluarController extends Controller
             Storage::disk('local')->delete($suratKeluar->file_draft);
         }
         $suratKeluar->delete();
+
         return redirect()->route('surat-keluar.index')->with('success', 'Surat keluar berhasil dihapus.');
     }
 }

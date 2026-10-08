@@ -3,18 +3,15 @@
 @section('title', 'Edit Guru')
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('guru.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-page-header :title="'Edit Guru: '.($guru->nama)">
+    <x-slot:actions>
+        <a href="{{ route('guru.index') }}" class="btn btn-light border">Kembali</a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="row">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header">
-                <h5>Edit Guru: {{ $guru->nama }}</h5>
-            </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('guru.update', $guru) }}">
                     @csrf

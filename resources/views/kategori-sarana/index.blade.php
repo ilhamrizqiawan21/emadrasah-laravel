@@ -3,12 +3,13 @@
 @section('title', 'Kategori Sarana')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Kategori Sarana Prasarana</h1>
-    <a href="{{ route('kategori-sarana.create') }}" class="btn btn-primary">
+<x-page-header title="Kategori Sarana Prasarana">
+    <x-slot:actions>
+        <a href="{{ route('kategori-sarana.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah Kategori
-    </a>
-</div>
+        </a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -38,9 +39,7 @@
                         </td>
                     </tr>
                     @empty
-                        <tr>
-                            <td colspan="3" class="text-center py-4">Belum ada kategori</td>
-                        </tr>
+                        <x-empty-row :colspan="3" icon="fa-folder-open">Belum ada kategori</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

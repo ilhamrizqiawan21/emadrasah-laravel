@@ -2,332 +2,15 @@
 
 @section('title', 'Dashboard')
 
-@push('styles')
-<style>
-/* ── Dashboard-specific styles ── */
-
-/* Greeting banner */
-.dash-greeting {
-    background: linear-gradient(135deg, #052e1c 0%, #1a7a52 60%, #22a06b 100%);
-    border-radius: var(--em-r-xl);
-    padding: 26px 30px;
-    margin-bottom: 24px;
-    position: relative;
-    overflow: hidden;
-}
-.dash-greeting::before {
-    content: '';
-    position: absolute;
-    right: -40px; top: -40px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.05);
-}
-.dash-greeting::after {
-    content: '';
-    position: absolute;
-    right: 60px; bottom: -60px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.04);
-}
-.dash-greeting__label {
-    font-size: .75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(255,255,255,.55);
-    margin-bottom: 4px;
-}
-.dash-greeting__name {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1.45rem;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 2px;
-    line-height: 1.2;
-}
-.dash-greeting__sub {
-    font-size: .8rem;
-    color: rgba(255,255,255,.6);
-}
-.dash-greeting__date {
-    font-size: .75rem;
-    color: rgba(255,255,255,.5);
-    margin-top: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.dash-greeting__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
-    background: rgba(255,255,255,.12);
-    border: 1px solid rgba(255,255,255,.2);
-    border-radius: var(--em-r-full);
-    color: rgba(255,255,255,.85);
-    font-size: .75rem;
-    font-weight: 600;
-    backdrop-filter: blur(4px);
-    white-space: nowrap;
-}
-
-/* Stat cards */
-.em-stat {
-    background: #fff;
-    border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: transform .2s var(--em-ease), box-shadow .2s var(--em-ease);
-    position: relative;
-    overflow: hidden;
-}
-.em-stat::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--em-stat-color, var(--em-primary));
-    opacity: 0;
-    transition: opacity .2s;
-}
-.em-stat { height: 100%; } /* kartu dalam satu baris sama tinggi */
-.em-stat:hover { transform: translateY(-4px); box-shadow: var(--em-shadow-md); }
-.em-stat:hover::after { opacity: 1; }
-
-.em-stat__icon {
-    width: 46px; height: 46px;
-    border-radius: var(--em-r-lg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.05rem;
-    flex-shrink: 0;
-    color: #fff;
-    background: var(--em-stat-color, var(--em-primary));
-}
-.em-stat__body { flex: 1; min-width: 0; }
-.em-stat__label {
-    font-size: .75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .7px;
-    color: var(--em-text-muted);
-    margin-bottom: 2px;
-    white-space: nowrap;
-}
-.em-stat__value {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--em-gray-900);
-    line-height: 1.1;
-}
-.em-stat__sub {
-    font-size: .75rem;
-    color: var(--em-text-muted);
-    margin-top: 2px;
-    line-height: 1.3;
-}
-
-/* Chart card */
-.em-chart-card {
-    background: #fff;
-    border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
-    overflow: hidden;
-}
-.em-chart-card__header {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--em-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-.em-chart-card__title {
-    font-size: .86rem;
-    font-weight: 700;
-    color: var(--em-gray-900);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-}
-.em-chart-card__body { padding: 16px 18px; }
-
-/* Legend pills */
-.chart-legend { display: flex; gap: 12px; flex-wrap: wrap; }
-.chart-legend__item {
-    display: flex; align-items: center; gap: 5px;
-    font-size: .75rem; font-weight: 600; color: var(--em-gray-600);
-}
-.chart-legend__dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-}
-
-/* Activity cards */
-.em-activity-card {
-    background: #fff;
-    border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
-    overflow: hidden;
-    height: 100%;
-}
-.em-activity-card__header {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--em-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.em-activity-card__title {
-    font-size: .86rem;
-    font-weight: 700;
-    color: var(--em-gray-900);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin: 0;
-}
-.em-activity-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 18px;
-    border-bottom: 1px solid var(--em-gray-100);
-    transition: background .13s;
-}
-.em-activity-item:last-child { border-bottom: none; }
-.em-activity-item:hover { background: var(--em-green-50); }
-.em-activity-item__icon {
-    width: 32px; height: 32px;
-    border-radius: var(--em-r-md);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .8rem;
-    flex-shrink: 0;
-}
-.em-activity-item__body { flex: 1; min-width: 0; }
-.em-activity-item__title {
-    font-size: .82rem;
-    font-weight: 600;
-    color: var(--em-gray-800);
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.em-activity-item__meta {
-    font-size: .75rem;
-    color: var(--em-text-muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-.em-activity-empty {
-    padding: 28px 18px;
-    text-align: center;
-    color: var(--em-text-muted);
-    font-size: .82rem;
-}
-.em-activity-empty i { font-size: 1.4rem; display: block; margin-bottom: 6px; opacity: .35; }
-
-/* Priority badge */
-.em-prio {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px; border-radius: var(--em-r-sm);
-    font-size: .75rem; font-weight: 700; flex-shrink: 0;
-}
-.em-prio-tinggi  { background: #fee2e2; color: #991b1b; }
-.em-prio-sedang  { background: #fef3c7; color: #92400e; }
-.em-prio-rendah  { background: #dbeafe; color: #1e40af; }
-
-/* Status badge surat */
-.em-status {
-    display: inline-block;
-    padding: 2px 8px; border-radius: var(--em-r-sm);
-    font-size: .75rem; font-weight: 700;
-}
-.em-status-diterima  { background: #dbeafe; color: #1e40af; }
-.em-status-diproses  { background: #fef3c7; color: #92400e; }
-.em-status-selesai   { background: #d1fae5; color: #065f46; }
-
-/* Quick actions */
-.em-quick-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-.em-quick-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 8px;
-    border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
-    background: #fff;
-    color: var(--em-gray-600);
-    font-size: .75rem;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    text-decoration: none;
-    transition: all .18s var(--em-ease);
-    line-height: 1.3;
-}
-.em-quick-btn:hover {
-    background: var(--em-green-50);
-    border-color: var(--em-green-200);
-    color: var(--em-primary);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 14px rgba(26,122,82,.12);
-}
-.em-quick-btn i {
-    font-size: 1.2rem;
-    width: 36px; height: 36px;
-    border-radius: var(--em-r-md);
-    display: flex; align-items: center; justify-content: center;
-    background: var(--em-gray-100);
-    transition: background .18s;
-}
-.em-quick-btn:hover i { background: var(--em-green-100); color: var(--em-primary); }
-
-/* Section label */
-.em-section-label {
-    font-size: .75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .9px;
-    color: var(--em-gray-400);
-    margin-bottom: 10px;
-    display: block;
-}
-
-@media (max-width: 991.98px) {
-    .dash-greeting { padding: 20px; }
-    .dash-greeting__name { font-size: 1.2rem; }
-    .em-stat__value { font-size: 1.5rem; }
-    .em-quick-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 575.98px) {
-    .em-stat { padding: 14px; }
-    .em-stat__icon { width: 38px; height: 38px; font-size: .9rem; }
-    .em-quick-grid { grid-template-columns: repeat(2, 1fr); }
-}
-</style>
-@endpush
-
 @section('content')
 
 {{-- ── Greeting Banner ── --}}
 <div class="dash-greeting d-flex align-items-center justify-content-between flex-wrap gap-3">
     <div>
-        <div class="dash-greeting__label">Selamat datang kembali</div>
+        @php
+            $jam = now()->hour;
+        @endphp
+        <div class="dash-greeting__label">Selamat {{ match (true) { $jam >= 4 && $jam < 11 => 'pagi', $jam >= 11 && $jam < 15 => 'siang', $jam >= 15 && $jam < 18 => 'sore', default => 'malam' } }}</div>
         <div class="dash-greeting__name">{{ Auth::user()->name ?? 'Admin' }} </div>
         <div class="dash-greeting__sub">Berikut ringkasan aktivitas madrasah hari ini.</div>
         <div class="dash-greeting__date">
@@ -337,12 +20,8 @@
     </div>
     <div class="d-flex flex-column align-items-end gap-2">
         <div class="dash-greeting__badge">
-            <i class="fas fa-circle-dot" style="color:#34d399; font-size:.75rem;"></i>
-            Sistem Online
-        </div>
-        <div class="dash-greeting__badge">
             <i class="fas fa-school"></i>
-            MTs Al-Ihsan Batujajar
+            {{ $madrasah->nama }}
         </div>
     </div>
 </div>
@@ -351,7 +30,7 @@
 <span class="em-section-label">Statistik Utama</span>
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="em-stat" style="--em-stat-color:#1a7a52;">
+        <div class="em-stat" style="--em-stat-color:var(--em-green-700);">
             <div class="em-stat__icon"><i class="fas fa-user-graduate"></i></div>
             <div class="em-stat__body">
                 <div class="em-stat__label">Total Siswa</div>
@@ -588,12 +267,13 @@
 @endSection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const kehadiran = @json($kehadiran);
 
     const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+    await window.loadChart();
 
     new Chart(ctx, {
         type: 'line',

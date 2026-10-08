@@ -2,27 +2,33 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\TahunPelajaran;
+use App\Models\AgendaGuru;
+use App\Models\ArsipAkademik;
 use App\Models\Guru;
+use App\Models\Jadwal;
+use App\Models\JamPelajaran;
 use App\Models\Kelas;
 use App\Models\Mapel;
-use App\Models\JamPelajaran;
-use App\Models\Jadwal;
-use App\Models\Siswa;
 use App\Models\OrangTuaWali;
+use App\Models\PemeliharaanSarana;
+use App\Models\PeminjamanSarana;
 use App\Models\PerkembanganSiswa;
-use App\Models\AgendaGuru;
-use App\Models\SuratMasuk;
+use App\Models\RaportEkskul;
+use App\Models\RaportKehadiran;
+use App\Models\RaportNilai;
+use App\Models\RaportPrestasi;
+use App\Models\SaranaPrasarana;
+use App\Models\Siswa;
 use App\Models\SuratKeluar;
-use App\Models\TemplateSurat;
+use App\Models\SuratMasuk;
+use App\Models\TahunPelajaran;
 use App\Models\Task;
 use App\Models\TaskLog;
-use App\Models\RaportNilai;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use App\Models\TemplateSurat;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DummyDataSeeder extends Seeder
 {
@@ -163,7 +169,7 @@ class DummyDataSeeder extends Seeder
                         'jam_selesai' => $s['selesai'],
                     ]
                 );
-                $jamMap[$hari . '_' . $s['sesi_ke']] = $jp;
+                $jamMap[$hari.'_'.$s['sesi_ke']] = $jp;
             }
         }
 
@@ -192,7 +198,7 @@ class DummyDataSeeder extends Seeder
             $k = $kelasMap[$js['kelas']] ?? null;
             $m = $mapelMap[$js['mapel']] ?? null;
             $g = $guruMap[$js['guru']] ?? null;
-            $jp = $jamMap[$js['hari'] . '_' . $js['sesi']] ?? null;
+            $jp = $jamMap[$js['hari'].'_'.$js['sesi']] ?? null;
 
             if ($k && $m && $g && $jp) {
                 Jadwal::firstOrCreate(
@@ -222,7 +228,7 @@ class DummyDataSeeder extends Seeder
                 'kelas' => '7A', 'alamat' => 'Kp. Batujajar Tengah RT 02/05', 'hp' => '081234567891',
                 'ayah' => 'Dedi Pratama', 'pekerjaan_ayah' => 'Wiraswasta',
                 'ibu' => 'Siti Aisyah', 'pekerjaan_ibu' => 'Ibu Rumah Tangga',
-                'asal_madrasah' => 'MI Al-Ihsan Batujajar'
+                'asal_madrasah' => 'MI Al-Ihsan Batujajar',
             ],
             [
                 'nis' => '2425002', 'nisn' => '0091234562', 'nik' => '3201014603100002',
@@ -231,7 +237,7 @@ class DummyDataSeeder extends Seeder
                 'kelas' => '7A', 'alamat' => 'Jl. Raya Batujajar No. 45', 'hp' => '081234567892',
                 'ayah' => 'Rahmat Hidayat', 'pekerjaan_ayah' => 'Karyawan Swasta',
                 'ibu' => 'Nurhayati', 'pekerjaan_ibu' => 'Guru',
-                'asal_madrasah' => 'SDN Batujajar 1'
+                'asal_madrasah' => 'SDN Batujajar 1',
             ],
             [
                 'nis' => '2425003', 'nisn' => '0091234563', 'nik' => '3201014705110003',
@@ -240,7 +246,7 @@ class DummyDataSeeder extends Seeder
                 'kelas' => '7B', 'alamat' => 'Kp. Babakan Sari RT 01/03', 'hp' => '081234567893',
                 'ayah' => 'Lukman Hakim', 'pekerjaan_ayah' => 'PNS',
                 'ibu' => 'Farida', 'pekerjaan_ibu' => 'Karyawan Swasta',
-                'asal_madrasah' => 'MI Nurul Iman'
+                'asal_madrasah' => 'MI Nurul Iman',
             ],
             [
                 'nis' => '2324001', 'nisn' => '0081234564', 'nik' => '3201014807120004',
@@ -249,7 +255,7 @@ class DummyDataSeeder extends Seeder
                 'kelas' => '8A', 'alamat' => 'Ds. Galanggang RT 03/02', 'hp' => '081234567894',
                 'ayah' => 'Agus Ramadhan', 'pekerjaan_ayah' => 'Pedagang',
                 'ibu' => 'Dewi Yuliani', 'pekerjaan_ibu' => 'Ibu Rumah Tangga',
-                'asal_madrasah' => 'SDN Batujajar 2'
+                'asal_madrasah' => 'SDN Batujajar 2',
             ],
             [
                 'nis' => '2324002', 'nisn' => '0081234565', 'nik' => '3201014908130005',
@@ -258,7 +264,7 @@ class DummyDataSeeder extends Seeder
                 'kelas' => '8B', 'alamat' => 'Kp. Cangkorah RT 04/01', 'hp' => '081234567895',
                 'ayah' => 'H. Syamsudin', 'pekerjaan_ayah' => 'Wiraswasta',
                 'ibu' => 'Hj. Mardiah', 'pekerjaan_ibu' => 'Wiraswasta',
-                'asal_madrasah' => 'MI Al-Ihsan Batujajar'
+                'asal_madrasah' => 'MI Al-Ihsan Batujajar',
             ],
             [
                 'nis' => '2223001', 'nisn' => '0071234566', 'nik' => '3201015009140006',
@@ -267,7 +273,7 @@ class DummyDataSeeder extends Seeder
                 'kelas' => '9A', 'alamat' => 'Jl. Babakan Pari RT 02/04', 'hp' => '081234567896',
                 'ayah' => 'Anwar Sanusi', 'pekerjaan_ayah' => 'PNS',
                 'ibu' => 'Enok Rohaeti', 'pekerjaan_ibu' => 'Ibu Rumah Tangga',
-                'asal_madrasah' => 'MI Al-Hidayah'
+                'asal_madrasah' => 'MI Al-Hidayah',
             ],
         ];
 
@@ -307,13 +313,13 @@ class DummyDataSeeder extends Seeder
                 ['siswa_id' => $siswa->id],
                 [
                     'asal_madrasah' => $sd['asal_madrasah'],
-                    'no_ijazah_asal' => 'DN-02/D-MI/13/' . rand(100000, 999999),
+                    'no_ijazah_asal' => 'DN-02/D-MI/13/'.rand(100000, 999999),
                 ]
             );
         }
 
         // 9. Raport Nilai Sample untuk Siswa Pertama
-        if (!empty($createdSiswa)) {
+        if (! empty($createdSiswa)) {
             $siswaSample = $createdSiswa[0];
             $daftarMapel = Mapel::all();
             foreach ($daftarMapel as $idx => $mpl) {
@@ -332,6 +338,63 @@ class DummyDataSeeder extends Seeder
                     ]
                 );
             }
+
+            // Kehadiran Raport
+            RaportKehadiran::updateOrCreate(
+                [
+                    'siswa_id' => $siswaSample->id,
+                    'tahun_pelajaran_id' => $tp25->id,
+                    'semester' => 1,
+                ],
+                [
+                    'sakit' => 1,
+                    'ijin' => 0,
+                    'tanpa_keterangan' => 0,
+                ]
+            );
+
+            // Ekskul Raport
+            RaportEkskul::updateOrCreate(
+                [
+                    'siswa_id' => $siswaSample->id,
+                    'tahun_pelajaran_id' => $tp25->id,
+                    'semester' => 1,
+                    'nama_ekskul' => 'Pramuka',
+                ],
+                [
+                    'keterangan' => 'Aktif dalam kegiatan kepramukaan dan menunjukkan jiwa kepemimpinan.',
+                    'nilai' => 'A',
+                    'urut' => 1,
+                ]
+            );
+            RaportEkskul::updateOrCreate(
+                [
+                    'siswa_id' => $siswaSample->id,
+                    'tahun_pelajaran_id' => $tp25->id,
+                    'semester' => 1,
+                    'nama_ekskul' => 'Tahfidz Al-Qur\'an',
+                ],
+                [
+                    'keterangan' => 'Telah menyelesaikan hafalan Juz 30 dengan tartil dan tajwid yang baik.',
+                    'nilai' => 'A',
+                    'urut' => 2,
+                ]
+            );
+
+            // Prestasi Raport
+            RaportPrestasi::updateOrCreate(
+                [
+                    'siswa_id' => $siswaSample->id,
+                    'tahun_pelajaran_id' => $tp25->id,
+                    'semester' => 1,
+                    'jenis_prestasi' => 'Juara 2 MTQ Tingkat Kecamatan',
+                ],
+                [
+                    'keterangan' => 'Lomba Tilawatil Qur\'an dalam rangka Hari Amal Bakti Kemenag.',
+                    'nilai' => 'Tingkat Kecamatan',
+                    'urut' => 1,
+                ]
+            );
         }
 
         // 10. Agenda & Absensi Guru (7 Hari Terakhir)
@@ -346,7 +409,7 @@ class DummyDataSeeder extends Seeder
                 $status = ($gIdx === 3 && $i === 1) ? 'izin' : (($gIdx === 5 && $i === 2) ? 'sakit' : 'hadir');
                 $ket = $status === 'izin' ? 'Keperluan dinas luar' : ($status === 'sakit' ? 'Sakit flu dan demam' : null);
                 AgendaGuru::updateOrCreate(
-                    ['tanggal' => $tgl->format('Y-m-d'), 'guru_id' => $guru->id],
+                    ['tanggal' => $tgl, 'guru_id' => $guru->id],
                     ['status' => $status, 'keterangan' => $ket]
                 );
             }
@@ -487,8 +550,82 @@ class DummyDataSeeder extends Seeder
                 ['task_id' => $task->id, 'action' => 'Tugas dibuat'],
                 [
                     'user_id' => $adminUser?->id ?? 1,
-                    'keterangan' => 'Inisiasi tugas: ' . $task->judul,
+                    'keterangan' => 'Inisiasi tugas: '.$task->judul,
                     'created_at' => now(),
+                ]
+            );
+        }
+
+        // 15. Peminjaman & Pemeliharaan Sarana
+        $proyektor = SaranaPrasarana::where('kode_sarana', 'ELK-001')->first();
+        $laptop = SaranaPrasarana::where('kode_sarana', 'ELK-002')->first();
+        if ($proyektor) {
+            PeminjamanSarana::firstOrCreate(
+                [
+                    'sarana_id' => $proyektor->id,
+                    'peminjam' => 'Ahmad Fauzi, S.Pd.I',
+                    'tanggal_pinjam' => Carbon::now()->subDays(1)->format('Y-m-d'),
+                ],
+                [
+                    'tipe_peminjam' => 'guru',
+                    'status' => 'dipinjam',
+                ]
+            );
+            PeminjamanSarana::firstOrCreate(
+                [
+                    'sarana_id' => $proyektor->id,
+                    'peminjam' => 'Muhammad Rayhan Pratama',
+                    'tanggal_pinjam' => Carbon::now()->subDays(4)->format('Y-m-d'),
+                ],
+                [
+                    'tipe_peminjam' => 'siswa',
+                    'tanggal_kembali' => Carbon::now()->subDays(4)->format('Y-m-d'),
+                    'status' => 'dikembalikan',
+                ]
+            );
+        }
+
+        if ($laptop) {
+            PemeliharaanSarana::firstOrCreate(
+                [
+                    'sarana_id' => $laptop->id,
+                    'tanggal_pemeliharaan' => Carbon::now()->subDays(3)->format('Y-m-d'),
+                ],
+                [
+                    'biaya' => 250000,
+                    'keterangan' => 'Ganti pasta pendingin prosesor dan install ulang sistem operasi',
+                    'status' => 'selesai',
+                    'tanggal_selesai' => Carbon::now()->subDays(1)->format('Y-m-d'),
+                    'teknisi' => 'CV Media Sarana Bandung',
+                ]
+            );
+        }
+
+        // 16. Arsip Akademik Sample
+        $kelas7A = Kelas::where('nama_kelas', '7A')->first();
+        if ($kelas7A && $tp25) {
+            ArsipAkademik::firstOrCreate(
+                [
+                    'nama_arsip' => 'Buku Leger Nilai Semester Ganjil 7A 2025-2026',
+                    'tahun_pelajaran_id' => $tp25->id,
+                    'kelas_id' => $kelas7A->id,
+                ],
+                [
+                    'semester' => '1',
+                    'tipe' => 'Leger',
+                    'file_path' => 'arsip-akademik/sample_leger_7a.pdf',
+                ]
+            );
+            ArsipAkademik::firstOrCreate(
+                [
+                    'nama_arsip' => 'Rekapitulasi Rapor Digital Madrasah (RDM) 7A',
+                    'tahun_pelajaran_id' => $tp25->id,
+                    'kelas_id' => $kelas7A->id,
+                ],
+                [
+                    'semester' => '1',
+                    'tipe' => 'RDM',
+                    'file_path' => 'arsip-akademik/sample_rdm_7a.xlsx',
                 ]
             );
         }

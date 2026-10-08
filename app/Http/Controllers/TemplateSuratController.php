@@ -10,6 +10,7 @@ class TemplateSuratController extends Controller
     public function index()
     {
         $templates = TemplateSurat::orderBy('nama_template')->paginate(10);
+
         return view('template-surat.index', compact('templates'));
     }
 
@@ -25,6 +26,7 @@ class TemplateSuratController extends Controller
             'konten' => 'required',
         ]);
         TemplateSurat::create($request->only('nama_template', 'konten'));
+
         return redirect()->route('template-surat.index')->with('success', 'Template surat berhasil ditambahkan.');
     }
 
@@ -36,16 +38,18 @@ class TemplateSuratController extends Controller
     public function update(Request $request, TemplateSurat $templateSurat)
     {
         $request->validate([
-            'nama_template' => 'required|unique:template_surat,nama_template,' . $templateSurat->id,
+            'nama_template' => 'required|unique:template_surat,nama_template,'.$templateSurat->id,
             'konten' => 'required',
         ]);
         $templateSurat->update($request->only('nama_template', 'konten'));
+
         return redirect()->route('template-surat.index')->with('success', 'Template surat berhasil diupdate.');
     }
 
     public function destroy(TemplateSurat $templateSurat)
     {
         $templateSurat->delete();
+
         return redirect()->route('template-surat.index')->with('success', 'Template surat berhasil dihapus.');
     }
 }

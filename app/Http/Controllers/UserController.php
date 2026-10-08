@@ -11,6 +11,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::paginate(10);
+
         return view('users.index', compact('users'));
     }
 
@@ -24,11 +25,12 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8|max:255',
+            'password' => 'required|string|min:10|max:255',
             'role' => 'required|in:admin,guru,wali_murid,siswa,operator',
         ]);
         $validated['password'] = Hash::make($validated['password']);
         User::create($validated);
+
         return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
     }
 
@@ -41,8 +43,8 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|max:255',
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
+            'password' => 'nullable|string|min:10|max:255',
             'role' => 'required|in:admin,guru,wali_murid,siswa,operator',
         ]);
 
@@ -56,15 +58,17 @@ class UserController extends Controller
             unset($validated['password']);
         }
         $user->update($validated);
+
         return redirect()->route('users.index')->with('success', 'User berhasil diupdate.');
     }
 
-public function destroy(User $user)
-{
-    if ($user->id === auth()->id()) {
-        return redirect()->route('users.index')->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+    public function destroy(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->route('users.index')->with('error', 'Anda tidak dapat menghapus akun sendiri.');
+        }
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
     }
-    $user->delete();
-    return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
-}
 }

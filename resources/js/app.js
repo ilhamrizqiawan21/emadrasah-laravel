@@ -1,3 +1,15 @@
+import * as bootstrap from 'bootstrap';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import '@fontsource-variable/dm-sans/opsz.css';
+import '@fontsource-variable/plus-jakarta-sans/index.css';
+
+// Blade views call these as globals.
+window.bootstrap = bootstrap;
+
+// Chart.js is only needed on the dashboard, so it is loaded on demand.
+window.loadChart = () =>
+    import('chart.js/auto').then(({ default: Chart }) => (window.Chart = Chart));
+
 /* ================================================================
    e-Madrasah · app.js  v4.0
    Satu sistem sidebar — em-sidebar only, tidak ada duplikasi
@@ -429,3 +441,52 @@
     });
 
 })();
+
+/* Tabel responsif: di HP, table[data-hide-sm] tampil sebagai kartu. Label tiap sel diambil dari judul kolom. */
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('table[data-hide-sm]').forEach((table) => {
+        const heads = [...table.querySelectorAll('thead tr:last-child > th')].map((th) => th.textContent.trim());
+
+        table.querySelectorAll('tbody > tr').forEach((row) => {
+            [...row.children].forEach((cell, i) => {
+                const head = heads[i];
+                if (!head || cell.hasAttribute('colspan') || cell.hasAttribute('data-label')) return;
+
+                if (/^(no\.?|#)$/i.test(head)) {
+                    cell.setAttribute('data-stack-hide', '');
+                } else {
+                    cell.setAttribute('data-label', head);
+                }
+            });
+        });
+    });
+});
+
+/* Umpan balik saat form dikirim: tombol submit dinonaktifkan dengan spinner agar tidak terkirim ganda.
+   Hanya form POST. Lewati dengan data-no-loading pada <form>. */
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (event.defaultPrevented) return; // dibatalkan handler lain (mis. dialog konfirmasi): jangan nonaktifkan tombol
+    if (!(form instanceof HTMLFormElement) || form.method.toLowerCase() !== 'post' || form.hasAttribute('data-no-loading')) return;
+
+    const button = event.submitter || form.querySelector('[type="submit"]');
+    if (!button || button.disabled || button.dataset.loading) return;
+
+    // Ditunda sampai data form selesai dibentuk, supaya nama/nilai tombol tetap terkirim.
+    setTimeout(() => {
+        button.dataset.loading = '1';
+        button.dataset.original = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Memproses…';
+    }, 0);
+});
+
+// Kembali lewat tombol "back" browser: pulihkan tombol yang masih berputar.
+window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    document.querySelectorAll('[data-loading]').forEach((button) => {
+        button.disabled = false;
+        button.innerHTML = button.dataset.original;
+        delete button.dataset.loading;
+    });
+});

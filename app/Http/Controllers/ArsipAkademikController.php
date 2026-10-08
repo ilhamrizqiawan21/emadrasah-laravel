@@ -15,6 +15,7 @@ class ArsipAkademikController extends Controller
         $arsip = ArsipAkademik::with(['kelas', 'tahunPelajaran'])->latest()->paginate(15);
         $kelas = Kelas::all();
         $tahunPelajaran = TahunPelajaran::all();
+
         return view('arsip-akademik.index', compact('arsip', 'kelas', 'tahunPelajaran'));
     }
 
@@ -51,6 +52,7 @@ class ArsipAkademikController extends Controller
             Storage::disk('local')->delete($arsipAkademik->file_path);
         }
         $arsipAkademik->delete();
+
         return redirect()->back()->with('success', 'Arsip berhasil dihapus.');
     }
 }

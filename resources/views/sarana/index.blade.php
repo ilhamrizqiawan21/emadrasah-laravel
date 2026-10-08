@@ -60,9 +60,7 @@
                         </td>
                     </tr>
                     @empty
-                        <tr>
-                            <td colspan="8" class="text-center py-4">Belum ada data sarana</td>
-                        </tr>
+                        <x-empty-row :colspan="8" icon="fa-folder-open">Belum ada data sarana</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

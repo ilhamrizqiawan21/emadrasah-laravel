@@ -2,7 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\SaranaPrasarana;
+use App\Models\Siswa;
+use App\Models\SuratMasuk;
+use App\Models\Task;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +22,7 @@ class RouteAuditTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+        $this->seed(DatabaseSeeder::class);
         $this->admin = User::where('role', 'admin')->first();
     }
 
@@ -60,47 +67,48 @@ class RouteAuditTest extends TestCase
             'kategori-sarana.create' => '/kategori-sarana/create',
             'users.index' => '/users',
             'users.create' => '/users/create',
+            'pengaturan.edit' => '/pengaturan',
         ];
 
         // Model parameter routes
-        $siswa = \App\Models\Siswa::first();
+        $siswa = Siswa::first();
         if ($siswa) {
-            $routes['siswa.show'] = '/siswa/' . $siswa->id;
-            $routes['siswa.edit'] = '/siswa/' . $siswa->id . '/edit';
-            $routes['buku-induk.show'] = '/buku-induk/' . $siswa->id;
-            $routes['buku-induk.edit'] = '/buku-induk/' . $siswa->id . '/edit';
-            $routes['buku-induk.export-pdf'] = '/buku-induk/' . $siswa->id . '/export-pdf';
-            $routes['raport.manage'] = '/raport/' . $siswa->id . '/manage';
-            $routes['raport.export-pdf'] = '/raport/' . $siswa->id . '/export-pdf';
+            $routes['siswa.show'] = '/siswa/'.$siswa->id;
+            $routes['siswa.edit'] = '/siswa/'.$siswa->id.'/edit';
+            $routes['buku-induk.show'] = '/buku-induk/'.$siswa->id;
+            $routes['buku-induk.edit'] = '/buku-induk/'.$siswa->id.'/edit';
+            $routes['buku-induk.export-pdf'] = '/buku-induk/'.$siswa->id.'/export-pdf';
+            $routes['raport.manage'] = '/raport/'.$siswa->id.'/manage';
+            $routes['raport.export-pdf'] = '/raport/'.$siswa->id.'/export-pdf';
         }
 
-        $guru = \App\Models\Guru::first();
+        $guru = Guru::first();
         if ($guru) {
-            $routes['guru.edit'] = '/guru/' . $guru->id . '/edit';
+            $routes['guru.edit'] = '/guru/'.$guru->id.'/edit';
         }
 
-        $kelas = \App\Models\Kelas::first();
+        $kelas = Kelas::first();
         if ($kelas) {
-            $routes['kelas.edit'] = '/kelas/' . $kelas->id . '/edit';
+            $routes['kelas.edit'] = '/kelas/'.$kelas->id.'/edit';
         }
 
-        $task = \App\Models\Task::first();
+        $task = Task::first();
         if ($task) {
-            $routes['tasks.show'] = '/tasks/' . $task->id;
-            $routes['tasks.edit'] = '/tasks/' . $task->id . '/edit';
+            $routes['tasks.show'] = '/tasks/'.$task->id;
+            $routes['tasks.edit'] = '/tasks/'.$task->id.'/edit';
         }
 
-        $suratMasuk = \App\Models\SuratMasuk::first();
+        $suratMasuk = SuratMasuk::first();
         if ($suratMasuk) {
-            $routes['surat-masuk.show'] = '/surat-masuk/' . $suratMasuk->id;
-            $routes['surat-masuk.edit'] = '/surat-masuk/' . $suratMasuk->id . '/edit';
+            $routes['surat-masuk.show'] = '/surat-masuk/'.$suratMasuk->id;
+            $routes['surat-masuk.edit'] = '/surat-masuk/'.$suratMasuk->id.'/edit';
         }
 
-        $sarana = \App\Models\SaranaPrasarana::first();
+        $sarana = SaranaPrasarana::first();
         if ($sarana) {
-            $routes['sarana.edit'] = '/sarana/' . $sarana->id . '/edit';
-            $routes['sarana.peminjaman'] = '/sarana/' . $sarana->id . '/peminjaman';
-            $routes['sarana.pemeliharaan'] = '/sarana/' . $sarana->id . '/pemeliharaan';
+            $routes['sarana.edit'] = '/sarana/'.$sarana->id.'/edit';
+            $routes['sarana.peminjaman'] = '/sarana/'.$sarana->id.'/peminjaman';
+            $routes['sarana.pemeliharaan'] = '/sarana/'.$sarana->id.'/pemeliharaan';
         }
 
         $errors = [];
@@ -113,11 +121,11 @@ class RouteAuditTest extends TestCase
                     $errors[] = "Route [$name] ($url) returned status $status";
                 }
             } catch (\Throwable $e) {
-                $errors[] = "Route [$name] ($url) threw Exception: " . $e->getMessage();
+                $errors[] = "Route [$name] ($url) threw Exception: ".$e->getMessage();
             }
         }
 
-        $this->assertEmpty($errors, "Failed routes:\n" . implode("\n", $errors));
+        $this->assertEmpty($errors, "Failed routes:\n".implode("\n", $errors));
     }
 
     public function test_operator_access_and_restrictions(): void

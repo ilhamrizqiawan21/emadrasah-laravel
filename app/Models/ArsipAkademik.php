@@ -10,6 +10,7 @@ class ArsipAkademik extends Model
     use HasFactory;
 
     protected $table = 'arsip_akademik';
+
     protected $fillable = ['tahun_pelajaran_id', 'kelas_id', 'semester', 'nama_arsip', 'file_path', 'tipe'];
 
     public function tahunPelajaran()

@@ -11,33 +11,35 @@ use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
-public function index(Request $request)
-{
-    $query = Task::with('assignedTo')->orderByRaw("CASE status WHEN 'antrean' THEN 1 WHEN 'proses' THEN 2 WHEN 'selesai' THEN 3 ELSE 4 END");
-    
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
+    public function index(Request $request)
+    {
+        $query = Task::with('assignedTo')->orderByRaw("CASE status WHEN 'antrean' THEN 1 WHEN 'proses' THEN 2 WHEN 'selesai' THEN 3 ELSE 4 END");
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('prioritas')) {
+            $query->where('prioritas', $request->prioritas);
+        }
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('judul', 'like', '%'.$request->search.'%')
+                    ->orWhere('deskripsi', 'like', '%'.$request->search.'%');
+            });
+        }
+
+        $tasks = $query->paginate(15);
+        if ($request->get('view') === 'list') {
+            return view('tasks.index_list', compact('tasks'));
+        }
+
+        return view('tasks.index', compact('tasks'));
     }
-    if ($request->filled('prioritas')) {
-        $query->where('prioritas', $request->prioritas);
-    }
-    if ($request->filled('search')) {
-        $query->where(function($q) use ($request) {
-            $q->where('judul', 'like', '%' . $request->search . '%')
-              ->orWhere('deskripsi', 'like', '%' . $request->search . '%');
-        });
-    }
-    
-    $tasks = $query->paginate(15);
-    if ($request->get('view') === 'list') {
-        return view('tasks.index_list', compact('tasks'));
-    }
-    return view('tasks.index', compact('tasks'));
-}
 
     public function create()
     {
         $users = User::orderBy('name')->get();
+
         return view('tasks.create', compact('users'));
     }
 
@@ -67,7 +69,7 @@ public function index(Request $request)
             'task_id' => $task->id,
             'user_id' => Auth::id(),
             'action' => 'Tugas dibuat',
-            'keterangan' => 'Status awal: ' . $task->status,
+            'keterangan' => 'Status awal: '.$task->status,
         ]);
 
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil ditambahkan.');
@@ -76,12 +78,14 @@ public function index(Request $request)
     public function show(Task $task)
     {
         $logs = $task->logs()->with('user')->orderBy('created_at', 'desc')->get();
+
         return view('tasks.show', compact('task', 'logs'));
     }
 
     public function edit(Task $task)
     {
         $users = User::orderBy('name')->get();
+
         return view('tasks.edit', compact('task', 'users'));
     }
 
@@ -123,7 +127,7 @@ public function index(Request $request)
         $request->validate(['status' => 'required|in:antrean,proses,selesai']);
         $oldStatus = $task->status;
         $task->update(['status' => $request->status]);
-        
+
         TaskLog::create([
             'task_id' => $task->id,
             'user_id' => Auth::id(),
@@ -135,7 +139,7 @@ public function index(Request $request)
             return response()->json([
                 'success' => true,
                 'message' => 'Status tugas diperbarui.',
-                'new_status' => $request->status
+                'new_status' => $request->status,
             ]);
         }
 
@@ -148,6 +152,7 @@ public function index(Request $request)
             Storage::disk('local')->delete($task->attachment);
         }
         $task->delete();
+
         return redirect()->route('tasks.index')->with('success', 'Tugas berhasil dihapus.');
     }
 }

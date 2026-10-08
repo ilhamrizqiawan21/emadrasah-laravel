@@ -3,16 +3,13 @@
 @section('title', 'Tambah Surat Masuk')
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('surat-masuk.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-page-header title="Form Tambah Surat Masuk">
+    <x-slot:actions>
+        <a href="{{ route('surat-masuk.index') }}" class="btn btn-light border">Kembali</a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
-    <div class="card-header">
-        <h5>Form Tambah Surat Masuk</h5>
-    </div>
     <div class="card-body">
         <form method="POST" action="{{ route('surat-masuk.store') }}" enctype="multipart/form-data">
             @csrf

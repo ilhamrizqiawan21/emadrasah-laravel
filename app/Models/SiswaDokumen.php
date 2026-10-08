@@ -10,6 +10,7 @@ class SiswaDokumen extends Model
     use HasFactory;
 
     protected $table = 'siswa_dokumen';
+
     protected $fillable = ['siswa_id', 'jenis_dokumen', 'file_path', 'nama_file'];
 
     public function siswa()

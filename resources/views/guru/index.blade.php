@@ -3,12 +3,13 @@
 @section('title', 'Data Guru')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Data Guru</h1>
-    <a href="{{ route('guru.create') }}" class="btn btn-primary">
+<x-page-header title="Data Guru">
+    <x-slot:actions>
+        <a href="{{ route('guru.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah Guru
-    </a>
-</div>
+        </a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -44,9 +45,7 @@
                         </td>
                     </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="text-center py-4">Belum ada data guru</td>
-                        </tr>
+                        <x-empty-row :colspan="5" icon="fa-folder-open">Belum ada data guru</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

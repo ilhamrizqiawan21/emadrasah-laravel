@@ -2,53 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Jadwal;
-use App\Models\Kelas;
 use App\Models\Guru;
-use App\Models\Mapel;
+use App\Models\Jadwal;
 use App\Models\JamPelajaran;
+use App\Models\Kelas;
+use App\Models\Mapel;
 use App\Models\TahunPelajaran;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class JadwalController extends Controller
 {
-public function index()
-{
-    $kelasList = Kelas::orderBy('nama_kelas')->get();
-    $selectedKelas = request('kelas_id') ? Kelas::find(request('kelas_id')) : null;
-    
-    // Urutan hari yang benar
-    $hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-    
-    // Ambil semua jam pelajaran (urut berdasarkan sesi_ke, lalu grouping per hari)
-    $jamPelajaran = JamPelajaran::orderBy('sesi_ke')->orderBy('hari')->get();
-    
-    $jadwalGrid = [];
-    if ($selectedKelas) {
-        $jadwals = Jadwal::with(['guru', 'mapel'])
-            ->where('kelas_id', $selectedKelas->id)
-            ->get();
-            
-        foreach ($jadwals as $j) {
-            // Cari jam pelajaran yang cocok (dari koleksi yang sudah dimuat, bukan query per baris)
-            $jam = $jamPelajaran->first(fn ($jp) => $jp->hari === $j->hari
-                && $jp->jam_mulai == $j->jam_mulai
-                && $jp->jam_selesai == $j->jam_selesai);
-            if ($jam) {
-                $key = $selectedKelas->id . '_' . $j->hari . '_' . $jam->sesi_ke;
-                $jadwalGrid[$key] = [
-                    'jadwal_id' => $j->id,
-                    'guru_kode' => $j->guru->kode ?? '',
-                    'guru_nama' => $j->guru->nama ?? '',
-                    'mapel'     => $j->mapel->nama_mapel ?? '',
-                ];
+    public function index()
+    {
+        $kelasList = Kelas::orderBy('nama_kelas')->get();
+        $selectedKelas = request('kelas_id') ? Kelas::find(request('kelas_id')) : null;
+
+        // Urutan hari yang benar
+        $hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+        // Ambil semua jam pelajaran (urut berdasarkan sesi_ke, lalu grouping per hari)
+        $jamPelajaran = JamPelajaran::orderBy('sesi_ke')->orderBy('hari')->get();
+
+        $jadwalGrid = [];
+        if ($selectedKelas) {
+            $jadwals = Jadwal::with(['guru', 'mapel'])
+                ->where('kelas_id', $selectedKelas->id)
+                ->get();
+
+            foreach ($jadwals as $j) {
+                // Cari jam pelajaran yang cocok (dari koleksi yang sudah dimuat, bukan query per baris)
+                $jam = $jamPelajaran->first(fn ($jp) => $jp->hari === $j->hari
+                    && $jp->jam_mulai == $j->jam_mulai
+                    && $jp->jam_selesai == $j->jam_selesai);
+                if ($jam) {
+                    $key = $selectedKelas->id.'_'.$j->hari.'_'.$jam->sesi_ke;
+                    $jadwalGrid[$key] = [
+                        'jadwal_id' => $j->id,
+                        'guru_kode' => $j->guru->kode ?? '',
+                        'guru_nama' => $j->guru->nama ?? '',
+                        'mapel' => $j->mapel->nama_mapel ?? '',
+                    ];
+                }
             }
         }
+
+        return view('jadwal.index', compact('kelasList', 'selectedKelas', 'hariList', 'jamPelajaran', 'jadwalGrid'));
     }
-    
-    return view('jadwal.index', compact('kelasList', 'selectedKelas', 'hariList', 'jamPelajaran', 'jadwalGrid'));
-}
 
     public function create()
     {
@@ -56,6 +55,7 @@ public function index()
         $gurus = Guru::all();
         $mapels = Mapel::all();
         $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->get();
+
         return view('jadwal.create', compact('kelas', 'gurus', 'mapels', 'jamPelajaran'));
     }
 
@@ -110,6 +110,7 @@ public function index()
         $gurus = Guru::all();
         $mapels = Mapel::all();
         $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->get();
+
         return view('jadwal.edit', compact('jadwal', 'kelas', 'gurus', 'mapels', 'jamPelajaran'));
     }
 
@@ -157,117 +158,118 @@ public function index()
     public function destroy(Jadwal $jadwal)
     {
         $jadwal->delete();
+
         return redirect()->route('jadwal.index')->with('success', 'Jadwal berhasil dihapus.');
     }
 
     public function byKelas(Kelas $kelas)
     {
         $jadwals = Jadwal::with(['guru', 'mapel'])->where('kelas_id', $kelas->id)->orderBy('hari')->orderBy('jam_mulai')->get();
+
         return response()->json($jadwals);
     }
 
     // ========== GRID METHODS ==========
-public function grid()
-{
-    $kelas = Kelas::orderBy('nama_kelas')->get();
-    
-    // Urutan hari yang benar
-    $orderHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
-    
-    $jamPelajaran = JamPelajaran::orderBy('sesi_ke')
-        ->get()
-        ->sortBy(function ($item) use ($orderHari) {
-            return array_search($item->hari, $orderHari);
-        })
-        ->values(); // reset index
-    
-    $gurus = Guru::all();
-    $mapels = Mapel::all();
+    public function grid()
+    {
+        $kelas = Kelas::orderBy('nama_kelas')->get();
 
-    $jadwalGrid = [];
-    $jadwals = Jadwal::with(['guru', 'mapel'])->get();
-    foreach ($jadwals as $j) {
-        $jam = $jamPelajaran->first(function ($jp) use ($j) {
-            return $jp->hari === $j->hari
-                && $jp->jam_mulai == $j->jam_mulai
-                && $jp->jam_selesai == $j->jam_selesai;
-        });
-        if ($jam) {
-            $key = $j->kelas_id . '_' . $j->hari . '_' . $jam->id;
-            $jadwalGrid[$key] = [
-                'jadwal_id' => $j->id,
-                'guru_id'   => $j->guru_id,
-                'guru_kode' => $j->guru->kode ?? '',
-                'mapel_id'  => $j->mapel_id,
-            ];
+        // Urutan hari yang benar
+        $orderHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+        $jamPelajaran = JamPelajaran::orderBy('sesi_ke')
+            ->get()
+            ->sortBy(function ($item) use ($orderHari) {
+                return array_search($item->hari, $orderHari);
+            })
+            ->values(); // reset index
+
+        $gurus = Guru::all();
+        $mapels = Mapel::all();
+
+        $jadwalGrid = [];
+        $jadwals = Jadwal::with(['guru', 'mapel'])->get();
+        foreach ($jadwals as $j) {
+            $jam = $jamPelajaran->first(function ($jp) use ($j) {
+                return $jp->hari === $j->hari
+                    && $jp->jam_mulai == $j->jam_mulai
+                    && $jp->jam_selesai == $j->jam_selesai;
+            });
+            if ($jam) {
+                $key = $j->kelas_id.'_'.$j->hari.'_'.$jam->id;
+                $jadwalGrid[$key] = [
+                    'jadwal_id' => $j->id,
+                    'guru_id' => $j->guru_id,
+                    'guru_kode' => $j->guru->kode ?? '',
+                    'mapel_id' => $j->mapel_id,
+                ];
+            }
         }
+
+        return view('jadwal.grid', compact('kelas', 'jamPelajaran', 'gurus', 'mapels', 'jadwalGrid'));
     }
 
-    return view('jadwal.grid', compact('kelas', 'jamPelajaran', 'gurus', 'mapels', 'jadwalGrid'));
-}
+    public function gridStore(Request $request)
+    {
+        $request->validate([
+            'kelas_id' => 'required|integer|exists:kelas,id',
+            'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
+            'jam_id' => 'required|integer|exists:jam_pelajaran,id',
+            'guru_id' => 'required|integer|exists:gurus,id',
+            'mapel_id' => 'required|integer|exists:mapels,id',
+        ]);
 
-public function gridStore(Request $request)
-{
-    $request->validate([
-        'kelas_id' => 'required|integer|exists:kelas,id',
-        'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
-        'jam_id' => 'required|integer|exists:jam_pelajaran,id',
-        'guru_id' => 'required|integer|exists:gurus,id',
-        'mapel_id' => 'required|integer|exists:mapels,id',
-    ]);
+        $sesi = JamPelajaran::findOrFail($request->jam_id);
 
-    $sesi = JamPelajaran::findOrFail($request->jam_id);
+        // Cek konflik guru
+        // Slot yang sedang ditimpa (kelas+hari+jam sama) tidak dihitung sebagai bentrok dengan dirinya sendiri.
+        $conflict = Jadwal::where('guru_id', $request->guru_id)
+            ->where('hari', $request->hari)
+            ->where(function ($q) use ($request) {
+                $q->where('kelas_id', '!=', $request->kelas_id)
+                    ->orWhere('jam_pelajaran_id', '!=', $request->jam_id)
+                    ->orWhereNull('jam_pelajaran_id');
+            })
+            ->where('jam_mulai', '<', $sesi->jam_selesai)
+            ->where('jam_selesai', '>', $sesi->jam_mulai)
+            ->exists();
 
-    // Cek konflik guru
-    // Slot yang sedang ditimpa (kelas+hari+jam sama) tidak dihitung sebagai bentrok dengan dirinya sendiri.
-    $conflict = Jadwal::where('guru_id', $request->guru_id)
-        ->where('hari', $request->hari)
-        ->where(function ($q) use ($request) {
-            $q->where('kelas_id', '!=', $request->kelas_id)
-              ->orWhere('jam_pelajaran_id', '!=', $request->jam_id)
-              ->orWhereNull('jam_pelajaran_id');
-        })
-        ->where('jam_mulai', '<', $sesi->jam_selesai)
-        ->where('jam_selesai', '>', $sesi->jam_mulai)
-        ->exists();
+        if ($conflict) {
+            return response()->json(['status' => 'error', 'message' => 'Guru sudah memiliki jadwal di waktu tersebut.'], 422);
+        }
 
-    if ($conflict) {
-        return response()->json(['status' => 'error', 'message' => 'Guru sudah memiliki jadwal di waktu tersebut.'], 422);
+        // Cek apakah sudah ada jadwal di slot tersebut -> update atau create
+        $jadwal = Jadwal::updateOrCreate(
+            [
+                'kelas_id' => $request->kelas_id,
+                'hari' => $request->hari,
+                'jam_pelajaran_id' => $request->jam_id,
+            ],
+            [
+                'guru_id' => $request->guru_id,
+                'mapel_id' => $request->mapel_id,
+                'jam_mulai' => $sesi->jam_mulai,
+                'jam_selesai' => $sesi->jam_selesai,
+                'tahun_pelajaran_kode' => TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026',
+            ]
+        );
+
+        return response()->json(['status' => 'success', 'jadwal' => $jadwal]);
     }
 
-    // Cek apakah sudah ada jadwal di slot tersebut -> update atau create
-    $jadwal = Jadwal::updateOrCreate(
-        [
-            'kelas_id' => $request->kelas_id,
-            'hari' => $request->hari,
-            'jam_pelajaran_id' => $request->jam_id,
-        ],
-        [
-            'guru_id' => $request->guru_id,
-            'mapel_id' => $request->mapel_id,
-            'jam_mulai' => $sesi->jam_mulai,
-            'jam_selesai' => $sesi->jam_selesai,
-            'tahun_pelajaran_kode' => TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026',
-        ]
-    );
+    public function resolveKode(Request $request)
+    {
+        $request->validate(['kode' => 'required|string']);
+        $guru = Guru::where('kode', $request->kode)->first();
 
-    return response()->json(['status' => 'success', 'jadwal' => $jadwal]);
-}
+        if (! $guru) {
+            return response()->json(['status' => 'error', 'message' => 'Guru tidak ditemukan.'], 404);
+        }
 
-public function resolveKode(Request $request)
-{
-    $request->validate(['kode' => 'required|string']);
-    $guru = Guru::where('kode', $request->kode)->first();
-
-    if (!$guru) {
-        return response()->json(['status' => 'error', 'message' => 'Guru tidak ditemukan.'], 404);
+        return response()->json([
+            'status' => 'success',
+            'guru_id' => $guru->id,
+            'nama' => $guru->nama,
+        ]);
     }
-
-    return response()->json([
-        'status' => 'success',
-        'guru_id' => $guru->id,
-        'nama' => $guru->nama,
-    ]);
-}
-
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\Siswa;
 use App\Models\TahunPelajaran;
 use Illuminate\Http\Request;
 
@@ -12,14 +12,14 @@ class SiswaController extends Controller
     public function index(Request $request)
     {
         $siswa = Siswa::with('kelas')
-            ->when($request->search, function($q) use ($request) {
+            ->when($request->search, function ($q) use ($request) {
                 $q->where('nama_lengkap', 'like', "%{$request->search}%")
-                  ->orWhere('nis', 'like', "%{$request->search}%")
-                  ->orWhere('nisn', 'like', "%{$request->search}%");
+                    ->orWhere('nis', 'like', "%{$request->search}%")
+                    ->orWhere('nisn', 'like', "%{$request->search}%");
             })
             ->orderBy('nama_lengkap')
             ->paginate(15);
-            
+
         return view('siswa.index', compact('siswa'));
     }
 
@@ -27,6 +27,7 @@ class SiswaController extends Controller
     {
         $kelas = Kelas::all();
         $tahunPelajaran = TahunPelajaran::all();
+
         return view('siswa.create', compact('kelas', 'tahunPelajaran'));
     }
 
@@ -61,21 +62,22 @@ class SiswaController extends Controller
     {
         $kelas = Kelas::all();
         $tahunPelajaran = TahunPelajaran::all();
+
         return view('siswa.edit', compact('siswa', 'kelas', 'tahunPelajaran'));
     }
 
     public function update(Request $request, Siswa $siswa)
     {
         $validated = $request->validate([
-            'nis' => 'required|unique:siswa,nis,' . $siswa->id,
+            'nis' => 'required|unique:siswa,nis,'.$siswa->id,
             'nama_lengkap' => 'required',
             'nama_orang_tua' => 'nullable|string|max:255',
             'kelas_id' => 'required|exists:kelas,id',
             'jenis_kelamin' => 'required|in:L,P',
             'tempat_lahir' => 'nullable',
             'tanggal_lahir' => 'nullable|date',
-            'nisn' => 'nullable|unique:siswa,nisn,' . $siswa->id,
-            'nik' => 'nullable|digits:16|unique:siswa,nik,' . $siswa->id,
+            'nisn' => 'nullable|unique:siswa,nisn,'.$siswa->id,
+            'nik' => 'nullable|digits:16|unique:siswa,nik,'.$siswa->id,
             'alamat' => 'nullable',
             'hp' => 'nullable',
             'status' => 'required|in:Aktif,Lulus,Pindah,Keluar',
@@ -90,6 +92,7 @@ class SiswaController extends Controller
     public function destroy(Siswa $siswa)
     {
         $siswa->delete();
+
         return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil dihapus.');
     }
 }

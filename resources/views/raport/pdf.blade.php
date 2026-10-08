@@ -14,6 +14,7 @@
     </style>
 </head>
 <body>
+    @include('partials.pdf-kop')
     <div class="header">
         <h1>Raport Siswa</h1>
         <p>Nama: {{ $siswa->nama_lengkap }}</p>
@@ -41,5 +42,7 @@
             @endforeach
         </tbody>
     </table>
+
+    @include('partials.pdf-ttd')
 </body>
 </html>

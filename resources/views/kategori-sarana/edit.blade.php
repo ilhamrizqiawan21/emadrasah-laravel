@@ -3,16 +3,13 @@
 @section('title', 'Edit Kategori Sarana')
 
 @section('content')
-<div class="mb-4">
-    <a href="{{ route('kategori-sarana.index') }}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Kembali
-    </a>
-</div>
+<x-page-header :title="'Edit Kategori: '.($kategori_sarana->nama_kategori)">
+    <x-slot:actions>
+        <a href="{{ route('kategori-sarana.index') }}" class="btn btn-light border">Kembali</a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
-    <div class="card-header">
-        <h5>Edit Kategori: {{ $kategori_sarana->nama_kategori }}</h5>
-    </div>
     <div class="card-body">
         <form method="POST" action="{{ route('kategori-sarana.update', $kategori_sarana->id) }}">
             @csrf

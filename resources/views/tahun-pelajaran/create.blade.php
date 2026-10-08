@@ -3,15 +3,12 @@
 @section('title', 'Tambah Tahun Pelajaran')
 
 @section('content')
-<div class="row mb-4 align-items-center">
-    <div class="col-md-8">
-        <h2 class="em-page-title">Tambah Tahun Pelajaran</h2>
-        <p class="text-muted">Masukkan informasi dasar tahun pelajaran baru.</p>
-    </div>
-    <div class="col-md-4 text-end">
+<x-page-header title="Tambah Tahun Pelajaran" cols="8">
+    Masukkan informasi dasar tahun pelajaran baru.
+    <x-slot:actions>
         <a href="{{ route('tahun-pelajaran.index') }}" class="btn btn-light border">Kembali</a>
-    </div>
-</div>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guru;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,13 +11,15 @@ class KelasController extends Controller
 {
     public function index()
     {
-        $kelas = Kelas::orderBy('tingkat')->orderBy('nama_kelas')->paginate(10);
+        $kelas = Kelas::with('guruPembimbing')->orderBy('tingkat')->orderBy('nama_kelas')->paginate(10);
+
         return view('kelas.index', compact('kelas'));
     }
 
     public function create()
     {
-        $gurus = \App\Models\Guru::orderBy('nama')->get();
+        $gurus = Guru::orderBy('nama')->get();
+
         return view('kelas.create', compact('gurus'));
     }
 
@@ -31,19 +34,21 @@ class KelasController extends Controller
             'fase' => 'nullable|string|max:5',
         ]);
         Kelas::create($validated);
+
         return redirect()->route('kelas.index')->with('success', 'Kelas berhasil ditambahkan.');
     }
 
     public function edit(Kelas $kelas)
     {
-        $gurus = \App\Models\Guru::orderBy('nama')->get();
+        $gurus = Guru::orderBy('nama')->get();
+
         return view('kelas.edit', compact('kelas', 'gurus'));
     }
 
     public function update(Request $request, Kelas $kelas)
     {
         $validated = $request->validate([
-            'nama_kelas' => 'required|unique:kelas,nama_kelas,' . $kelas->id,
+            'nama_kelas' => 'required|unique:kelas,nama_kelas,'.$kelas->id,
             'tingkat' => 'required',
             'guru_pembimbing_id' => 'nullable|exists:gurus,id',
             'kapasitas' => 'nullable|integer|min:1',
@@ -51,34 +56,36 @@ class KelasController extends Controller
             'fase' => 'nullable|string|max:5',
         ]);
         $kelas->update($validated);
+
         return redirect()->route('kelas.index')->with('success', 'Kelas berhasil diupdate.');
     }
 
-public function destroy($id)
-{
-    try {
-        $kelas = Kelas::find($id);
-        if (!$kelas) {
-            return redirect()->route('kelas.index')->with('error', 'Kelas tidak ditemukan.');
-        }
+    public function destroy($id)
+    {
+        try {
+            $kelas = Kelas::find($id);
+            if (! $kelas) {
+                return redirect()->route('kelas.index')->with('error', 'Kelas tidak ditemukan.');
+            }
 
-        // Cek apakah kelas memiliki jadwal
-        $jadwalCount = DB::table('jadwals')->where('kelas_id', $id)->count();
-        if ($jadwalCount > 0) {
-            return redirect()->route('kelas.index')->with('error', "Kelas masih memiliki {$jadwalCount} jadwal. Hapus jadwal terlebih dahulu.");
-        }
+            // Cek apakah kelas memiliki jadwal
+            $jadwalCount = DB::table('jadwals')->where('kelas_id', $id)->count();
+            if ($jadwalCount > 0) {
+                return redirect()->route('kelas.index')->with('error', "Kelas masih memiliki {$jadwalCount} jadwal. Hapus jadwal terlebih dahulu.");
+            }
 
-        // Hapus langsung via query builder
-        $deleted = DB::table('kelas')->where('id', $id)->delete();
+            // Hapus langsung via query builder
+            $deleted = DB::table('kelas')->where('id', $id)->delete();
 
-        if ($deleted) {
-            return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus.');
-        } else {
-            return redirect()->route('kelas.index')->with('error', 'Gagal menghapus kelas. Data tidak ditemukan.');
+            if ($deleted) {
+                return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus.');
+            } else {
+                return redirect()->route('kelas.index')->with('error', 'Gagal menghapus kelas. Data tidak ditemukan.');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Hapus kelas gagal: '.$e->getMessage());
+
+            return redirect()->route('kelas.index')->with('error', 'Kelas tidak dapat dihapus karena masih dipakai data lain (mis. siswa).');
         }
-    } catch (\Exception $e) {
-        \Log::error('Hapus kelas gagal: ' . $e->getMessage());
-        return redirect()->route('kelas.index')->with('error', 'Kelas tidak dapat dihapus karena masih dipakai data lain (mis. siswa).');
     }
-}
 }

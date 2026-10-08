@@ -71,7 +71,7 @@
                         <td class="fw-semibold">{{ $task->judul }}</td>
                         <td>
                             @if($task->assigned_to)
-                            <i class="fas fa-user-circle me-1 text-muted"></i> {{ \App\Models\User::find($task->assigned_to)->name ?? '-' }}
+                            <i class="fas fa-user-circle me-1 text-muted"></i> {{ $task->assignedTo->name ?? '-' }}
                             @else
                             <span class="text-muted">-</span>
                             @endif

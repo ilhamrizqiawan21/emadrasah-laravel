@@ -21,8 +21,9 @@
 </head>
 <body>
     <div class="header">
-        <h2>Buku Induk Register Peserta Didik</h2>
-        <p>Madrasah Tsanawiyah Al-Ihsan - Kurikulum Merdeka</p>
+        @include('partials.pdf-kop')
+        <h2 style="margin-top: 14px;">Buku Induk Register Peserta Didik</h2>
+        <p>Kurikulum Merdeka</p>
     </div>
 
     <div class="photo-box">
@@ -65,11 +66,14 @@
     </table>
 
     <div class="footer">
-        <p>Dicetak pada: {{ date('d F Y') }}</p>
+        <p>Dicetak pada: {{ now()->translatedFormat('d F Y') }}</p>
         <div class="signature">
             <p>Kepala Madrasah,</p>
             <br><br><br>
-            <p><strong>Dra. Hj. Lina Nurhasanah</strong></p>
+            <p><strong>{{ $madrasah->kepala_nama ?: '..............................' }}</strong></p>
+            @if ($madrasah->kepala_nip)
+                <p>NIP. {{ $madrasah->kepala_nip }}</p>
+            @endif
         </div>
     </div>
 </body>

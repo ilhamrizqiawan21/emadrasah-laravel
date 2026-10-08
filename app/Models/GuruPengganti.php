@@ -10,6 +10,7 @@ class GuruPengganti extends Model
     use HasFactory;
 
     protected $table = 'guru_pengganti';
+
     protected $fillable = ['agenda_guru_id', 'jam_pelajaran_id', 'guru_pengganti_id', 'keterangan'];
 
     public function agendaGuru()

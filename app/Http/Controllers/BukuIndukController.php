@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
 use App\Models\Kelas;
-use App\Models\TahunPelajaran;
 use App\Models\OrangTuaWali;
 use App\Models\PerkembanganSiswa;
+use App\Models\Siswa;
 use App\Models\SiswaDokumen;
+use App\Models\TahunPelajaran;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class BukuIndukController extends Controller
 {
     public function index()
     {
         $siswa = Siswa::with(['kelas', 'tahunPelajaran'])->latest()->paginate(20);
+
         return view('buku-induk.index', compact('siswa'));
     }
 
@@ -25,6 +26,7 @@ class BukuIndukController extends Controller
     {
         $kelas = Kelas::all();
         $tahunPelajaran = TahunPelajaran::all();
+
         return view('buku-induk.create', compact('kelas', 'tahunPelajaran'));
     }
 
@@ -35,6 +37,7 @@ class BukuIndukController extends Controller
             'nis' => 'required|unique:siswa,nis',
             'nisn' => 'nullable|unique:siswa,nisn',
             'nik' => 'nullable|unique:siswa,nik|digits:16',
+            'dokumen' => 'nullable|array|max:10',
             'dokumen.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
@@ -63,22 +66,24 @@ class BukuIndukController extends Controller
                     if ($file) {
                         // Nama file acak di disk privat; $jenis hanya disimpan sebagai label di DB.
                         $path = $file->store('siswa-dokumen', 'local');
-                        
+
                         SiswaDokumen::create([
                             'siswa_id' => $siswa->id,
                             'jenis_dokumen' => mb_substr((string) $jenis, 0, 100),
                             'file_path' => $path,
-                            'nama_file' => $file->getClientOriginalName()
+                            'nama_file' => $file->getClientOriginalName(),
                         ]);
                     }
                 }
             }
 
             DB::commit();
+
             return redirect()->route('buku-induk.index')->with('success', 'Data Buku Induk Siswa berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
             report($e);
+
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Silakan periksa isian dan coba lagi.');
         }
     }
@@ -88,6 +93,7 @@ class BukuIndukController extends Controller
         $siswa->load(['orangTuaWali', 'perkembangan', 'dokumen']);
         $kelas = Kelas::all();
         $tahunPelajaran = TahunPelajaran::all();
+
         return view('buku-induk.edit', compact('siswa', 'kelas', 'tahunPelajaran'));
     }
 
@@ -95,9 +101,10 @@ class BukuIndukController extends Controller
     {
         $request->validate([
             'nama_lengkap' => 'required|string|max:100',
-            'nis' => 'required|unique:siswa,nis,' . $siswa->id,
-            'nisn' => 'nullable|unique:siswa,nisn,' . $siswa->id,
-            'nik' => 'nullable|unique:siswa,nik,' . $siswa->id . '|digits:16',
+            'nis' => 'required|unique:siswa,nis,'.$siswa->id,
+            'nisn' => 'nullable|unique:siswa,nisn,'.$siswa->id,
+            'nik' => 'nullable|unique:siswa,nik,'.$siswa->id.'|digits:16',
+            'dokumen' => 'nullable|array|max:10',
             'dokumen.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ]);
 
@@ -121,8 +128,8 @@ class BukuIndukController extends Controller
                 foreach ($request->file('dokumen') as $jenis => $file) {
                     if ($file) {
                         $jenis = mb_substr((string) $jenis, 0, 100);
-                        $path  = $file->store('siswa-dokumen', 'local');
-                        $lama  = $siswa->dokumen()->where('jenis_dokumen', $jenis)->value('file_path');
+                        $path = $file->store('siswa-dokumen', 'local');
+                        $lama = $siswa->dokumen()->where('jenis_dokumen', $jenis)->value('file_path');
                         $siswa->dokumen()->updateOrCreate(['jenis_dokumen' => $jenis], ['file_path' => $path, 'nama_file' => $file->getClientOriginalName()]);
                         if ($lama) {
                             Storage::disk('local')->delete($lama);
@@ -132,10 +139,12 @@ class BukuIndukController extends Controller
             }
 
             DB::commit();
+
             return redirect()->route('buku-induk.index')->with('success', 'Data Buku Induk Siswa berhasil diperbarui.');
         } catch (\Exception $e) {
             DB::rollBack();
             report($e);
+
             return back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data. Silakan periksa isian dan coba lagi.');
         }
     }
@@ -143,6 +152,7 @@ class BukuIndukController extends Controller
     public function show(Siswa $siswa)
     {
         $siswa->load(['kelas', 'tahunPelajaran', 'orangTuaWali', 'perkembangan', 'dokumen']);
+
         return view('buku-induk.show', compact('siswa'));
     }
 
@@ -151,6 +161,7 @@ class BukuIndukController extends Controller
         $paths = $siswa->dokumen()->pluck('file_path')->filter()->all();
         $siswa->delete();
         Storage::disk('local')->delete($paths);
+
         return redirect()->route('buku-induk.index')->with('success', 'Data siswa berhasil dihapus.');
     }
 
@@ -158,6 +169,7 @@ class BukuIndukController extends Controller
     {
         $siswa->load(['kelas', 'tahunPelajaran', 'orangTuaWali', 'perkembangan']);
         $pdf = Pdf::loadView('buku-induk.pdf', compact('siswa'))->setPaper('a4', 'portrait');
+
         return $pdf->stream('Buku_Induk_'.$siswa->nis.'.pdf');
     }
 }

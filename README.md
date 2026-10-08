@@ -38,12 +38,11 @@
 ## 🛠️ Tech Stack
 
 - **Framework**: [Laravel 13](https://laravel.com)
-- **Bahasa Pemrograman**: PHP 8.3
-- **Frontend**: Blade Templates, TailwindCSS, Alpine.js
-- **Database**: MySQL
+- **Bahasa Pemrograman**: PHP 8.3+ (diuji di PHP 8.5)
+- **Frontend**: Blade Templates, Bootstrap 5 (Sass), Font Awesome 6, Chart.js, dibangun dengan Vite
+- **Database**: SQLite (pengembangan) atau MySQL/PostgreSQL (produksi)
 - **Eksportir**: 
   - PDF: [Barryvdh/Laravel-DomPDF](https://github.com/barryvdh/laravel-dompdf)
-  - Excel: [Maatwebsite/Laravel-Excel](https://laravel-excel.com/)
 - **Scripts**: Python (untuk ekstraksi teks dari dokumen statis)
 
 ---
@@ -68,10 +67,12 @@
    composer install
    ```
 
-3. **Instal dependensi Frontend:**
+3. **Instal dan bangun aset Frontend:**
    ```bash
    npm install
+   npm run build
    ```
+   Untuk pengembangan, jalankan `npm run dev` agar perubahan CSS/JS langsung termuat.
 
 4. **Konfigurasi Lingkungan:**
    Salin file `.env.example` menjadi `.env` dan sesuaikan pengaturan database Anda.
@@ -89,6 +90,19 @@
    ```bash
    php artisan serve
    ```
+
+---
+
+## ⚙️ Pengaturan Madrasah (tanpa mengubah kode)
+
+Satu instalasi melayani satu madrasah. Identitas dan tampilan diatur dari menu **Pengaturan** (khusus admin), jadi klien tidak perlu menyentuh kode atau file `.env`:
+
+- Nama madrasah (lengkap, tampilan, dan singkat), NPSN, alamat, telepon, email, website
+- Nama dan NIP kepala madrasah (tercetak pada tanda tangan dokumen)
+- Logo dan favicon (PNG/JPG/WebP, maksimal 1 MB; favicon mengikuti logo bila tidak diunggah)
+- Warna utama aplikasi (pilih preset atau warna sendiri; warna yang terlalu terang ditolak agar teks tetap terbaca)
+
+Nilai awal untuk instalasi baru diambil dari `config/madrasah.php` (dapat diisi lewat variabel `MADRASAH_*` di `.env`). Setelah admin menyimpan Pengaturan, nilai di database yang dipakai.
 
 ---
 

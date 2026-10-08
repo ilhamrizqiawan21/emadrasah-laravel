@@ -4,11 +4,11 @@
     <div class="em-sidebar__header">
         <div class="em-brand">
             <div class="em-brand__logo">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" width="24" height="24">
+                <img src="{{ $madrasah->logoUrl() }}" alt="Logo" width="24" height="24">
             </div>
             <div class="em-brand__text">
                 <span class="em-brand__title">e-Madrasah</span>
-                <span class="em-brand__sub">MTs Al-Ihsan</span>
+                <span class="em-brand__sub">{{ $madrasah->nama_pendek }}</span>
             </div>
         </div>
         <button type="button" class="em-sidebar-toggle" id="sidebarToggleDesktop" aria-label="Ciutkan atau lebarkan menu" title="Ciutkan / lebarkan menu">
@@ -168,6 +168,12 @@
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Manajemen Pengguna">
                     <span class="em-nav__icon"><i class="fas fa-user-cog"></i></span>
                     <span class="em-nav__text">Pengguna</span>
+                </a>
+                <a href="{{ route('pengaturan.edit') }}"
+                   class="em-nav__link {{ request()->routeIs('pengaturan.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Pengaturan Madrasah">
+                    <span class="em-nav__icon"><i class="fas fa-cog"></i></span>
+                    <span class="em-nav__text">Pengaturan</span>
                 </a>
                 @endif
             </div>

@@ -8,9 +8,9 @@ use App\Models\GuruPengganti;
 use App\Models\Jadwal;
 use App\Models\JamPelajaran;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class AgendaGuruController extends Controller
 {
@@ -22,13 +22,13 @@ class AgendaGuruController extends Controller
      * bahasa Inggris dan query ke jam_pelajaran selalu kosong.
      */
     private array $hariMap = [
-        'Monday'    => 'Senin',
-        'Tuesday'   => 'Selasa',
+        'Monday' => 'Senin',
+        'Tuesday' => 'Selasa',
         'Wednesday' => 'Rabu',
-        'Thursday'  => 'Kamis',
-        'Friday'    => 'Jumat',
-        'Saturday'  => 'Sabtu',
-        'Sunday'    => 'Minggu',
+        'Thursday' => 'Kamis',
+        'Friday' => 'Jumat',
+        'Saturday' => 'Sabtu',
+        'Sunday' => 'Minggu',
     ];
 
     /** Konversi objek Carbon → nama hari Indonesia. */
@@ -49,6 +49,7 @@ class AgendaGuruController extends Controller
         }
         $id = Guru::where('user_id', $user->id)->value('id');
         abort_if($id === null, 403, 'Akun Anda belum terhubung dengan data guru.');
+
         return (int) $id;
     }
 
@@ -58,7 +59,7 @@ class AgendaGuruController extends Controller
     {
         request()->validate(['tanggal' => 'nullable|date']);
         $tanggal = request('tanggal') ? Carbon::parse(request('tanggal')) : today();
-        $gurus   = Guru::orderBy('nama')->get();
+        $gurus = Guru::orderBy('nama')->get();
 
         $existingAgendas = AgendaGuru::whereDate('tanggal', $tanggal)
             ->get()
@@ -75,11 +76,11 @@ class AgendaGuruController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tanggal'       => 'required|date',
-            'status'        => 'required|array',
-            'status.*'      => 'in:hadir,izin,sakit,alpha',
-            'keterangan'    => 'nullable|array',
-            'keterangan.*'  => 'nullable|string|max:255',
+            'tanggal' => 'required|date',
+            'status' => 'required|array',
+            'status.*' => 'in:hadir,izin,sakit,alpha',
+            'keterangan' => 'nullable|array',
+            'keterangan.*' => 'nullable|string|max:255',
         ]);
 
         // Hanya ID guru yang benar-benar ada; guru biasa hanya boleh mengisi dirinya sendiri.
@@ -93,11 +94,13 @@ class AgendaGuruController extends Controller
                 if (! in_array((int) $guruId, array_map('intval', $guruIds), true)) {
                     continue;
                 }
+                // Kunci berupa tanggal Carbon: string 'Y-m-d' tidak cocok dengan nilai tersimpan
+                // di database yang menyimpan datetime (SQLite), sehingga simpan kedua kali gagal.
                 AgendaGuru::updateOrCreate(
-                    ['tanggal' => $request->tanggal, 'guru_id' => $guruId],
+                    ['tanggal' => Carbon::parse($request->tanggal)->startOfDay(), 'guru_id' => $guruId],
                     [
-                        'status'      => $status,
-                        'keterangan'  => $request->keterangan[$guruId] ?? null,
+                        'status' => $status,
+                        'keterangan' => $request->keterangan[$guruId] ?? null,
                     ]
                 );
             }
@@ -119,11 +122,11 @@ class AgendaGuruController extends Controller
     public function pengganti(AgendaGuru $agenda)
     {
         $this->pastikanBolehKelola($agenda);
-        $tanggal  = $agenda->tanggal;
+        $tanggal = $agenda->tanggal;
         $hariIndo = $this->hariIndo($tanggal); // ← pakai helper, konsisten
 
-        $jamList               = JamPelajaran::where('hari', $hariIndo)->orderBy('sesi_ke')->get();
-        $guruPenggantiOptions  = Guru::where('id', '!=', $agenda->guru_id)->orderBy('nama')->get();
+        $jamList = JamPelajaran::where('hari', $hariIndo)->orderBy('sesi_ke')->get();
+        $guruPenggantiOptions = Guru::where('id', '!=', $agenda->guru_id)->orderBy('nama')->get();
 
         $jadwalGuru = Jadwal::where('hari', $hariIndo)
             ->get(['guru_id', 'jam_mulai', 'jam_selesai'])
@@ -136,13 +139,13 @@ class AgendaGuruController extends Controller
     {
         $this->pastikanBolehKelola($agenda);
         $request->validate([
-            'jam_pelajaran_id'   => 'required|exists:jam_pelajaran,id',
-            'guru_pengganti_id'  => 'required|exists:gurus,id',
-            'keterangan'         => 'nullable|string|max:255',
+            'jam_pelajaran_id' => 'required|exists:jam_pelajaran,id',
+            'guru_pengganti_id' => 'required|exists:gurus,id',
+            'keterangan' => 'nullable|string|max:255',
         ]);
 
-        $jam      = JamPelajaran::find($request->jam_pelajaran_id);
-        $tanggal  = $agenda->tanggal;
+        $jam = JamPelajaran::find($request->jam_pelajaran_id);
+        $tanggal = $agenda->tanggal;
 
         // FIX POIN 1 — gunakan hariMap manual, bukan translatedFormat('l')
         // yang bergantung pada locale Carbon (bisa menghasilkan nama hari
@@ -164,8 +167,8 @@ class AgendaGuruController extends Controller
 
         // 2. Cek apakah guru pengganti sudah ditugaskan di sesi yang sama pada hari ini
         $existingPengganti = GuruPengganti::whereHas('agendaGuru', function ($q) use ($tanggal) {
-                $q->whereDate('tanggal', $tanggal);
-            })
+            $q->whereDate('tanggal', $tanggal);
+        })
             ->where('jam_pelajaran_id', $request->jam_pelajaran_id)
             ->where('guru_pengganti_id', $request->guru_pengganti_id)
             ->exists();
@@ -178,10 +181,10 @@ class AgendaGuruController extends Controller
 
         // 3. Simpan pengganti
         GuruPengganti::create([
-            'agenda_guru_id'    => $agenda->id,
-            'jam_pelajaran_id'  => $request->jam_pelajaran_id,
+            'agenda_guru_id' => $agenda->id,
+            'jam_pelajaran_id' => $request->jam_pelajaran_id,
             'guru_pengganti_id' => $request->guru_pengganti_id,
-            'keterangan'        => $request->keterangan,
+            'keterangan' => $request->keterangan,
         ]);
 
         return redirect()
@@ -203,11 +206,12 @@ class AgendaGuruController extends Controller
             ->get()
             ->groupBy('guru_id')
             ->map(function ($items) {
-                $hadir  = $items->where('status', 'hadir')->count();
-                $izin   = $items->where('status', 'izin')->count();
-                $sakit  = $items->where('status', 'sakit')->count();
-                $alpha  = $items->where('status', 'alpha')->count();
-                $guru   = $items->first()->guru; // ambil relasi guru dari item pertama
+                $hadir = $items->where('status', 'hadir')->count();
+                $izin = $items->where('status', 'izin')->count();
+                $sakit = $items->where('status', 'sakit')->count();
+                $alpha = $items->where('status', 'alpha')->count();
+                $guru = $items->first()->guru; // ambil relasi guru dari item pertama
+
                 return [
                     'guru' => $guru,
                     'hadir' => $hadir,
@@ -232,11 +236,12 @@ class AgendaGuruController extends Controller
             ->get()
             ->groupBy('guru_id')
             ->map(function ($items) {
-                $hadir  = $items->where('status', 'hadir')->count();
-                $izin   = $items->where('status', 'izin')->count();
-                $sakit  = $items->where('status', 'sakit')->count();
-                $alpha  = $items->where('status', 'alpha')->count();
-                $guru   = $items->first()->guru;
+                $hadir = $items->where('status', 'hadir')->count();
+                $izin = $items->where('status', 'izin')->count();
+                $sakit = $items->where('status', 'sakit')->count();
+                $alpha = $items->where('status', 'alpha')->count();
+                $guru = $items->first()->guru;
+
                 return [
                     'guru' => $guru,
                     'hadir' => $hadir,
@@ -249,6 +254,6 @@ class AgendaGuruController extends Controller
         $pdf = Pdf::loadView('absensi.rekap-pdf', compact('rekap', 'bulan', 'tahun'))
             ->setPaper('a4', 'landscape');
 
-        return $pdf->stream('Rekap_Absensi_' . $bulan . '_' . $tahun . '.pdf');
+        return $pdf->stream('Rekap_Absensi_'.$bulan.'_'.$tahun.'.pdf');
     }
 }

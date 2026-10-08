@@ -10,6 +10,7 @@ class JamPelajaranController extends Controller
     public function index()
     {
         $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->paginate(20);
+
         return view('jam-pelajaran.index', compact('jamPelajaran'));
     }
 
@@ -27,6 +28,7 @@ class JamPelajaranController extends Controller
             'jam_selesai' => 'required|date_format:H:i,H:i:s|after:jam_mulai',
         ]);
         JamPelajaran::create($validated);
+
         return redirect()->route('jam-pelajaran.index')->with('success', 'Jam pelajaran berhasil ditambahkan.');
     }
 
@@ -44,12 +46,14 @@ class JamPelajaranController extends Controller
             'jam_selesai' => 'required|date_format:H:i,H:i:s|after:jam_mulai',
         ]);
         $jamPelajaran->update($validated);
+
         return redirect()->route('jam-pelajaran.index')->with('success', 'Jam pelajaran berhasil diupdate.');
     }
 
     public function destroy(JamPelajaran $jamPelajaran)
     {
         $jamPelajaran->delete();
+
         return redirect()->route('jam-pelajaran.index')->with('success', 'Jam pelajaran berhasil dihapus.');
     }
 }

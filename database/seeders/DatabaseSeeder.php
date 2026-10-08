@@ -14,16 +14,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Default Admin User
-        User::firstOrCreate(
-            ['email' => 'admin@madrasah.id'],
-            [
-                'name' => 'Administrator',
-                'password' => Hash::make('admin123'),
-                'role' => 'admin',
-                'is_active' => true,
-            ]
-        );
+        // Akun demo hanya untuk pengembangan/demo. Di produksi admin pertama dibuat dengan
+        // `php artisan madrasah:install` (kata sandi sendiri), bukan kredensial yang diketahui umum.
+        if (! app()->isProduction()) {
+            User::firstOrCreate(
+                ['email' => 'admin@madrasah.id'],
+                [
+                    'name' => 'Administrator',
+                    'password' => Hash::make('admin123'),
+                    'role' => 'admin',
+                    'is_active' => true,
+                ]
+            );
+        }
 
         // Kategori Sarana
         $kategoriList = ['Elektronik', 'Furniture', 'Alat Peraga', 'Olahraga'];
@@ -44,9 +47,12 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        $this->call([
-            SaranaSeeder::class,
-            DummyDataSeeder::class,
-        ]);
+        // Data contoh (siswa, guru, surat, akun demo) tidak boleh ikut ke produksi.
+        if (! app()->isProduction()) {
+            $this->call([
+                SaranaSeeder::class,
+                DummyDataSeeder::class,
+            ]);
+        }
     }
 }

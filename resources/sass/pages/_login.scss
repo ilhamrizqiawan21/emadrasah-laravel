@@ -1,0 +1,191 @@
+// Halaman login: dua panel di desktop (merek | form), satu kolom di HP.
+body.login-page {
+    background: var(--em-white);
+    min-height: 100vh;
+}
+
+.login-split {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 992px) {
+        grid-template-columns: minmax(380px, 5fr) 6fr;
+    }
+}
+
+// ── Panel merek ──────────────────────────────────────────────
+.login-brand {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 36px 28px 28px;
+    color: #fff;
+    background: linear-gradient(150deg, var(--em-green-950) 0%, var(--em-green-800) 60%, var(--em-green-700) 100%);
+
+    // Lingkaran dekoratif
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, .06);
+        pointer-events: none;
+    }
+    &::before { width: 340px; height: 340px; top: -120px; right: -100px; }
+    &::after { width: 240px; height: 240px; bottom: -90px; left: -70px; }
+
+    @media (min-width: 992px) {
+        padding: 56px;
+    }
+}
+
+.login-brand__inner {
+    position: relative;
+    z-index: 1;
+    margin: auto 0;
+    text-align: center;
+
+    @media (min-width: 992px) {
+        text-align: left;
+    }
+}
+
+.login-logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: var(--em-r-xl);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+    font-size: 2rem;
+
+    @media (min-width: 992px) {
+        width: 96px;
+        height: 96px;
+        margin: 0 0 28px;
+        font-size: 2.6rem;
+    }
+}
+
+.login-logo__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.login-brand__name {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -.3px;
+    margin: 0 0 6px;
+
+    @media (min-width: 992px) {
+        font-size: 2.1rem;
+        line-height: 1.2;
+    }
+}
+
+.login-brand__tagline {
+    margin: 0;
+    color: rgba(255, 255, 255, .72);
+    font-size: .9rem;
+
+    @media (min-width: 992px) {
+        font-size: 1.05rem;
+        max-width: 28ch;
+    }
+}
+
+.login-brand__foot {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .5);
+    display: none;
+
+    @media (min-width: 992px) {
+        display: block;
+    }
+}
+
+// ── Panel form ───────────────────────────────────────────────
+.login-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px 40px;
+    background: var(--em-white);
+    animation: em-fade-in .35s var(--em-ease) both;
+}
+
+.login-panel__inner {
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-heading {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 4px;
+}
+
+.login-lead {
+    color: var(--em-text-muted);
+    margin: 0 0 24px;
+}
+
+.login-password {
+    position: relative;
+
+    .form-control { padding-right: 48px; }
+}
+
+.login-password__toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 48px;
+    border: 0;
+    background: transparent;
+    color: var(--em-text-muted);
+    z-index: 5;
+
+    &:hover { color: var(--em-primary); }
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--em-primary);
+    opacity: .8;
+}
+
+.btn-login {
+    padding: 12px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+.login-footer {
+    text-align: center;
+    margin: 28px 0 0;
+    font-size: .75rem;
+    color: var(--em-gray-400);
+}
+
+@keyframes em-fade-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}

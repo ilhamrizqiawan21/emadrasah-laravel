@@ -3,12 +3,13 @@
 @section('title', 'Mata Pelajaran')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Mata Pelajaran</h1>
-    <a href="{{ route('mapel.create') }}" class="btn btn-primary">
+<x-page-header title="Mata Pelajaran">
+    <x-slot:actions>
+        <a href="{{ route('mapel.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah Mapel
-    </a>
-</div>
+        </a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -38,9 +39,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="3" class="text-center py-4">Belum ada data mata pelajaran</td>
-                    </tr>
+                    <x-empty-row :colspan="3" icon="fa-folder-open">Belum ada data mata pelajaran</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

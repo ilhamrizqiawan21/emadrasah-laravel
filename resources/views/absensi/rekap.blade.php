@@ -27,7 +27,7 @@
                     <select name="bulan" class="form-select">
                         @for($m=1; $m<=12; $m++)
                             <option value="{{ $m }}" {{ $bulan == $m ? 'selected' : '' }}>
-                                {{ date('F', mktime(0,0,0,$m,1)) }}
+                                {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
                             </option>
                         @endfor
                     </select>
@@ -135,7 +135,7 @@
         <div class="card-header bg-white py-3">
             <h5 class="mb-0 fw-semibold">
                 <i class="fas fa-table me-2 text-primary"></i> 
-                Detail Rekap Bulan {{ date('F', mktime(0,0,0,$bulan,1)) }} {{ $tahun }}
+                Detail Rekap Bulan {{ \Carbon\Carbon::create(null, $bulan, 1)->translatedFormat('F') }} {{ $tahun }}
             </h5>
         </div>
         <div class="card-body p-0">
@@ -203,9 +203,11 @@
 
 @push('scripts')
 <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     tooltipTriggerList.map(function (tooltipTriggerEl) {
         return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
     });
 </script>
 @endpush

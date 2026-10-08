@@ -10,6 +10,7 @@ class TaskLog extends Model
     use HasFactory;
 
     protected $table = 'task_logs';
+
     protected $fillable = ['task_id', 'user_id', 'action', 'keterangan'];
 
     public function task()

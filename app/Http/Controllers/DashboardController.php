@@ -2,15 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
+use App\Models\AgendaGuru;
 use App\Models\Guru;
 use App\Models\Kelas;
-use App\Models\Task;
-use App\Models\SuratMasuk;
-use App\Models\AgendaGuru;
 use App\Models\SaranaPrasarana;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
+use App\Models\Siswa;
+use App\Models\SuratMasuk;
+use App\Models\Task;
 
 class DashboardController extends Controller
 {

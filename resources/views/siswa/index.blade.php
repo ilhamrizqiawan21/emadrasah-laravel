@@ -3,17 +3,14 @@
 @section('title', 'Data Siswa')
 
 @section('content')
-<div class="row mb-4 align-items-center">
-    <div class="col-md-6">
-        <h2 class="em-page-title">Data Siswa</h2>
-        <p class="text-muted">Kelola data seluruh siswa MTs Al-Ihsan Batujajar.</p>
-    </div>
-    <div class="col-md-6 text-end">
+<x-page-header title="Data Siswa">
+    Kelola data seluruh siswa {{ $madrasah->nama }}.
+    <x-slot:actions>
         <a href="{{ route('siswa.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus me-2"></i>Tambah Siswa
+        <i class="fas fa-plus me-2"></i>Tambah Siswa
         </a>
-    </div>
-</div>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white py-3">
@@ -74,9 +71,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">Data siswa tidak ditemukan.</td>
-                    </tr>
+                    <x-empty-row :colspan="7">Data siswa tidak ditemukan.</x-empty-row>
                     @endforelse
                 </tbody>
             </table>

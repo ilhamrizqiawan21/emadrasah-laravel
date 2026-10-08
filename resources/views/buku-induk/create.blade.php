@@ -230,20 +230,4 @@
     </form>
 </div>
 
-<style>
-    .em-tabs .nav-link {
-        background: #f8f9fa;
-        color: #495057;
-        margin-right: 5px;
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-weight: 500;
-        border: 1px solid #dee2e6;
-    }
-    .em-tabs .nav-link.active {
-        background: var(--em-primary);
-        color: white;
-        border-color: var(--em-primary);
-    }
-</style>
 @endsection

@@ -1,7 +1,21 @@
 {
     "private": true,
+    "type": "module",
     "scripts": {
-        "dev": "echo 'No build step needed'",
-        "build": "echo 'No build step needed'"
+        "dev": "vite",
+        "build": "vite build",
+        "e2e": "playwright test"
+    },
+    "devDependencies": {
+        "@fontsource-variable/dm-sans": "^5.3.0",
+        "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+        "@fortawesome/fontawesome-free": "^6.7.2",
+        "@playwright/test": "^1.64.0",
+        "@popperjs/core": "^2.11.8",
+        "bootstrap": "^5.3.8",
+        "chart.js": "^4.5.1",
+        "laravel-vite-plugin": "^3.2.0",
+        "sass": "^1.105.1",
+        "vite": "^8.3.3"
     }
 }

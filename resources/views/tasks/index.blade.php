@@ -2,47 +2,6 @@
 
 @section('title', 'Manajemen Tugas - Kanban')
 
-@push('styles')
-<style>
-    .kanban-column {
-        background: #f8fafc;
-        border-radius: 1rem;
-        transition: all 0.2s;
-    }
-    .kanban-column .card-header {
-        border-radius: 1rem 1rem 0 0;
-        padding: 0.75rem 1rem;
-    }
-    .task-card {
-        transition: all 0.2s ease;
-        border-left: 4px solid transparent;
-    }
-    .task-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    .task-card.deadline-warning {
-        border-left-color: #ef4444;
-        background: #fef2f2;
-    }
-    .task-card.deadline-approaching {
-        border-left-color: #f59e0b;
-    }
-    .priority-badge {
-        font-size: .75rem;
-        padding: 0.2rem 0.5rem;
-        border-radius: 20px;
-    }
-    .task-footer {
-        border-top: 1px solid #e2e8f0;
-        margin-top: 0.5rem;
-        padding-top: 0.5rem;
-        font-size: .75rem;
-        color: #64748b;
-    }
-</style>
-@endpush
-
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -113,7 +72,7 @@
                             </span>
                         </div>
                         <p class="card-text small text-muted mb-1">
-                            <i class="fas fa-user-circle me-1"></i> {{ $task->assigned_to ? \App\Models\User::find($task->assigned_to)->name ?? '-' : '-' }}
+                            <i class="fas fa-user-circle me-1"></i> {{ $task->assigned_to ? $task->assignedTo->name ?? '-' : '-' }}
                         </p>
                         @if($task->deadline)
                         <p class="card-text small mb-1">

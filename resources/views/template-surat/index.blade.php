@@ -3,12 +3,13 @@
 @section('title', 'Template Surat')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3">Template Surat</h1>
-    <a href="{{ route('template-surat.create') }}" class="btn btn-primary">
+<x-page-header title="Template Surat">
+    <x-slot:actions>
+        <a href="{{ route('template-surat.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Tambah Template
-    </a>
-</div>
+        </a>
+    </x-slot:actions>
+</x-page-header>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">
@@ -44,9 +45,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-4">Belum ada template surat</td>
-                    </tr>
+                    <x-empty-row :colspan="4" icon="fa-folder-open">Belum ada template surat</x-empty-row>
                     @endforelse
                 </tbody>
             </table>
