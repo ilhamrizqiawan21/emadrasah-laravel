@@ -477,21 +477,7 @@ h1, h2, h3, h4, h5, h6 {
     transform: scale(1.1);
 }
 
-/* Bar atas ponsel: di bawah overlay (1030) dan sidebar (1040) agar ikut tertutup saat menu terbuka */
-.em-topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 0 12px;
-    background: var(--em-white);
-    border-bottom: 1px solid var(--em-border);
-    z-index: 1020;
-}
+/* Aturan dasar .em-topbar ada di _soft.scss (bagian 7) */
 .em-topbar .em-mobile-menu-btn {
     position: static;
     width: 40px;
@@ -1107,7 +1093,6 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
 .em-nav__dropdown.is-open .em-nav__dropdown-menu { animation: em-slide-down .25s var(--em-ease-out); }
 .em-sidebar { transition: width var(--em-dur-base) var(--em-ease-out), transform .32s var(--em-ease-out), box-shadow .32s; }
 .em-sidebar.is-open { box-shadow: var(--em-shadow-md); }
-.em-topbar { box-shadow: var(--em-shadow-xs); }
 .em-logout-btn { transition: background-color var(--em-dur-base), color var(--em-dur-base), transform var(--em-dur-fast); }
 .em-logout-btn:hover { transform: scale(1.06); }
 

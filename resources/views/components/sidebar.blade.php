@@ -202,6 +202,3 @@
     </div>
 
 </aside>
-
-{{-- Bar atas ada di components/topbar.blade.php --}}
-@include('components.topbar')

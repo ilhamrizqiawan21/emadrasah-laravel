@@ -16,6 +16,9 @@
     <div class="em-layout">
         <!-- Sidebar -->
         @include('components.sidebar')
+
+        <!-- Topbar -->
+        @include('components.topbar')
         <script>
             /* Terapkan keadaan ciut sebelum render pertama agar tidak berkedip/beranimasi setiap pindah halaman */
             (function () {
