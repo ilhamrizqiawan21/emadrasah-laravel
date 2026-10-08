@@ -28,7 +28,7 @@ class TaskController extends Controller
             });
         }
 
-        $tasks = $query->paginate(15);
+        $tasks = $query->orderByDesc('id')->paginate(15);
         if ($request->get('view') === 'list') {
             return view('tasks.index_list', compact('tasks'));
         }
@@ -77,7 +77,7 @@ class TaskController extends Controller
 
     public function show(Task $task)
     {
-        $logs = $task->logs()->with('user')->orderBy('created_at', 'desc')->get();
+        $logs = $task->logs()->with('user')->orderBy('created_at', 'desc')->orderByDesc('id')->paginate(10)->withQueryString();
 
         return view('tasks.show', compact('task', 'logs'));
     }

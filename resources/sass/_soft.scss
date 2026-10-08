@@ -1,0 +1,601 @@
+// ===========================================================================
+// Gaya "Lembut & Ramah" (opsi B)
+//
+// Diimpor setelah _custom.scss dan menimpanya. Semua warna turunan merek memakai
+// var(--em-green-*) / color-mix(), sehingga ganti warna klien di menu Pengaturan
+// tetap mengubah seluruh tampilan.
+//
+//   1. Token dan tipografi        4. Komponen (kartu, tombol, form, badge, dll.)
+//   2. Rangka (sidebar, topbar)   5. Tabel
+//   3. Tombol sidebar             6. Avatar
+// ===========================================================================
+
+// ── 1. Token dan tipografi ─────────────────────────────────────────────────
+:root {
+    --em-gap: 0px; // sidebar menempel penuh di tepi; ubah di sini bila ingin kembali mengambang
+    --em-sidebar-w: 272px;
+    --em-sidebar-collapsed-w: 88px;
+
+    --em-bg: color-mix(in srgb, var(--em-green-700) 6%, #f4f7f6);
+    --em-border: #e8edf0;
+    --em-text: #1e293b;
+    --em-text-muted: #64748b;
+
+    --em-r-sm: 10px;
+    --em-r-md: 14px;
+    --em-r-lg: 22px;
+    --em-r-xl: 28px;
+
+    --em-soft-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 10px 30px rgba(15, 23, 42, .06);
+    --em-soft-shadow-lg: 0 2px 4px rgba(15, 23, 42, .04), 0 18px 44px rgba(15, 23, 42, .09);
+    --em-ring: 0 0 0 4px rgba(var(--em-green-700-rgb), .16);
+    --em-tint: rgba(var(--em-green-700-rgb), .08);
+}
+
+body {
+    font-family: 'Inter Variable', 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-size: .9375rem;
+    line-height: 1.55;
+    color: var(--em-text);
+    font-feature-settings: 'cv11', 'ss03';
+    letter-spacing: -.003em;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    color: #0f172a;
+}
+
+.em-page-title {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin-bottom: .2rem;
+}
+
+// Angka sejajar rapi di tabel dan kartu statistik.
+.table, .em-stat__value, .badge, .page-link { font-variant-numeric: tabular-nums; }
+
+::selection { background: rgba(var(--em-green-700-rgb), .22); }
+
+// ── 2. Rangka ──────────────────────────────────────────────────────────────
+.em-main {
+    margin-left: calc(var(--em-sidebar-w) + var(--em-gap) * 2);
+    padding: 30px 34px 24px;
+}
+
+// Catatan: ada <script> di antara <aside> dan <main> di layout, jadi selector harus ~ (bukan +).
+.em-sidebar.is-collapsed ~ .em-main {
+    margin-left: calc(var(--em-sidebar-collapsed-w) + var(--em-gap) * 2);
+}
+
+.em-footer {
+    margin-left: calc(var(--em-sidebar-w) + var(--em-gap) * 2);
+    background: transparent;
+    border-top: 0;
+    color: var(--em-text-muted);
+}
+
+.em-sidebar.is-collapsed ~ .em-footer {
+    margin-left: calc(var(--em-sidebar-collapsed-w) + var(--em-gap) * 2);
+}
+
+// Sidebar presisi: menempel penuh di tepi kiri, sudut lurus, dipisah garis tipis.
+.em-sidebar {
+    top: var(--em-gap);
+    left: var(--em-gap);
+    bottom: var(--em-gap);
+    border: 0;
+    border-right: 1px solid var(--em-border);
+    border-radius: 0;
+    background: #fff;
+    box-shadow: none;
+    overflow: visible; // tombol buka-tutup menempel di tepi dan harus terlihat
+}
+
+.em-sidebar__header {
+    position: static;
+    height: 89px; // 88px isi + 1px garis bawah: sumbu logo tepat di y=44, sejajar dengan tombol toggle
+    padding: 0 22px; // 22 + logo 44 + 22 = 88: logo tepat di tengah saat sidebar diciutkan
+    background: transparent;
+    color: var(--em-text);
+    border-bottom: 1px solid #eef1f4;
+}
+
+.em-brand { gap: 14px; }
+
+.em-brand__logo {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--em-r-md);
+    background: var(--em-tint);
+
+    img { width: 30px; height: 30px; object-fit: contain; }
+}
+
+.em-brand__title { color: #0f172a; font-size: 1.05rem; }
+.em-brand__sub { color: var(--em-text-muted); opacity: 1; font-weight: 500; }
+
+.em-sidebar__inner { padding: 4px 14px 14px; }
+
+.em-nav__group { margin-bottom: 18px; }
+
+.em-nav__label {
+    padding: 0 14px;
+    margin-bottom: 8px;
+    font-size: .68rem;
+    letter-spacing: .09em;
+    color: #94a3b8;
+}
+
+.em-nav__link,
+.em-nav__dropdown-toggle {
+    padding: 6px 12px 6px 6px;
+    border-radius: var(--em-r-md);
+    color: #475569;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.em-nav__dropdown-toggle:hover {
+    background: rgba(var(--em-green-700-rgb), .07);
+    color: var(--em-green-800);
+}
+
+.em-nav__link {
+
+    &:hover {
+        background: rgba(var(--em-green-700-rgb), .07);
+        color: var(--em-green-800);
+
+        .em-nav__icon { color: var(--em-green-700); }
+    }
+
+    &.is-active {
+        background: rgba(var(--em-green-700-rgb), .1);
+        color: var(--em-green-800);
+        font-weight: 700;
+
+        &::before { display: none; }
+
+        .em-nav__icon {
+            background: var(--em-green-700);
+            color: #fff;
+            box-shadow: 0 8px 16px rgba(var(--em-green-700-rgb), .32);
+        }
+    }
+}
+
+.em-nav__icon {
+    width: 36px;
+    height: 36px;
+    margin-right: 12px;
+    border-radius: 11px;
+    font-size: .92rem;
+    color: #64748b;
+    transition: background .2s, color .2s, box-shadow .2s;
+}
+
+.em-nav__text { font-size: .9rem; }
+
+.em-nav__link--sub {
+    padding-left: 12px;
+    .em-nav__icon { width: 30px; height: 30px; border-radius: 10px; font-size: .8rem; }
+}
+
+// Sidebar diciutkan: ikon di tengah rel 88px (14 padding + 60 tautan + 14)
+.em-sidebar.is-collapsed {
+    .em-nav__link,
+    .em-nav__dropdown-toggle { justify-content: center; padding-left: 0; padding-right: 0; }
+    .em-nav__icon { margin-right: 0; }
+}
+
+.em-sidebar__footer {
+    margin: 0;
+    padding: 14px 16px;
+    border-top: 1px solid #eef1f4;
+    border-radius: 0;
+    background: rgba(var(--em-green-700-rgb), .04);
+}
+
+.em-user-avatar { width: 40px; height: 40px; border-radius: var(--em-r-md); }
+
+.em-sidebar-overlay {
+    background: rgba(15, 23, 42, .45);
+    backdrop-filter: blur(3px);
+}
+
+// ── 3. Tombol buka-tutup sidebar ───────────────────────────────────────────
+// Bulat 30px, titik tengahnya tepat di tepi kanan sidebar (right: -16px, termasuk garis batas 1px) dan sejajar
+// dengan logo (header 88px: top 29px + 15px = 44px). Ikon berputar saat diciutkan.
+.em-sidebar-toggle {
+    position: absolute;
+    top: 29px;
+    right: -16px; // 15px (setengah tombol) + 1px (garis batas sidebar) => titik tengah tepat di tepi luar
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(15, 23, 42, .08);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--em-green-700);
+    font-size: .7rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .14);
+    cursor: pointer;
+    transition: background .2s, color .2s, transform .2s, box-shadow .2s;
+
+    &:hover {
+        background: var(--em-green-700);
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(var(--em-green-700-rgb), .38);
+    }
+
+    &:active { transform: scale(.92); }
+
+    &:focus-visible {
+        outline: 3px solid rgba(var(--em-green-700-rgb), .4);
+        outline-offset: 2px;
+    }
+
+    i { transition: transform .25s var(--em-ease); }
+}
+
+.em-sidebar.is-collapsed .em-sidebar-toggle i { transform: rotate(180deg); }
+
+// Ponsel: sidebar menjadi laci dari kiri; tombol toggle desktop disembunyikan.
+@media (max-width: 991.98px) {
+    .em-sidebar {
+        top: 0;
+        left: 0;
+        bottom: 0;
+        border-radius: 0;
+        transform: translateX(-100%);
+
+        &.is-open { transform: translateX(0); box-shadow: 0 0 48px rgba(15, 23, 42, .28); }
+    }
+
+    .em-sidebar-toggle#sidebarToggleDesktop { display: none; }
+
+    // Tombol tutup laci: gaya lama putih-di-atas-hijau, sekarang header putih.
+    .em-sidebar__close {
+        color: #475569;
+        background: rgba(15, 23, 42, .06);
+        border-radius: 12px;
+
+        &:hover { background: rgba(15, 23, 42, .12); color: #0f172a; }
+    }
+
+    .em-main { padding: 18px 16px; padding-top: 76px; }
+
+    .em-topbar {
+        height: 60px;
+        background: rgba(255, 255, 255, .86);
+        backdrop-filter: blur(14px);
+        border-bottom: 0;
+        box-shadow: 0 1px 0 rgba(15, 23, 42, .05), 0 8px 24px rgba(15, 23, 42, .05);
+    }
+
+    .em-topbar .em-mobile-menu-btn { border-radius: var(--em-r-md); }
+}
+
+// ── 4. Komponen ────────────────────────────────────────────────────────────
+.card {
+    border: 0 !important;
+    border-radius: var(--em-r-lg) !important;
+    background: #fff;
+    box-shadow: var(--em-soft-shadow);
+
+    &:hover { transform: none; box-shadow: var(--em-soft-shadow); }
+}
+
+.card-header {
+    padding: 18px 24px;
+    background: transparent !important;
+    border-bottom: 1px solid #eef1f4;
+    font-weight: 700;
+
+    h5, .h5 { margin: 0; font-size: 1.05rem; }
+}
+
+.card-body { padding: 24px; }
+.card-body.p-0 { padding: 0; }
+
+.card-footer {
+    padding: 14px 24px;
+    background: transparent !important;
+    border-top: 1px solid #eef1f4;
+}
+
+// Tombol
+.btn {
+    border-radius: 999px;
+    padding: .55rem 1.2rem;
+    font-size: .875rem;
+    font-weight: 700;
+    letter-spacing: -.005em;
+    transition: background .2s, color .2s, box-shadow .2s, transform .15s;
+}
+
+.btn-sm { padding: .38rem .9rem; font-size: .8125rem; }
+.btn-lg { padding: .75rem 1.6rem; font-size: 1rem; }
+
+.btn-primary {
+    box-shadow: 0 8px 18px rgba(var(--em-green-700-rgb), .28);
+
+    &:hover { box-shadow: 0 10px 22px rgba(var(--em-green-700-rgb), .36); transform: translateY(-1px); }
+}
+
+.btn-light, .btn-secondary {
+    background: #fff;
+    border-color: #e2e8f0;
+    color: #334155;
+
+    &:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+}
+
+// Tombol hanya-ikon (aksi di tabel): lingkaran lembut berwarna sesuai maknanya.
+$tones: (
+    primary: var(--em-green-700-rgb),
+    warning: '217, 119, 6',
+    danger: '220, 38, 38',
+    info: '2, 132, 199',
+    success: '5, 150, 105',
+    secondary: '71, 85, 105',
+    dark: '30, 41, 59',
+);
+
+@each $name, $rgb in $tones {
+    $value: if(type-of($rgb) == 'string', unquote($rgb), $rgb);
+
+    .btn-icon.btn-#{$name},
+    .btn-icon.btn-outline-#{$name} {
+        --tone: #{$value};
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 12px;
+        font-size: .82rem;
+        background: rgba(var(--tone), .12);
+        color: rgb(var(--tone));
+        box-shadow: none;
+
+        &:hover {
+            background: rgb(var(--tone));
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(var(--tone), .3);
+        }
+    }
+}
+
+.btn-group, .btn-group-sm { gap: 6px; }
+.btn-group > .btn, .btn-group-sm > .btn { border-radius: 12px !important; margin-left: 0 !important; }
+.btn-group > .btn:not(.btn-icon) { border-radius: 999px !important; }
+
+// Form
+.form-label {
+    margin-bottom: .4rem;
+    font-size: .8125rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-control, .form-select {
+    min-height: 44px;
+    padding: .6rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--em-r-md);
+    background-color: #fff;
+    font-size: .9rem;
+    color: #0f172a;
+
+    &::placeholder { color: #94a3b8; }
+
+    &:hover:not(:focus):not(:disabled) { border-color: #cbd5e1; }
+
+    &:focus {
+        border-color: var(--em-green-600);
+        box-shadow: var(--em-ring);
+        background-color: #fff;
+    }
+
+    &:disabled, &[readonly] { background-color: #f1f5f9; }
+}
+
+// Padding kanan select harus menyisakan ruang panah dropdown (jangan tertimpa padding umum di atas).
+.form-select { padding-right: 2.5rem; }
+.form-select-sm { padding-right: 2.25rem; }
+
+textarea.form-control { min-height: 96px; }
+.form-control-sm, .form-select-sm { min-height: 36px; padding: .4rem .8rem; border-radius: 12px; font-size: .8125rem; }
+.form-text { color: var(--em-text-muted); font-size: .78rem; }
+
+.input-group-text {
+    border: 1px solid #e2e8f0;
+    border-radius: var(--em-r-md);
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.form-check-input { width: 1.15em; height: 1.15em; border-color: #cbd5e1; }
+.form-check-input:checked { background-color: var(--em-green-700); border-color: var(--em-green-700); }
+.form-check-input:focus { box-shadow: var(--em-ring); border-color: var(--em-green-600); }
+
+// Badge: pil lembut (latar tipis, teks pekat)
+.badge {
+    padding: .38em .8em;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .01em;
+}
+
+.badge.bg-success { background-color: rgba(5, 150, 105, .14) !important; color: #047857 !important; }
+.badge.bg-danger { background-color: rgba(220, 38, 38, .12) !important; color: #b91c1c !important; }
+.badge.bg-warning { background-color: rgba(217, 119, 6, .16) !important; color: #b45309 !important; }
+.badge.bg-info { background-color: rgba(2, 132, 199, .13) !important; color: #0369a1 !important; }
+.badge.bg-primary { background-color: rgba(var(--em-green-700-rgb), .13) !important; color: var(--em-green-800) !important; }
+.badge.bg-secondary { background-color: rgba(71, 85, 105, .12) !important; color: #334155 !important; }
+.badge.bg-light { background-color: #f1f5f9 !important; color: #334155 !important; border: 0 !important; }
+.badge.bg-dark { background-color: rgba(15, 23, 42, .88) !important; color: #fff !important; }
+
+// Pagination
+.pagination { gap: 6px; }
+
+.page-link {
+    min-width: 38px;
+    min-height: 38px;
+    padding: .45rem .8rem;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: transparent;
+    color: #475569;
+    font-weight: 600;
+    text-align: center;
+
+    &:hover { background: var(--em-tint); color: var(--em-green-800); }
+}
+
+.page-item.active .page-link {
+    background: var(--em-green-700);
+    color: #fff;
+    box-shadow: 0 8px 16px rgba(var(--em-green-700-rgb), .3);
+}
+
+.page-item.disabled .page-link { background: transparent; color: #cbd5e1; }
+
+// Notifikasi, modal, dropdown
+.em-alert { border-radius: var(--em-r-lg); border: 0; box-shadow: var(--em-soft-shadow); }
+
+.modal-content {
+    border: 0;
+    border-radius: var(--em-r-xl);
+    box-shadow: var(--em-soft-shadow-lg);
+}
+
+.modal-header, .modal-footer { border-color: #eef1f4; padding: 18px 24px; }
+.modal-body { padding: 22px 24px; }
+.modal-backdrop.show { opacity: .4; backdrop-filter: blur(3px); }
+
+.dropdown-menu {
+    padding: 8px;
+    border: 0;
+    border-radius: var(--em-r-lg);
+    box-shadow: var(--em-soft-shadow-lg);
+}
+
+.dropdown-item { border-radius: 12px; padding: .5rem .8rem; }
+
+// ── 5. Tabel ───────────────────────────────────────────────────────────────
+// Kartu tabel: tanpa garis vertikal, header berlatar tint merek, baris lega,
+// angka tabular, hover lembut. Berlaku untuk semua .table di aplikasi.
+.table-responsive { border-radius: 0 0 var(--em-r-lg) var(--em-r-lg); }
+
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: rgba(var(--em-green-700-rgb), .045);
+    --bs-table-striped-bg: transparent;
+    margin-bottom: 0;
+    font-size: .875rem;
+    color: #334155;
+
+    > :not(caption) > * > * {
+        padding: 14px 20px;
+        border-bottom: 1px solid #eef1f4;
+        background-color: transparent;
+        box-shadow: none;
+        vertical-align: middle;
+    }
+
+    > thead > tr > th {
+        padding-top: 13px;
+        padding-bottom: 13px;
+        border-bottom: 0;
+        background-color: rgba(var(--em-green-700-rgb), .05) !important;
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #64748b;
+        white-space: nowrap;
+    }
+
+    > tbody > tr:last-child > * { border-bottom: 0; }
+
+    > tbody > tr > td { transition: background .15s; }
+
+
+    a:not(.btn) { font-weight: 600; text-decoration: none; }
+    .fw-bold, .fw-semibold { color: #0f172a; }
+    .fw-bold { font-weight: 700 !important; }
+    .text-primary { color: var(--em-green-700) !important; }
+    .text-muted, .small.text-muted { color: #94a3b8 !important; }
+}
+
+.table-hover > tbody > tr:hover > * { background-color: rgba(var(--em-green-700-rgb), .045); }
+
+// Kerapatan: kolom tepi selalu lega, dan tabel lebar (7+ kolom) dipadatkan otomatis agar muat
+// tanpa menggulir ke samping. Badge dan tombol tidak boleh terpecah baris.
+.table > :not(caption) > * > :first-child { padding-left: 22px; }
+.table > :not(caption) > * > :last-child { padding-right: 22px; }
+.badge, .table .btn { white-space: nowrap; }
+
+.table:has(> thead th:nth-child(7)) {
+    font-size: .84rem;
+
+    > :not(caption) > * > * { padding: 12px 10px; }
+    > :not(caption) > * > :first-child { padding-left: 20px; }
+    > :not(caption) > * > :last-child { padding-right: 20px; }
+    > thead > tr > th { letter-spacing: .05em; }
+}
+
+// Baris "data kosong"
+.table td.text-muted.py-5 { padding-top: 56px !important; padding-bottom: 56px !important; }
+
+// Pencarian dan filter di kepala kartu tabel
+.card-header .form-control, .card-header .form-select { min-height: 42px; }
+
+// ── 6. Avatar inisial (<x-avatar>) ─────────────────────────────────────────
+.em-avatar {
+    --av-bg: #dcfce7;
+    --av-fg: #166534;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 13px;
+    background: var(--av-bg);
+    color: var(--av-fg);
+    font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    user-select: none;
+
+    &--1 { --av-bg: #dcfce7; --av-fg: #166534; }
+    &--2 { --av-bg: #dbeafe; --av-fg: #1e40af; }
+    &--3 { --av-bg: #fef3c7; --av-fg: #92400e; }
+    &--4 { --av-bg: #ede9fe; --av-fg: #5b21b6; }
+    &--5 { --av-bg: #ffe4e6; --av-fg: #9f1239; }
+    &--6 { --av-bg: #ccfbf1; --av-fg: #115e59; }
+}
+
+.em-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+
+    &__name { font-weight: 700; color: #0f172a; line-height: 1.25; }
+    &__meta { font-size: .78rem; color: #94a3b8; font-weight: 500; }
+}

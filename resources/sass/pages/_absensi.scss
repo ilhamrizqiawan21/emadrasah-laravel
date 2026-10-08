@@ -41,3 +41,36 @@
         > td[data-label="Guru Pengganti"]:has(> span.text-muted:only-child:not(.small)) { display: none; }
     }
 }
+
+// Pilihan status absensi: ikon Font Awesome + warna sesuai status (menggantikan emoji).
+.status-field {
+    --st: 5, 150, 105;
+    position: relative;
+
+    .form-select {
+        padding-left: 36px;
+        font-weight: 600;
+        color: rgb(var(--st));
+        background-color: rgba(var(--st), .08);
+        border-color: rgba(var(--st), .3);
+    }
+
+    &__icon {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        font-size: .85rem;
+        color: rgb(var(--st));
+        pointer-events: none;
+        --fa: '\f058'; // circle-check. Font Awesome 6 menggambar ikon lewat content: var(--fa)
+    }
+
+    &[data-status='izin'] { --st: 217, 119, 6; }
+    &[data-status='izin'] .status-field__icon { --fa: '\f31c'; } // file-pen
+    &[data-status='sakit'] { --st: 2, 132, 199; }
+    &[data-status='sakit'] .status-field__icon { --fa: '\f0f1'; } // stethoscope
+    &[data-status='alpha'] { --st: 220, 38, 38; }
+    &[data-status='alpha'] .status-field__icon { --fa: '\f057'; } // circle-xmark
+}

@@ -18,6 +18,7 @@ class SiswaController extends Controller
                     ->orWhere('nisn', 'like', "%{$request->search}%");
             })
             ->orderBy('nama_lengkap')
+            ->orderBy('id')
             ->paginate(15);
 
         return view('siswa.index', compact('siswa'));
@@ -29,6 +30,34 @@ class SiswaController extends Controller
         $tahunPelajaran = TahunPelajaran::all();
 
         return view('siswa.create', compact('kelas', 'tahunPelajaran'));
+    }
+
+    /**
+     * Pencarian siswa untuk kotak isian otomatis (mis. form surat keluar). Hasil dibatasi 10 baris
+     * supaya halaman tetap ringan walau siswanya puluhan ribu; minimal 2 karakter.
+     */
+    public function cari(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        // "!" sebagai karakter escape: valid di MySQL dan SQLite (backslash hanya bekerja di MySQL).
+        $like = '%'.preg_replace('/([%_!])/', '!$1', $q).'%';
+
+        return response()->json(
+            Siswa::select('id', 'nama_lengkap', 'nis', 'nisn')
+                ->where(fn ($w) => $w
+                    ->whereRaw("nama_lengkap LIKE ? ESCAPE '!'", [$like])
+                    ->orWhereRaw("nis LIKE ? ESCAPE '!'", [$like])
+                    ->orWhereRaw("nisn LIKE ? ESCAPE '!'", [$like]))
+                ->orderBy('nama_lengkap')
+                ->limit(10)
+                ->get()
+                ->map(fn ($s) => ['id' => $s->id, 'label' => "{$s->nama_lengkap} (NIS: {$s->nis})"])
+        );
     }
 
     public function store(Request $request)

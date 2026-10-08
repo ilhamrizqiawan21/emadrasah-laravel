@@ -114,6 +114,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Siswa
         Route::get('buku-induk/{siswa}/export-pdf', [BukuIndukController::class, 'exportPdf'])->name('buku-induk.export-pdf');
+        // Pencarian siswa (JSON, maks. 10 hasil). Sengaja bukan di bawah /siswa agar tidak bentrok dengan siswa/{siswa}.
+        Route::get('cari/siswa', [SiswaController::class, 'cari'])->name('siswa.cari');
         Route::resource('siswa', SiswaController::class);
         Route::resource('buku-induk', BukuIndukController::class)->parameters(['buku-induk' => 'siswa']);
 

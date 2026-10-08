@@ -9,7 +9,7 @@ class MapelController extends Controller
 {
     public function index()
     {
-        $mapels = Mapel::with('parent')->orderBy('nama_mapel')->paginate(10);
+        $mapels = Mapel::with('parent')->orderBy('nama_mapel')->orderBy('id')->paginate(10);
 
         return view('mapel.index', compact('mapels'));
     }

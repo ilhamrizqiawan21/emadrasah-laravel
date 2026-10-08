@@ -31,7 +31,12 @@
                         <td>{{ $index + 1 + ($gurus->currentPage() - 1) * $gurus->perPage() }}</td>
                         <td><span class="badge bg-secondary">{{ $guru->kode }}</span></td>
                         <td>{{ $guru->nip ?? '-' }}</td>
-                        <td>{{ $guru->nama }}</td>
+                        <td>
+                            <div class="em-identity">
+                                <x-avatar :name="$guru->nama" />
+                                <span class="fw-bold">{{ $guru->nama }}</span>
+                            </div>
+                        </td>
                         <td>{{ $guru->bidang_studi ?? '-' }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">

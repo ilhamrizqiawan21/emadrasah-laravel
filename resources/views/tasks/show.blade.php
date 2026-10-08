@@ -89,6 +89,9 @@
                     </div>
                 @endif
             </div>
+            @if($logs->hasPages())
+                <div class="card-footer bg-white d-flex justify-content-center">{{ $logs->links() }}</div>
+            @endif
         </div>
     </div>
 </div>

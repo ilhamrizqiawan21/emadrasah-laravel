@@ -106,6 +106,19 @@ Nilai awal untuk instalasi baru diambil dari `config/madrasah.php` (dapat diisi 
 
 ---
 
+## 🧪 Pengujian
+
+```bash
+php artisan test        # 70 tes PHP (SQLite memori; tidak menyentuh database .env)
+npm run e2e             # 13 tes end-to-end di Chrome (server + SQLite + storage sementara di /tmp)
+vendor/bin/pint --test  # gaya kode
+composer audit          # advisory keamanan dependensi
+```
+- `RouteMatrixTest` menelusuri seluruh tabel route per role, jadi route baru otomatis teruji; `QueryBudgetTest` menjaga halaman daftar dari N+1.
+- Menjalankan suite di MySQL: buat database sementara, lalu `DB_CONNECTION=mysql DB_DATABASE=<db_sementara> php artisan test`. Jangan arahkan ke database yang berisi data asli: `RefreshDatabase` menghapus isinya.
+
+---
+
 ## 📂 Struktur Folder Utama
 
 - `app/Http/Controllers`: Logika bisnis dan penanganan permintaan web.

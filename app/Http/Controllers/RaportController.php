@@ -16,7 +16,7 @@ class RaportController extends Controller
         $siswa = Siswa::with(['kelas'])->when($request->search, function ($q) use ($request) {
             $q->where('nama_lengkap', 'like', "%{$request->search}%")
                 ->orWhere('nis', $request->search);
-        })->paginate(15);
+        })->orderBy('nama_lengkap')->orderBy('id')->paginate(15);
 
         return view('raport.index', compact('siswa'));
     }

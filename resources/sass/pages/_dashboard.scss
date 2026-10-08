@@ -71,9 +71,10 @@
 
 /* Stat cards */
 .em-stat {
-    background: #fff;
+    // Pastel: latar tipis dari warna kartu itu sendiri (ikut warna tema untuk kartu utama).
+    background: color-mix(in srgb, var(--em-stat-color, var(--em-primary)) 11%, #fff);
     border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
+    border: 0;
     padding: 18px 20px;
     display: flex;
     align-items: center;
@@ -92,7 +93,7 @@
     transition: opacity .2s;
 }
 .em-stat { height: 100%; } /* kartu dalam satu baris sama tinggi */
-.em-stat:hover { transform: translateY(-4px); box-shadow: var(--em-shadow-md); }
+.em-stat:hover { transform: translateY(-3px); box-shadow: var(--em-soft-shadow); }
 .em-stat:hover::after { opacity: 1; }
 
 .em-stat__icon {
@@ -101,8 +102,9 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 1.05rem;
     flex-shrink: 0;
-    color: #fff;
-    background: var(--em-stat-color, var(--em-primary));
+    color: var(--em-stat-color, var(--em-primary));
+    background: #fff;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
 }
 .em-stat__body { flex: 1; min-width: 0; }
 .em-stat__label {
@@ -132,7 +134,7 @@
 .em-chart-card {
     background: #fff;
     border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
+    border: 0; box-shadow: var(--em-soft-shadow);
     overflow: hidden;
 }
 .em-chart-card__header {
@@ -168,7 +170,7 @@
 .em-activity-card {
     background: #fff;
     border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
+    border: 0; box-shadow: var(--em-soft-shadow);
     overflow: hidden;
     height: 100%;
 }
@@ -264,7 +266,7 @@
     gap: 8px;
     padding: 14px 8px;
     border-radius: var(--em-r-lg);
-    border: 1px solid var(--em-border);
+    border: 0; box-shadow: var(--em-soft-shadow);
     background: #fff;
     color: var(--em-gray-600);
     font-size: .75rem;

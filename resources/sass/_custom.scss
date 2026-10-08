@@ -12,9 +12,14 @@
     --em-green-700: #047857;   /* primary */
     --em-green-600: #059669;
     --em-green-500: #10b981;
-    --em-green-200: var(--em-green-200);
-    --em-green-100: var(--em-green-100);
-    --em-green-50 : var(--em-green-50);
+    --em-green-200: #a7f3d0;
+    --em-green-100: #d1fae5;
+    --em-green-50 : #f0fdf4;
+
+    /* Kanal RGB untuk rgba(var(--em-green-700-rgb), .x). Ikut ditimpa bersama palet oleh Pengaturan (ThemePalette). */
+    --em-green-700-rgb: 4, 120, 87;
+    --em-green-600-rgb: 5, 150, 105;
+    --em-green-500-rgb: 16, 185, 129;
 
     --em-gold      : #b45309;
     --em-gold-light: #fef3c7;

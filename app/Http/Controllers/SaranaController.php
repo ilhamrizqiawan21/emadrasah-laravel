@@ -13,7 +13,7 @@ class SaranaController extends Controller
 {
     public function index()
     {
-        $sarana = SaranaPrasarana::with('kategori')->orderBy('nama_sarana')->paginate(15);
+        $sarana = SaranaPrasarana::with('kategori')->orderBy('nama_sarana')->orderBy('id')->paginate(15);
 
         return view('sarana.index', compact('sarana'));
     }
@@ -96,7 +96,7 @@ class SaranaController extends Controller
 
     public function peminjaman(SaranaPrasarana $sarana)
     {
-        $peminjaman = PeminjamanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pinjam', 'desc')->paginate(10);
+        $peminjaman = PeminjamanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pinjam', 'desc')->orderByDesc('id')->paginate(10);
 
         return view('sarana.peminjaman', compact('sarana', 'peminjaman'));
     }
@@ -131,7 +131,7 @@ class SaranaController extends Controller
 
     public function pemeliharaan(SaranaPrasarana $sarana)
     {
-        $pemeliharaan = PemeliharaanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pemeliharaan', 'desc')->paginate(10);
+        $pemeliharaan = PemeliharaanSarana::where('sarana_id', $sarana->id)->orderBy('tanggal_pemeliharaan', 'desc')->orderByDesc('id')->paginate(10);
 
         return view('sarana.pemeliharaan', compact('sarana', 'pemeliharaan'));
     }

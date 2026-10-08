@@ -49,8 +49,13 @@
                             <div class="small text-muted">{{ $s->nisn ?? '-' }}</div>
                         </td>
                         <td>
-                            <div class="fw-bold">{{ $s->nama_lengkap }}</div>
-                            <div class="small text-muted">{{ $s->tempat_lahir }}, {{ $s->tanggal_lahir?->format('d/m/Y') ?? '-' }}</div>
+                            <div class="em-identity">
+                                <x-avatar :name="$s->nama_lengkap" />
+                                <div>
+                                    <div class="fw-bold">{{ $s->nama_lengkap }}</div>
+                                    <div class="small text-muted">{{ $s->tempat_lahir }}, {{ $s->tanggal_lahir?->format('d/m/Y') ?? '-' }}</div>
+                                </div>
+                            </div>
                         </td>
                         <td><span class="badge bg-light text-dark border">{{ $s->kelas->nama_kelas ?? '-' }}</span></td>
                         <td><span class="badge {{ $s->jenis_kelamin == 'L' ? 'bg-info' : 'bg-danger' }} bg-opacity-10 {{ $s->jenis_kelamin == 'L' ? 'text-info' : 'text-danger' }}">{{ $s->jenis_kelamin }}</span></td>

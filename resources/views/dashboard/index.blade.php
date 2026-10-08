@@ -105,7 +105,7 @@
     </div>
     {{-- Kehadiran hari ini: progress bar mini --}}
     <div class="col-6 col-md-3">
-        <div class="em-stat" style="--em-stat-color:#1a7a52; flex-direction:column; align-items:flex-start; gap:10px;">
+        <div class="em-stat" style="--em-stat-color:var(--em-green-700); flex-direction:column; align-items:flex-start; gap:10px;">
             <div class="d-flex align-items-center justify-content-between w-100">
                 <div>
                     <div class="em-stat__label" style="margin-bottom:2px;white-space:normal;">Kehadiran Hari Ini</div>
@@ -114,11 +114,11 @@
                     @endphp
                     <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:800;color:var(--em-gray-900);">{{ $pct }}%</span>
                 </div>
-                <div class="em-stat__icon" style="background:#1a7a52;"><i class="fas fa-gauge-high"></i></div>
+                <div class="em-stat__icon"><i class="fas fa-gauge-high"></i></div>
             </div>
             <div class="w-100">
-                <div style="height:7px;background:var(--em-gray-100);border-radius:99px;overflow:hidden;">
-                    <div style="height:100%;width:{{ $pct }}%;background:linear-gradient(90deg,#22a06b,#1a7a52);border-radius:99px;transition:width .6s ease;"></div>
+                <div style="height:7px;background:rgba(var(--em-green-700-rgb),.14);border-radius:99px;overflow:hidden;">
+                    <div style="height:100%;width:{{ $pct }}%;background:linear-gradient(90deg,var(--em-green-500),var(--em-green-700));border-radius:99px;transition:width .6s ease;"></div>
                 </div>
                 <div style="display:flex;justify-content:space-between;margin-top:4px;">
                     <span style="font-size:.75rem;color:var(--em-text-muted);">{{ $guruHadirHariIni }} hadir</span>

@@ -161,12 +161,15 @@
                                 <td><span class="badge bg-secondary">{{ $guru->kode }}</span></td>
                                 <td class="fw-semibold">{{ $guru->nama }}</td>
                                 <td data-label="Status">
-                                    <select name="status[{{ $guru->id }}]" class="form-select form-select-sm status-select" data-guru-id="{{ $guru->id }}">
-                                        <option value="hadir" {{ $status=='hadir' ? 'selected' : '' }} data-bg="success">✅ Hadir</option>
-                                        <option value="izin" {{ $status=='izin' ? 'selected' : '' }} data-bg="warning">📝 Izin</option>
-                                        <option value="sakit" {{ $status=='sakit' ? 'selected' : '' }} data-bg="info">🤒 Sakit</option>
-                                        <option value="alpha" {{ $status=='alpha' ? 'selected' : '' }} data-bg="danger">❌ Alpha</option>
-                                    </select>
+                                    <div class="status-field" data-status="{{ $status }}">
+                                        <i class="fas status-field__icon" aria-hidden="true"></i>
+                                        <select name="status[{{ $guru->id }}]" class="form-select form-select-sm status-select" data-guru-id="{{ $guru->id }}" aria-label="Status {{ $guru->nama }}">
+                                            <option value="hadir" {{ $status=='hadir' ? 'selected' : '' }} data-bg="success">Hadir</option>
+                                            <option value="izin" {{ $status=='izin' ? 'selected' : '' }} data-bg="warning">Izin</option>
+                                            <option value="sakit" {{ $status=='sakit' ? 'selected' : '' }} data-bg="info">Sakit</option>
+                                            <option value="alpha" {{ $status=='alpha' ? 'selected' : '' }} data-bg="danger">Alpha</option>
+                                        </select>
+                                    </div>
                                 </td>
                                 <td data-label="Keterangan">
                                     <input type="text" name="keterangan[{{ $guru->id }}]" class="form-control form-control-sm" value="{{ old("keterangan.$guru->id", $keterangan) }}" placeholder="Opsional">
@@ -212,6 +215,13 @@
         const btn = document.getElementById('btnSimpan');
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Menyimpan...';
+    });
+
+    // Ikon dan warna status mengikuti pilihan (ikon Font Awesome, bukan emoji)
+    document.querySelectorAll('.status-field select').forEach(function (select) {
+        select.addEventListener('change', function () {
+            select.closest('.status-field').dataset.status = select.value;
+        });
     });
 
     // Tooltips

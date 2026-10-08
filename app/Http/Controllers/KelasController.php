@@ -11,7 +11,7 @@ class KelasController extends Controller
 {
     public function index()
     {
-        $kelas = Kelas::with('guruPembimbing')->orderBy('tingkat')->orderBy('nama_kelas')->paginate(10);
+        $kelas = Kelas::with('guruPembimbing')->orderBy('tingkat')->orderBy('nama_kelas')->orderBy('id')->paginate(10);
 
         return view('kelas.index', compact('kelas'));
     }

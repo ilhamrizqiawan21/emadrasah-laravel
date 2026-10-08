@@ -42,6 +42,15 @@ Disusun dari kondisi project saat ini. Tiap fase bisa dikerjakan terpisah, uruta
 - [x] Diuji di 375px, 768px, dan 1440px: 20 halaman di tablet tanpa overflow; HP dan desktop sudah diperiksa pada sapuan sebelumnya. Target sentuh di halaman Tugas belum diaudit
 - [x] PDF raport, rekap absensi, dan buku induk: kop, logo, dan tanda tangan kepala madrasah dari Pengaturan; raport dirender dan diperiksa visual. Surat/template surat belum
 
+## Redesain gaya "Lembut & Ramah" (opsi B), dikerjakan setelah Fase 4
+- [x] Font: Inter (isi/tabel) + Plus Jakarta Sans (judul); angka tabular
+- [x] Sidebar presisi (menempel penuh, sudut lurus, garis tipis) dengan tombol buka-tutup tepat di tepi, sejajar logo, ARIA, Ctrl+B; diuji E2E (5 tes) dan dimutasi (geser 1px terdeteksi)
+- [x] Tabel: header bertinta, baris lega, badge pil, angka tabular, aksi berupa tombol ikon lingkaran lembut, tabel lebar dipadatkan otomatis (13 tabel, tanpa gulir samping), avatar inisial di Siswa/Guru/Users
+- [x] Ikon: seluruh ikon Font Awesome; 4 emoji di absensi diganti ikon status berwarna
+- [x] Dashboard: kartu statistik pastel; kartu kehadiran mengikuti warna tema
+- [x] Bug lama yang ditemukan: token palet siklik dan kanal `-rgb` tidak terdefinisi (kini dijaga `ThemeTokensTest`)
+- [ ] Belum: login dipoles ulang ke gaya B (saat ini masih dua panel dari Fase 2), halaman form dan detail belum ditinjau satu per satu, mode gelap, pencarian global (Ctrl+K), skeleton loading
+
 ## Fase 3: Kesiapan produksi dan keamanan
 - [x] Advisory keamanan Composer: 31 advisory (dompdf, guzzle, psr7, commonmark, flysystem, laravel/framework) menjadi 0 lewat update terarah ke Laravel 13.35 / dompdf 3.1.6. `composer.json` mengunci `config.platform.php = 8.3.0` supaya lock tidak menarik paket yang butuh PHP 8.4+ (percobaan pertama sempat menarik Symfony 8 dan ketahuan). Perlu `composer audit` bersih di tiap rilis
 - [x] Konfigurasi produksi: `.env.production.example` (debug off, https, cookie secure + terenkripsi, log harian), `URL::forceScheme('https')` di produksi, trusted proxy lewat `config/trustedproxy.php`. Diuji dengan menjalankan aplikasi sungguhan di `APP_ENV=production` (HSTS, cookie secure/httponly/samesite, login ke https, 404 tanpa kebocoran, `route:cache`/`view:cache`/`config:cache` sukses). Bug yang ditemukan lewat uji: `TRUSTED_PROXIES` di `bootstrap/app.php` tidak pernah terbaca (env() dievaluasi sebelum .env dimuat)
@@ -57,11 +66,11 @@ Disusun dari kondisi project saat ini. Tiap fase bisa dikerjakan terpisah, uruta
 - [x] Akun demo: seeder tidak lagi membuat `admin@madrasah.id`/`admin123` atau data contoh di produksi; admin pertama dibuat dengan `php artisan madrasah:install` (kata sandi min. 10 karakter, ditolak bila umum, atau dibuat acak)
 
 ## Fase 4: Kualitas dan test
-- [ ] Tambah test fitur untuk alur utama: login, CRUD siswa, raport, surat
-- [ ] Perluas `RouteAuditTest` agar mencakup semua route dan role
-- [ ] Tambah test end-to-end (Playwright) untuk alur penting
-- [ ] Jalankan Pint dan pastikan gaya kode seragam
-- [ ] Ukur kecepatan halaman (Lighthouse), perbaiki query N+1 dan aset yang berat
+- [x] Tes alur utama (`tests/Feature/MainFlowsTest.php`): masuk/keluar (salah sandi, akun nonaktif, redirect tujuan), siswa (tambah, cari, ubah, hapus, validasi, NIS unik), surat masuk (unggah, penyajian berkas per role, hapus berkas, berkas berbahaya/terlalu besar, path traversal), raport (simpan tanpa duplikat, nilai di luar rentang, PDF), absensi (simpan dua kali). Menemukan bug nyata: menyimpan absensi hari yang sama dua kali gagal di SQLite (kunci `updateOrCreate` berupa string tanggal)
+- [x] `tests/Feature/RouteMatrixTest.php` menelusuri SELURUH tabel route (141 route) dengan ekspektasi per role yang ditulis mandiri: tamu ke login di semua route, admin tanpa 5xx/403, operator dan guru 403 persis di route terlarang (semua metode, id ada maupun tidak). Menemukan: 14 route mengarah ke metode controller yang tidak ada (500, kini dibatasi `except/only`) dan kebocoran 404-vs-403 akibat urutan middleware (kini `role` sebelum `SubstituteBindings`). Diverifikasi dengan mutasi
+- [x] E2E Playwright (`npm run e2e`, 13 tes, ~30 dtk, Chrome terpasang): login/logout, akses per role, CRUD siswa lewat antarmuka, Pengaturan (nama, warna, logo; tampilan tamu), tampilan HP, dan unggahan ke server sungguhan (berkas PHP berkedok .pdf ditolak; hal yang tidak bisa dibuktikan `UploadedFile::fake()`). Server, SQLite, dan storage terisolasi di `/tmp`; pengaman menolak lanjut bila konfigurasi aktif bukan SQLite sementara
+- [x] Pint dijalankan pada `app`, `routes`, `tests`, `database/seeders`, `config`, `bootstrap/app.php`: 34 berkas dirapikan, perilaku sama (70 tes lulus). Migration lama sengaja tidak disentuh
+- [~] Performa: N+1 diukur di 20 halaman daftar dengan data diperbanyak 4x; ditemukan dan diperbaiki di `/kelas` (8 ke 3 query) dan `/tasks` (7 ke 3); penjaga permanen `QueryBudgetTest`. Ukuran aset terukur dari build (CSS ~39 KB gzip, JS ~27 KB gzip, Chart.js 69 KB gzip hanya di dashboard). **Lighthouse belum dijalankan**; skor performa/aksesibilitas belum terukur
 
 ## Fase 5: Paket penjualan
 - [ ] Siapkan akun dan data demo untuk presentasi ke calon client

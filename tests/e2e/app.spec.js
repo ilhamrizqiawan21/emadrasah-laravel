@@ -203,3 +203,159 @@ test.describe('keamanan unggahan (server sungguhan)', () => {
         await expect(page.locator('tbody')).toContainText('Unggahan asli E2E');
     });
 });
+
+test.describe('sidebar: tombol buka-tutup', () => {
+    const geometry = (page) => page.evaluate(() => {
+        const box = (selector) => document.querySelector(selector).getBoundingClientRect();
+        const sidebar = box('#emSidebar');
+        const toggle = box('#sidebarToggleDesktop');
+        const logo = box('.em-brand__logo');
+        const main = box('.em-main');
+
+        return {
+            left: sidebar.left, top: sidebar.top, height: sidebar.height, right: sidebar.right, width: sidebar.width,
+            toggleX: toggle.left + toggle.width / 2, toggleY: toggle.top + toggle.height / 2,
+            logoY: logo.top + logo.height / 2, mainLeft: main.left, viewport: window.innerHeight,
+        };
+    });
+
+    test('presisi: sidebar menempel penuh, tombol tepat di tepi dan sejajar logo', async ({ page }) => {
+        await page.goto('/dashboard');
+        await page.evaluate(() => localStorage.removeItem('em_sidebar_collapsed'));
+        await page.reload();
+
+        const g = await geometry(page);
+        expect(g.left).toBe(0);
+        expect(g.top).toBe(0);
+        expect(g.height).toBe(g.viewport);
+        expect(Math.abs(g.toggleX - g.right)).toBeLessThanOrEqual(0.5); // titik tengah tepat di tepi sidebar
+        expect(Math.abs(g.toggleY - g.logoY)).toBeLessThanOrEqual(0.5); // sejajar dengan logo
+        expect(g.mainLeft).toBeGreaterThanOrEqual(g.right);              // konten tidak tertimpa sidebar
+    });
+
+    test('menciutkan dan melebarkan: lebar, konten, dan status ARIA ikut berubah', async ({ page }) => {
+        await page.goto('/dashboard');
+        await page.evaluate(() => localStorage.removeItem('em_sidebar_collapsed'));
+        await page.reload();
+        const toggle = page.locator('#sidebarToggleDesktop');
+
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+        const open = await geometry(page);
+
+        await toggle.click();
+        await expect(page.locator('#emSidebar')).toHaveClass(/is-collapsed/);
+        await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+        await expect(toggle).toHaveAttribute('aria-label', 'Lebarkan menu');
+        await page.waitForTimeout(450); // tunggu transisi
+        const closed = await geometry(page);
+        expect(closed.width).toBeLessThan(open.width);
+        expect(closed.mainLeft).toBeLessThan(open.mainLeft);
+        expect(closed.mainLeft).toBeGreaterThanOrEqual(closed.right);
+        expect(Math.abs(closed.toggleX - closed.right)).toBeLessThanOrEqual(0.5); // tetap tepat di tepi saat tertutup
+        expect(Math.abs(closed.toggleY - closed.logoY)).toBeLessThanOrEqual(0.5);
+
+        await toggle.click();
+        await expect(page.locator('#emSidebar')).not.toHaveClass(/is-collapsed/);
+        await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+        await expect(toggle).toHaveAttribute('aria-label', 'Ciutkan menu');
+    });
+
+    test('pilihan ciut bertahan setelah muat ulang dan pindah halaman', async ({ page }) => {
+        await page.goto('/dashboard');
+        await page.evaluate(() => localStorage.removeItem('em_sidebar_collapsed'));
+        await page.reload();
+
+        await page.click('#sidebarToggleDesktop');
+        await page.reload();
+        await expect(page.locator('#emSidebar')).toHaveClass(/is-collapsed/);
+
+        await page.goto('/siswa');
+        await expect(page.locator('#emSidebar')).toHaveClass(/is-collapsed/);
+        await expect(page.locator('#sidebarToggleDesktop')).toHaveAttribute('aria-expanded', 'false');
+
+        await page.click('#sidebarToggleDesktop');
+        await page.goto('/guru');
+        await expect(page.locator('#emSidebar')).not.toHaveClass(/is-collapsed/);
+    });
+
+    test('keyboard: Ctrl+B dan Enter pada tombol, tetapi Ctrl+B diabaikan saat mengetik', async ({ page }) => {
+        await page.goto('/siswa');
+        await page.evaluate(() => localStorage.removeItem('em_sidebar_collapsed'));
+        await page.reload();
+        const sidebar = page.locator('#emSidebar');
+
+        await page.keyboard.press('Control+b');
+        await expect(sidebar).toHaveClass(/is-collapsed/);
+        await page.keyboard.press('Control+b');
+        await expect(sidebar).not.toHaveClass(/is-collapsed/);
+
+        // Saat fokus di kolom isian, Ctrl+B adalah milik pengetikan (tebal), bukan sidebar.
+        await page.focus('[name="search"]');
+        await page.keyboard.press('Control+b');
+        await expect(sidebar).not.toHaveClass(/is-collapsed/);
+
+        // Tombol dapat dioperasikan dengan keyboard
+        await page.focus('#sidebarToggleDesktop');
+        await page.keyboard.press('Enter');
+        await expect(sidebar).toHaveClass(/is-collapsed/);
+    });
+
+    test.describe('di HP', () => {
+        test.use({ viewport: { width: 375, height: 800 } });
+
+        test('laci menu: dibuka hamburger, ditutup tombol X, overlay, dan Escape', async ({ page }) => {
+            await page.goto('/dashboard');
+            const sidebar = page.locator('#emSidebar');
+            await expect(page.locator('#sidebarToggleDesktop')).toBeHidden();
+
+            const open = async () => { await page.click('#sidebarToggleMobile'); await expect(sidebar).toHaveClass(/is-open/); };
+
+            await open();
+            await expect(page.locator('#sidebarClose')).toBeVisible();
+            await page.click('#sidebarClose');
+            await expect(sidebar).not.toHaveClass(/is-open/);
+
+            await open();
+            await page.mouse.click(350, 400); // di luar laci (overlay)
+            await expect(sidebar).not.toHaveClass(/is-open/);
+
+            await open();
+            await page.keyboard.press('Escape');
+            await expect(sidebar).not.toHaveClass(/is-open/);
+        });
+    });
+});
+
+test.describe('surat keluar: pencarian siswa', () => {
+    test('mengetik nama menampilkan hasil terbatas dan memilihnya mengisi kolom Tujuan', async ({ page }) => {
+        await page.goto('/surat-keluar/create');
+        const input = page.locator('#cariSiswa');
+        const results = page.locator('#hasilSiswa');
+
+        // Satu huruf belum mencari apa pun
+        await input.fill('A');
+        await page.waitForTimeout(450);
+        await expect(results).toBeHidden();
+
+        await input.fill('Aisyah');
+        await expect(results.locator('button')).toHaveCount(1);
+        await expect(results.locator('button').first()).toContainText('Aisyah Putri Azzahra (NIS: 2425002)');
+
+        await results.locator('button').first().click();
+        await expect(page.locator('[name="tujuan"]')).toHaveValue('Aisyah Putri Azzahra (NIS: 2425002)');
+        await expect(results).toBeHidden();
+        await expect(input).toHaveValue('');
+    });
+
+    test('tidak ada hasil menampilkan pesan, bukan daftar kosong', async ({ page }) => {
+        await page.goto('/surat-keluar/create');
+        await page.fill('#cariSiswa', 'zzzzzzzz');
+        await expect(page.locator('#hasilSiswa')).toContainText('Siswa tidak ditemukan');
+    });
+
+    test('halaman tidak memuat daftar siswa di dalam HTML', async ({ page }) => {
+        const response = await page.goto('/surat-keluar/create');
+        const html = await response.text();
+        expect(html).not.toContain('Aisyah Putri Azzahra');
+    });
+});

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siswa;
 use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -11,16 +10,14 @@ class SuratKeluarController extends Controller
 {
     public function index()
     {
-        $surat = SuratKeluar::orderBy('tanggal_kirim', 'desc')->paginate(15);
+        $surat = SuratKeluar::orderBy('tanggal_kirim', 'desc')->orderByDesc('id')->paginate(15);
 
         return view('surat-keluar.index', compact('surat'));
     }
 
     public function create()
     {
-        $siswa = Siswa::select('id', 'nama_lengkap', 'nis', 'nisn')->get();
-
-        return view('surat-keluar.create', compact('siswa'));
+        return view('surat-keluar.create');
     }
 
     public function store(Request $request)

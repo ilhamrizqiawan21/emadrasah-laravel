@@ -40,7 +40,7 @@ class RouteMatrixTest extends TestCase
         };
     }
 
-    /** @return list<array{route: LaravelRoute, method: string, uri: string, name: string}> */
+    /** @return list<array{route: LaravelRoute, method: string, uri: string, missing: string, name: string}> */
     private function protectedRoutes(): array
     {
         $found = [];
@@ -59,6 +59,8 @@ class RouteMatrixTest extends TestCase
                     'method' => $method,
                     // Parameter diganti 1: id contoh dari seeder, atau 404 bila tidak ada.
                     'uri' => '/'.ltrim(preg_replace('/\{[^}]+\}/', '1', $uri), '/'),
+                    // Id yang pasti tidak ada, agar tes akses tidak bergantung pada isi/auto-increment database.
+                    'missing' => '/'.ltrim(preg_replace('/\{[^}]+\}/', '999999', $uri), '/'),
                     'name' => $name,
                 ];
             }
@@ -160,9 +162,13 @@ class RouteMatrixTest extends TestCase
                 continue;
             }
 
-            $status = $this->call($r['method'], $r['uri'])->status();
-            if ($status !== 403) {
-                $failures[] = "[{$role}] seharusnya 403: {$r['method']} {$r['uri']} ({$r['name']}) -> {$status}";
+            // Id yang tidak ada harus tetap 403 (bukan 404): role diperiksa sebelum record dicari,
+            // sehingga pengguna tanpa hak akses tidak bisa menebak id yang tersimpan.
+            foreach (['uri', 'missing'] as $kind) {
+                $status = $this->call($r['method'], $r[$kind])->status();
+                if ($status !== 403) {
+                    $failures[] = "[{$role}] seharusnya 403: {$r['method']} {$r[$kind]} ({$r['name']}) -> {$status}";
+                }
             }
         }
 

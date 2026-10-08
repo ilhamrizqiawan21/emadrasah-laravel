@@ -1,6 +1,6 @@
 import * as bootstrap from 'bootstrap';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import '@fontsource-variable/dm-sans/opsz.css';
+import '@fontsource-variable/inter/index.css';
 import '@fontsource-variable/plus-jakarta-sans/index.css';
 
 // Blade views call these as globals.
@@ -37,24 +37,45 @@ window.loadChart = () =>
 
         /* ── Sinkronkan keadaan ciut: hanya berlaku di desktop; di ponsel selalu lebar penuh ── */
         const wantsCollapsed = () => { try { return localStorage.getItem(LS_KEY) === 'true'; } catch (e) { return false; } };
+        const btnDesktop = $('#sidebarToggleDesktop');
+
+        /* Satu-satunya tempat yang memperbarui keadaan tombol (ARIA, label, tooltip) agar tidak pernah tidak sinkron. */
+        function syncToggleState() {
+            if (!btnDesktop) return;
+            const collapsed = sidebar.classList.contains('is-collapsed');
+            const label = collapsed ? 'Lebarkan menu' : 'Ciutkan menu';
+            btnDesktop.setAttribute('aria-expanded', String(!collapsed));
+            btnDesktop.setAttribute('aria-label', label);
+            btnDesktop.setAttribute('title', label + ' (Ctrl+B)');
+        }
+
         function syncCollapsed() {
             sidebar.classList.toggle('is-collapsed', isDesktop() && wantsCollapsed());
+            syncToggleState();
         }
         syncCollapsed();
 
-        /* ── Desktop toggle ── */
-        const btnDesktop = $('#sidebarToggleDesktop');
-        if (btnDesktop) {
-            btnDesktop.addEventListener('click', () => {
-                if (!isDesktop()) return;
-                const nowCollapsed = sidebar.classList.toggle('is-collapsed');
-                try { localStorage.setItem(LS_KEY, nowCollapsed); } catch (e) {}
-                btnDesktop.setAttribute('aria-expanded', String(!nowCollapsed));
-                
-                /* Refresh tooltips because their visibility might change */
-                initTooltips();
-            });
+        function toggleDesktop() {
+            if (!isDesktop()) return;
+            const nowCollapsed = sidebar.classList.toggle('is-collapsed');
+            try { localStorage.setItem(LS_KEY, nowCollapsed); } catch (e) {}
+            syncToggleState();
+            initTooltips(); /* tooltip menu hanya relevan saat diciutkan */
         }
+
+        /* ── Desktop toggle ── */
+        if (btnDesktop) {
+            btnDesktop.addEventListener('click', toggleDesktop);
+        }
+
+        /* ── Pintasan Ctrl+B (Cmd+B di Mac), tidak aktif saat mengetik di kolom isian ── */
+        document.addEventListener('keydown', e => {
+            if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== 'b' || e.altKey || e.shiftKey) return;
+            const el = document.activeElement;
+            if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+            e.preventDefault();
+            toggleDesktop();
+        });
 
         /* ── Mobile FAB toggle ── */
         const btnMobile = $('#sidebarToggleMobile');
@@ -490,3 +511,17 @@ window.addEventListener('pageshow', (event) => {
         delete button.dataset.loading;
     });
 });
+
+/* Tombol yang hanya berisi ikon (aksi di tabel) diberi kelas btn-icon agar tampil sebagai lingkaran lembut.
+   CSS murni tidak bisa membedakan "ikon saja" dari "ikon + teks". aria-label diambil dari title bila belum ada. */
+function markIconButtons(root = document) {
+    root.querySelectorAll('.btn:not(.btn-icon)').forEach((button) => {
+        if (button.textContent.trim() !== '' || !button.querySelector('i, svg')) return;
+        button.classList.add('btn-icon');
+        if (!button.hasAttribute('aria-label') && button.title) {
+            button.setAttribute('aria-label', button.title);
+        }
+    });
+}
+markIconButtons();
+document.addEventListener('DOMContentLoaded', () => markIconButtons());

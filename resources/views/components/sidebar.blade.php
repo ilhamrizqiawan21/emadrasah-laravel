@@ -11,7 +11,7 @@
                 <span class="em-brand__sub">{{ $madrasah->nama_pendek }}</span>
             </div>
         </div>
-        <button type="button" class="em-sidebar-toggle" id="sidebarToggleDesktop" aria-label="Ciutkan atau lebarkan menu" title="Ciutkan / lebarkan menu">
+        <button type="button" class="em-sidebar-toggle" id="sidebarToggleDesktop" aria-controls="emSidebar" aria-expanded="true" aria-label="Ciutkan menu" title="Ciutkan menu (Ctrl+B)">
             <i class="fas fa-chevron-left"></i>
         </button>
         <button type="button" class="em-sidebar__close d-lg-none" id="sidebarClose" aria-label="Tutup menu">

@@ -14,7 +14,7 @@ $info:      #0ea5e9;
 $warning:   #f59e0b;
 $danger:    #ef4444;
 
-$font-family-sans-serif: 'DM Sans Variable', 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+$font-family-sans-serif: 'Inter Variable', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
 $headings-font-family:   'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', sans-serif;
 
 $enable-shadows: false;
@@ -25,6 +25,7 @@ $enable-negative-margins: false;
 
 // 3. Application theme ------------------------------------------------------
 @import 'custom';
+@import 'soft';
 
 // 4. Page-specific styles ---------------------------------------------------
 @import "pages/login";

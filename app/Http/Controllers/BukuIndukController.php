@@ -17,7 +17,7 @@ class BukuIndukController extends Controller
 {
     public function index()
     {
-        $siswa = Siswa::with(['kelas', 'tahunPelajaran'])->latest()->paginate(20);
+        $siswa = Siswa::with(['kelas', 'tahunPelajaran'])->latest()->orderByDesc('id')->paginate(20);
 
         return view('buku-induk.index', compact('siswa'));
     }

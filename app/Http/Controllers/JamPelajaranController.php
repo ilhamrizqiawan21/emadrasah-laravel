@@ -9,7 +9,7 @@ class JamPelajaranController extends Controller
 {
     public function index()
     {
-        $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->paginate(20);
+        $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->orderBy('id')->paginate(20);
 
         return view('jam-pelajaran.index', compact('jamPelajaran'));
     }

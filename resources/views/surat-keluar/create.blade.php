@@ -16,14 +16,14 @@
 
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <label class="form-label">Otomatisasi Data Siswa (Opsional)</label>
-                    <select id="selectSiswa" class="form-select border-primary shadow-sm">
-                        <option value="">-- Pilih Siswa untuk mengisi Tujuan otomatis --</option>
-                        @foreach($siswa as $s)
-                        <option value="{{ $s->nama_lengkap }} (NIS: {{ $s->nis }})">{{ $s->nama_lengkap }} - {{ $s->nis }}</option>
-                        @endforeach
-                    </select>
-                    <small class="text-muted">Memilih siswa akan otomatis mengisi kolom "Tujuan" di bawah.</small>
+                    <label class="form-label" for="cariSiswa">Cari Siswa (Opsional)</label>
+                    <div class="position-relative">
+                        <input type="search" id="cariSiswa" class="form-control" autocomplete="off"
+                               placeholder="Ketik nama atau NIS siswa (minimal 2 huruf)…"
+                               aria-controls="hasilSiswa" aria-expanded="false">
+                        <div id="hasilSiswa" class="list-group position-absolute w-100 shadow-sm" style="z-index: 20;" hidden></div>
+                    </div>
+                    <small class="text-muted">Memilih siswa akan otomatis mengisi kolom "Tujuan" di bawah. Menampilkan maksimal 10 hasil.</small>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -71,11 +71,51 @@
 
 @push('scripts')
 <script>
-    document.getElementById('selectSiswa').addEventListener('change', function() {
-        const value = this.value;
-        if (value) {
-            document.getElementsByName('tujuan')[0].value = value;
+    (function () {
+        const input = document.getElementById('cariSiswa');
+        const list = document.getElementById('hasilSiswa');
+        const tujuan = document.getElementsByName('tujuan')[0];
+        const url = @json(route('siswa.cari'));
+        let timer = null;
+        let sequence = 0;
+
+        const hide = () => { list.hidden = true; list.replaceChildren(); input.setAttribute('aria-expanded', 'false'); };
+
+        function show(items) {
+            list.replaceChildren();
+            if (!items.length) {
+                const empty = document.createElement('div');
+                empty.className = 'list-group-item text-muted small';
+                empty.textContent = 'Siswa tidak ditemukan.';
+                list.append(empty);
+            }
+            items.forEach((item) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'list-group-item list-group-item-action';
+                button.textContent = item.label; // textContent: nama siswa tidak pernah dianggap HTML
+                button.addEventListener('click', () => { tujuan.value = item.label; input.value = ''; hide(); tujuan.focus(); });
+                list.append(button);
+            });
+            list.hidden = false;
+            input.setAttribute('aria-expanded', 'true');
         }
-    });
+
+        input.addEventListener('input', () => {
+            clearTimeout(timer);
+            const q = input.value.trim();
+            if (q.length < 2) { hide(); return; }
+            timer = setTimeout(async () => {
+                const mine = ++sequence; // abaikan jawaban lama yang datang terlambat
+                try {
+                    const response = await fetch(url + '?q=' + encodeURIComponent(q), { headers: { Accept: 'application/json' }, credentials: 'same-origin' });
+                    if (response.ok && mine === sequence) show(await response.json());
+                } catch (e) { /* jaringan putus: biarkan daftar kosong */ }
+            }, 250);
+        });
+
+        document.addEventListener('click', (e) => { if (!list.contains(e.target) && e.target !== input) hide(); });
+        input.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+    })();
 </script>
 @endpush

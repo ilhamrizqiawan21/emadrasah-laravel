@@ -12,7 +12,7 @@ class ArsipAkademikController extends Controller
 {
     public function index()
     {
-        $arsip = ArsipAkademik::with(['kelas', 'tahunPelajaran'])->latest()->paginate(15);
+        $arsip = ArsipAkademik::with(['kelas', 'tahunPelajaran'])->latest()->orderByDesc('id')->paginate(15);
         $kelas = Kelas::all();
         $tahunPelajaran = TahunPelajaran::all();
 

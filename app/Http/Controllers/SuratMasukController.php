@@ -11,7 +11,7 @@ class SuratMasukController extends Controller
 {
     public function index()
     {
-        $surat = SuratMasuk::orderBy('tanggal_terima', 'desc')->paginate(15);
+        $surat = SuratMasuk::orderBy('tanggal_terima', 'desc')->orderByDesc('id')->paginate(15);
 
         return view('surat-masuk.index', compact('surat'));
     }

@@ -9,7 +9,7 @@ class TemplateSuratController extends Controller
 {
     public function index()
     {
-        $templates = TemplateSurat::orderBy('nama_template')->paginate(10);
+        $templates = TemplateSurat::orderBy('nama_template')->orderBy('id')->paginate(10);
 
         return view('template-surat.index', compact('templates'));
     }

@@ -45,7 +45,12 @@
                     @forelse($users as $index => $user)
                     <tr>
                         <td>{{ $index + 1 + ($users->currentPage() - 1) * $users->perPage() }}</td>
-                        <td>{{ $user->name }}</td>
+                        <td>
+                            <div class="em-identity">
+                                <x-avatar :name="$user->name" />
+                                <span class="fw-bold">{{ $user->name }}</span>
+                            </div>
+                        </td>
                         <td>{{ $user->email }}</td>
                         <td>
                             <span class="badge bg-secondary">{{ $user->role ?? 'user' }}</span>

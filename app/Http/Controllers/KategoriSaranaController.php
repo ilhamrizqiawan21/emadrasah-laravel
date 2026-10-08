@@ -9,7 +9,7 @@ class KategoriSaranaController extends Controller
 {
     public function index()
     {
-        $kategori = KategoriSarana::orderBy('nama_kategori')->paginate(10);
+        $kategori = KategoriSarana::orderBy('nama_kategori')->orderBy('id')->paginate(10);
 
         return view('kategori-sarana.index', compact('kategori'));
     }
