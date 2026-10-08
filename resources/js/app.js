@@ -525,3 +525,12 @@ function markIconButtons(root = document) {
 }
 markIconButtons();
 document.addEventListener('DOMContentLoaded', () => markIconButtons());
+
+/* ── Topbar: bayangan saat halaman di-scroll ── */
+document.addEventListener('DOMContentLoaded', () => {
+    const topbar = document.querySelector('.em-topbar');
+    if (!topbar) return;
+    const sync = () => topbar.classList.toggle('is-scrolled', window.scrollY > 4);
+    window.addEventListener('scroll', sync, { passive: true });
+    sync();
+});

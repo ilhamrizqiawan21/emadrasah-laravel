@@ -6,6 +6,8 @@ use App\Support\Madrasah;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -31,6 +33,19 @@ class AppServiceProvider extends ServiceProvider
 
         // Identitas madrasah (nama, logo, warna…) tersedia di semua view sebagai $madrasah.
         View::share('madrasah', $this->app->make(Madrasah::class));
+
+        // Penghitung badge menu sidebar (surat masuk & tugas TU yang belum selesai), cache singkat.
+        View::composer('components.sidebar', function ($view) {
+            try {
+                $badges = Cache::remember('nav.badges', 60, fn () => [
+                    'surat_masuk' => DB::table('surat_masuk')->where('status', '!=', 'selesai')->count(),
+                    'tasks' => DB::table('tasks')->where('status', '!=', 'selesai')->count(),
+                ]);
+            } catch (\Throwable $e) {
+                $badges = ['surat_masuk' => 0, 'tasks' => 0];
+            }
+            $view->with('navBadges', $badges);
+        });
 
         // Di produksi semua URL (aset, redirect, tautan) harus https.
         if ($this->app->isProduction()) {

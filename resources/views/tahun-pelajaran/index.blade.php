@@ -3,12 +3,40 @@
 @section('title', 'Tahun Pelajaran')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="em-page-title">Tahun Pelajaran</h2>
-        <p class="text-muted">Kelola daftar tahun pelajaran untuk sistem rapor dan arsip.</p>
+<x-page-header title="Tahun Pelajaran">
+    Kelola daftar tahun pelajaran untuk sistem rapor dan arsip.
+</x-page-header>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">
+        <i class="fas fa-plus-circle me-1"></i> Tambah Tahun Pelajaran
     </div>
-    <a href="{{ route('tahun-pelajaran.create') }}" class="btn btn-primary">Tambah Tahun Pelajaran</a>
+    <div class="card-body">
+        <form action="{{ route('tahun-pelajaran.store') }}" method="POST">
+            @csrf
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Kode <span class="text-danger">*</span></label>
+                    <input type="text" name="kode" value="{{ old('kode') }}" class="form-control @error('kode') is-invalid @enderror" required>
+                    @error('kode')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nama <span class="text-danger">*</span></label>
+                    <input type="text" name="nama" value="{{ old('nama') }}" class="form-control @error('nama') is-invalid @enderror" required>
+                    @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="is_aktif" id="is_aktif" {{ old('is_aktif') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="is_aktif">Aktifkan tahun ini</label>
+                    </div>
+                </div>
+                <div class="col-md-2 text-md-end">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card border-0 shadow-sm">

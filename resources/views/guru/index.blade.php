@@ -4,12 +4,64 @@
 
 @section('content')
 <x-page-header title="Data Guru">
-    <x-slot:actions>
-        <a href="{{ route('guru.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tambah Guru
-        </a>
-    </x-slot:actions>
+    Kelola data guru. Tambah guru baru lewat form di bawah ini.
 </x-page-header>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">
+        <i class="fas fa-user-plus me-1"></i> Tambah Guru Baru
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ route('guru.store') }}">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Kode Guru <span class="text-danger">*</span></label>
+                    <input type="text" name="kode" class="form-control @error('kode') is-invalid @enderror" value="{{ old('kode') }}" required>
+                    @error('kode')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text">Contoh: 1, 4A, 3/15A (unik)</div>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
+                    <input type="text" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" required>
+                    @error('nama')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">NIP</label>
+                    <input type="text" name="nip" class="form-control @error('nip') is-invalid @enderror" value="{{ old('nip') }}">
+                    @error('nip')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}">
+                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">No. Telepon</label>
+                    <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" value="{{ old('phone') }}">
+                    @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Bidang Studi</label>
+                    <select name="bidang_studi" class="form-select @error('bidang_studi') is-invalid @enderror">
+                        <option value="">-- Pilih Mata Pelajaran --</option>
+                        @foreach($mapels as $mapel)
+                            <option value="{{ $mapel->nama_mapel }}" {{ old('bidang_studi') == $mapel->nama_mapel ? 'selected' : '' }}>
+                                {{ $mapel->nama_mapel }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('bidang_studi')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">

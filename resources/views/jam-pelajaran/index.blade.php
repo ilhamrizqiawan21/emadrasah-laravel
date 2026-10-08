@@ -12,10 +12,48 @@
             </h1>
             <p class="text-muted mb-0">Kelola sesi dan waktu pelajaran per hari</p>
         </div>
-        <div>
-            <a href="{{ route('jam-pelajaran.create') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Tambah Jam
-            </a>
+    </div>
+
+    <!-- Form Tambah -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white fw-bold">
+            <i class="fas fa-plus-circle me-1 text-primary"></i> Tambah Jam Pelajaran
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ route('jam-pelajaran.store') }}">
+                @csrf
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Hari <span class="text-danger">*</span></label>
+                        <select name="hari" class="form-select @error('hari') is-invalid @enderror" required>
+                            <option value="">-- Pilih Hari --</option>
+                            @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $h)
+                                <option value="{{ $h }}" {{ old('hari') == $h ? 'selected' : '' }}>{{ $h }}</option>
+                            @endforeach
+                        </select>
+                        @error('hari')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Sesi Ke <span class="text-danger">*</span></label>
+                        <input type="number" name="sesi_ke" class="form-control @error('sesi_ke') is-invalid @enderror" value="{{ old('sesi_ke') }}" min="1" required>
+                        @error('sesi_ke')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Jam Mulai <span class="text-danger">*</span></label>
+                        <input type="time" name="jam_mulai" class="form-control @error('jam_mulai') is-invalid @enderror" value="{{ old('jam_mulai') }}" required>
+                        @error('jam_mulai')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Jam Selesai <span class="text-danger">*</span></label>
+                        <input type="time" name="jam_selesai" class="form-control @error('jam_selesai') is-invalid @enderror" value="{{ old('jam_selesai') }}" required>
+                        @error('jam_selesai')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <small class="text-muted">Pastikan jam tidak tumpang tindih dengan sesi lain pada hari yang sama.</small>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 

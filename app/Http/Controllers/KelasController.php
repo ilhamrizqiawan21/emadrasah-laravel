@@ -12,8 +12,9 @@ class KelasController extends Controller
     public function index()
     {
         $kelas = Kelas::with('guruPembimbing')->orderBy('tingkat')->orderBy('nama_kelas')->orderBy('id')->paginate(10);
+        $gurus = Guru::orderBy('nama')->get();
 
-        return view('kelas.index', compact('kelas'));
+        return view('kelas.index', compact('kelas', 'gurus'));
     }
 
     public function create()

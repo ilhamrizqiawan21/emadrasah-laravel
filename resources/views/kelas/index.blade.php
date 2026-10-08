@@ -4,12 +4,60 @@
 
 @section('content')
 <x-page-header title="Data Kelas">
-    <x-slot:actions>
-        <a href="{{ route('kelas.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tambah Kelas
-        </a>
-    </x-slot:actions>
+    Kelola data kelas. Tambah kelas baru lewat form di bawah ini.
 </x-page-header>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">
+        <i class="fas fa-plus-circle me-1"></i> Tambah Kelas Baru
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ route('kelas.store') }}">
+            @csrf
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Nama Kelas <span class="text-danger">*</span></label>
+                    <input type="text" name="nama_kelas" class="form-control @error('nama_kelas') is-invalid @enderror" value="{{ old('nama_kelas') }}" required>
+                    @error('nama_kelas')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text">Contoh: 7A, 8B, 9C</div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tingkat <span class="text-danger">*</span></label>
+                    <select name="tingkat" class="form-select @error('tingkat') is-invalid @enderror" required>
+                        <option value="">-- Pilih Tingkat --</option>
+                        @foreach([7, 8, 9] as $t)
+                            <option value="{{ $t }}" {{ old('tingkat') == $t ? 'selected' : '' }}>{{ $t }} (Kelas {{ $t }})</option>
+                        @endforeach
+                    </select>
+                    @error('tingkat')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Wali Kelas</label>
+                    <select name="guru_pembimbing_id" class="form-select @error('guru_pembimbing_id') is-invalid @enderror">
+                        <option value="">-- Pilih Wali Kelas --</option>
+                        @foreach($gurus as $guru)
+                            <option value="{{ $guru->id }}" {{ old('guru_pembimbing_id') == $guru->id ? 'selected' : '' }}>{{ $guru->nama }}</option>
+                        @endforeach
+                    </select>
+                    @error('guru_pembimbing_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Kapasitas</label>
+                    <input type="number" name="kapasitas" class="form-control @error('kapasitas') is-invalid @enderror" value="{{ old('kapasitas', 40) }}">
+                    @error('kapasitas')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Ruangan</label>
+                    <input type="text" name="ruangan" class="form-control @error('ruangan') is-invalid @enderror" value="{{ old('ruangan') }}">
+                    @error('ruangan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6 d-flex align-items-end justify-content-end">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">

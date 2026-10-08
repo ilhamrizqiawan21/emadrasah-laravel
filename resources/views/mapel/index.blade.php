@@ -4,12 +4,30 @@
 
 @section('content')
 <x-page-header title="Mata Pelajaran">
-    <x-slot:actions>
-        <a href="{{ route('mapel.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tambah Mapel
-        </a>
-    </x-slot:actions>
+    Kelola mata pelajaran. Tambah mapel baru lewat form di bawah ini.
 </x-page-header>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold">
+        <i class="fas fa-plus-circle me-1"></i> Tambah Mata Pelajaran
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ route('mapel.store') }}">
+            @csrf
+            <div class="row g-3 align-items-start">
+                <div class="col-md-9">
+                    <label class="form-label">Nama Mata Pelajaran <span class="text-danger">*</span></label>
+                    <input type="text" name="nama_mapel" class="form-control @error('nama_mapel') is-invalid @enderror" value="{{ old('nama_mapel') }}" required>
+                    @error('nama_mapel')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text">Contoh: Matematika, Bahasa Indonesia, IPA, dll.</div>
+                </div>
+                <div class="col-md-3 text-md-end" style="padding-top: 32px;">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="card shadow-sm">
     <div class="card-body p-0">

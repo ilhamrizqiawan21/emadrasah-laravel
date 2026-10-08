@@ -55,8 +55,9 @@ class JadwalController extends Controller
         $gurus = Guru::all();
         $mapels = Mapel::all();
         $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->get();
+        $existingJadwals = Jadwal::select('id', 'kelas_id', 'guru_id', 'hari', 'jam_mulai', 'jam_selesai', 'jam_pelajaran_id')->get();
 
-        return view('jadwal.create', compact('kelas', 'gurus', 'mapels', 'jamPelajaran'));
+        return view('jadwal.create', compact('kelas', 'gurus', 'mapels', 'jamPelajaran', 'existingJadwals'));
     }
 
     public function store(Request $request)
@@ -110,8 +111,9 @@ class JadwalController extends Controller
         $gurus = Guru::all();
         $mapels = Mapel::all();
         $jamPelajaran = JamPelajaran::orderBy('hari')->orderBy('sesi_ke')->get();
+        $existingJadwals = Jadwal::where('id', '!=', $jadwal->id)->select('id', 'kelas_id', 'guru_id', 'hari', 'jam_mulai', 'jam_selesai', 'jam_pelajaran_id')->get();
 
-        return view('jadwal.edit', compact('jadwal', 'kelas', 'gurus', 'mapels', 'jamPelajaran'));
+        return view('jadwal.edit', compact('jadwal', 'kelas', 'gurus', 'mapels', 'jamPelajaran', 'existingJadwals'));
     }
 
     public function update(Request $request, Jadwal $jadwal)
@@ -201,7 +203,9 @@ class JadwalController extends Controller
                     'jadwal_id' => $j->id,
                     'guru_id' => $j->guru_id,
                     'guru_kode' => $j->guru->kode ?? '',
+                    'guru_nama' => $j->guru->nama ?? '',
                     'mapel_id' => $j->mapel_id,
+                    'mapel_nama' => $j->mapel->nama_mapel ?? '',
                 ];
             }
         }
@@ -211,6 +215,94 @@ class JadwalController extends Controller
 
     public function gridStore(Request $request)
     {
+        $tpKode = TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026';
+
+        // 1. Batch save
+        if ($request->has('changes')) {
+            $changes = $request->input('changes', []);
+            $results = [];
+
+            foreach ($changes as $item) {
+                if (($item['action'] ?? '') === 'delete') {
+                    if (! empty($item['jadwal_id'])) {
+                        Jadwal::where('id', $item['jadwal_id'])->delete();
+                    }
+                    $results[] = ['success' => true, 'action' => 'delete'];
+                    continue;
+                }
+
+                $kelasId = $item['kelas_id'] ?? null;
+                $guruId = $item['guru_id'] ?? null;
+                $mapelId = $item['mapel_id'] ?? null;
+                $hari = $item['hari'] ?? null;
+                $jamMulai = $item['jam_mulai'] ?? null;
+                $jamSelesai = $item['jam_selesai'] ?? null;
+                $jamId = $item['jam_id'] ?? null;
+
+                if (! $kelasId || ! $guruId || ! $hari) {
+                    $results[] = ['success' => false, 'message' => 'Data tidak lengkap'];
+                    continue;
+                }
+
+                if (! $mapelId) {
+                    $guru = Guru::find($guruId);
+                    if ($guru && $guru->bidang_studi) {
+                        $foundMapel = Mapel::where('nama_mapel', 'like', '%'.$guru->bidang_studi.'%')->first();
+                        $mapelId = $foundMapel?->id;
+                    }
+                    if (! $mapelId) {
+                        $mapelId = Mapel::value('id');
+                    }
+                }
+
+                if (! $jamMulai || ! $jamSelesai) {
+                    if ($jamId) {
+                        $sesi = JamPelajaran::find($jamId);
+                        if ($sesi) {
+                            $jamMulai = $sesi->jam_mulai;
+                            $jamSelesai = $sesi->jam_selesai;
+                        }
+                    }
+                }
+
+                // Cek konflik guru di kelas lain pada waktu yang sama
+                $conflict = Jadwal::where('guru_id', $guruId)
+                    ->where('hari', $hari)
+                    ->where('kelas_id', '!=', $kelasId)
+                    ->where('jam_mulai', '<', $jamSelesai)
+                    ->where('jam_selesai', '>', $jamMulai)
+                    ->exists();
+
+                if ($conflict) {
+                    $results[] = ['success' => false, 'message' => 'Guru sudah memiliki jadwal di kelas lain pada waktu tersebut'];
+                    continue;
+                }
+
+                $jadwal = Jadwal::updateOrCreate(
+                    [
+                        'kelas_id' => $kelasId,
+                        'hari' => $hari,
+                        'jam_mulai' => $jamMulai,
+                        'jam_selesai' => $jamSelesai,
+                    ],
+                    [
+                        'guru_id' => $guruId,
+                        'mapel_id' => $mapelId,
+                        'jam_pelajaran_id' => $jamId,
+                        'tahun_pelajaran_kode' => $tpKode,
+                    ]
+                );
+
+                $results[] = ['success' => true, 'id' => $jadwal->id, 'action' => 'save'];
+            }
+
+            return response()->json([
+                'success' => true,
+                'results' => $results,
+            ]);
+        }
+
+        // 2. Single item save
         $request->validate([
             'kelas_id' => 'required|integer|exists:kelas,id',
             'hari' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu',
@@ -221,8 +313,6 @@ class JadwalController extends Controller
 
         $sesi = JamPelajaran::findOrFail($request->jam_id);
 
-        // Cek konflik guru
-        // Slot yang sedang ditimpa (kelas+hari+jam sama) tidak dihitung sebagai bentrok dengan dirinya sendiri.
         $conflict = Jadwal::where('guru_id', $request->guru_id)
             ->where('hari', $request->hari)
             ->where(function ($q) use ($request) {
@@ -238,7 +328,6 @@ class JadwalController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Guru sudah memiliki jadwal di waktu tersebut.'], 422);
         }
 
-        // Cek apakah sudah ada jadwal di slot tersebut -> update atau create
         $jadwal = Jadwal::updateOrCreate(
             [
                 'kelas_id' => $request->kelas_id,
@@ -250,7 +339,7 @@ class JadwalController extends Controller
                 'mapel_id' => $request->mapel_id,
                 'jam_mulai' => $sesi->jam_mulai,
                 'jam_selesai' => $sesi->jam_selesai,
-                'tahun_pelajaran_kode' => TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026',
+                'tahun_pelajaran_kode' => $tpKode,
             ]
         );
 

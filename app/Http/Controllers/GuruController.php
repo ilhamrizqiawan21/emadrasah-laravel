@@ -11,8 +11,9 @@ class GuruController extends Controller
     public function index()
     {
         $gurus = Guru::orderByRaw('LENGTH(kode), kode')->paginate(10);
+        $mapels = Mapel::orderBy('nama_mapel')->get();
 
-        return view('guru.index', compact('gurus'));
+        return view('guru.index', compact('gurus', 'mapels'));
     }
 
     public function create()

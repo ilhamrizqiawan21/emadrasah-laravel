@@ -125,12 +125,15 @@
 
             @if($canManage)
             <div class="em-nav__group">
-                <span class="em-nav__label">Lainnya</span>
+                <span class="em-nav__label">Administrasi</span>
                 <a href="{{ route('surat-masuk.index') }}"
                    class="em-nav__link {{ request()->routeIs('surat-masuk.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Surat Masuk">
                     <span class="em-nav__icon"><i class="fas fa-envelope-open-text"></i></span>
                     <span class="em-nav__text">Surat Masuk</span>
+                    @if(($navBadges['surat_masuk'] ?? 0) > 0)
+                        <span class="em-nav__badge" title="{{ $navBadges['surat_masuk'] }} surat belum selesai">{{ $navBadges['surat_masuk'] > 99 ? '99+' : $navBadges['surat_masuk'] }}</span>
+                    @endif
                 </a>
                 <a href="{{ route('surat-keluar.index') }}"
                    class="em-nav__link {{ request()->routeIs('surat-keluar.*') ? 'is-active' : '' }}"
@@ -144,11 +147,18 @@
                     <span class="em-nav__icon"><i class="fas fa-file-contract"></i></span>
                     <span class="em-nav__text">Template Surat</span>
                 </a>
+            </div>
+
+            <div class="em-nav__group">
+                <span class="em-nav__label">Operasional</span>
                 <a href="{{ route('tasks.index') }}"
                    class="em-nav__link {{ request()->routeIs('tasks.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Manajemen Tugas TU">
                     <span class="em-nav__icon"><i class="fas fa-tasks"></i></span>
                     <span class="em-nav__text">Tugas TU</span>
+                    @if(($navBadges['tasks'] ?? 0) > 0)
+                        <span class="em-nav__badge" title="{{ $navBadges['tasks'] }} tugas belum selesai">{{ $navBadges['tasks'] > 99 ? '99+' : $navBadges['tasks'] }}</span>
+                    @endif
                 </a>
                 <a href="{{ route('sarana.index') }}"
                    class="em-nav__link {{ request()->routeIs('sarana.*') ? 'is-active' : '' }}"
@@ -162,7 +172,11 @@
                     <span class="em-nav__icon"><i class="fas fa-tags"></i></span>
                     <span class="em-nav__text">Kategori Sarana</span>
                 </a>
-                @if(auth()->user()?->role === 'admin')
+            </div>
+
+            @if(auth()->user()?->role === 'admin')
+            <div class="em-nav__group">
+                <span class="em-nav__label">Sistem</span>
                 <a href="{{ route('users.index') }}"
                    class="em-nav__link {{ request()->routeIs('users.*') ? 'is-active' : '' }}"
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Manajemen Pengguna">
@@ -175,39 +189,19 @@
                     <span class="em-nav__icon"><i class="fas fa-cog"></i></span>
                     <span class="em-nav__text">Pengaturan</span>
                 </a>
-                @endif
             </div>
+            @endif
             @endif
 
         </nav>
     </div>
 
-    {{-- ── Footer: User info + Logout ── --}}
+    {{-- ── Footer: versi (profil & logout ada di dropdown topbar) ── --}}
     <div class="em-sidebar__footer">
-        <div class="em-user-info">
-            <div class="em-user-avatar">
-                <span>{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</span>
-            </div>
-            <div class="em-user-details">
-                <span class="em-user-name">{{ Auth::user()->name ?? 'Admin' }}</span>
-                <span class="em-user-role">{{ ucfirst(str_replace('_', ' ', Auth::user()->role ?? 'Admin')) }}</span>
-            </div>
-            <form method="POST" action="{{ route('logout') }}" class="em-logout-form">
-                @csrf
-                <button type="submit" class="em-logout-btn" title="Keluar" aria-label="Keluar dari akun">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </form>
-        </div>
         <div class="em-sidebar__version">e-Madrasah v2.0</div>
     </div>
 
 </aside>
 
-{{-- Bar atas ponsel (< 992px): tombol menu + nama aplikasi, tidak menutupi konten --}}
-<header class="em-topbar d-lg-none">
-    <button type="button" class="em-mobile-menu-btn" id="sidebarToggleMobile" aria-label="Buka menu">
-        <i class="fas fa-bars"></i>
-    </button>
-    <span class="em-topbar__title">e-Madrasah</span>
-</header>
+{{-- Bar atas ada di components/topbar.blade.php --}}
+@include('components.topbar')
