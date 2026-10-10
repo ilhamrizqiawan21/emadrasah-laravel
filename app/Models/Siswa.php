@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Siswa extends Model
 {
-    use HasFactory;
+    use Diaudit, HasFactory, SoftDeletes;
 
     protected $table = 'siswa';
 
@@ -55,6 +57,11 @@ class Siswa extends Model
         return $this->hasOne(PerkembanganSiswa::class);
     }
 
+    public function riwayatKelas()
+    {
+        return $this->hasMany(RiwayatKelas::class)->orderBy('tahun_pelajaran_id');
+    }
+
     public function raportNilai()
     {
         return $this->hasMany(RaportNilai::class);
@@ -88,5 +95,10 @@ class Siswa extends Model
     public function dokumen()
     {
         return $this->hasMany(SiswaDokumen::class);
+    }
+
+    public function auditLabel(): string
+    {
+        return "{$this->nama_lengkap} (NIS {$this->nis})";
     }
 }

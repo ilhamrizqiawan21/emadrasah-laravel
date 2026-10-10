@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,13 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
+    /** Data contoh/awal tidak dicatat di audit log: log hanya untuk tindakan pengguna. */
     public function run(): void
+    {
+        AuditLog::tanpaAudit(fn () => $this->isi());
+    }
+
+    private function isi(): void
     {
         // Akun demo hanya untuk pengembangan/demo. Di produksi admin pertama dibuat dengan
         // `php artisan madrasah:install` (kata sandi sendiri), bukan kredensial yang diketahui umum.

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Diaudit, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -42,5 +43,10 @@ class User extends Authenticatable
     public function taskLogs()
     {
         return $this->hasMany(TaskLog::class);
+    }
+
+    public function auditLabel(): string
+    {
+        return "{$this->name} ({$this->email})";
     }
 }

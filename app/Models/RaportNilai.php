@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class RaportNilai extends Model
 {
-    use HasFactory;
+    use Diaudit, HasFactory;
 
     protected $table = 'raport_nilai';
 
@@ -49,5 +50,13 @@ class RaportNilai extends Model
     public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function auditLabel(): string
+    {
+        $siswa = Siswa::withTrashed()->find($this->siswa_id)?->nama_lengkap ?? '#'.$this->siswa_id;
+        $mapel = Mapel::find($this->mapel_id)?->nama_mapel ?? '#'.$this->mapel_id;
+
+        return "{$siswa} - {$mapel} (Smt {$this->semester})";
     }
 }

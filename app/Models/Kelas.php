@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Kelas extends Model
 {
-    use HasFactory;
+    use Diaudit, HasFactory;
 
     protected $table = 'kelas';
 
@@ -42,5 +43,10 @@ class Kelas extends Model
     public function siswa()
     {
         return $this->hasMany(Siswa::class);
+    }
+
+    public function auditLabel(): string
+    {
+        return (string) $this->nama_kelas;
     }
 }

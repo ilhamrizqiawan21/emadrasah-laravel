@@ -103,7 +103,7 @@ class MainFlowsTest extends TestCase
         $this->assertDatabaseHas('siswa', ['id' => $siswa->id, 'nama_lengkap' => 'Budi Diubah', 'nis' => '9990001']);
 
         $this->delete("/siswa/{$siswa->id}")->assertRedirect(route('siswa.index'));
-        $this->assertDatabaseMissing('siswa', ['id' => $siswa->id]);
+        $this->assertSoftDeleted('siswa', ['id' => $siswa->id]);
     }
 
     public function test_siswa_validation_rules(): void

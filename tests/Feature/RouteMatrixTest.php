@@ -19,7 +19,7 @@ class RouteMatrixTest extends TestCase
     use RefreshDatabase;
 
     /** Route yang memang terbuka untuk tamu. */
-    private const PUBLIC_NAMES = ['login', 'branding.show'];
+    private const PUBLIC_NAMES = ['login', 'branding.show', 'password.request', 'password.email', 'password.reset', 'password.update'];
 
     protected function setUp(): void
     {
@@ -30,12 +30,12 @@ class RouteMatrixTest extends TestCase
     /** Akses yang seharusnya dimiliki tiap role, tertulis mandiri. */
     private function allowed(string $role, string $name): bool
     {
-        $adminOnly = str_starts_with($name, 'users.') || str_starts_with($name, 'pengaturan.');
+        $adminOnly = str_starts_with($name, 'users.') || str_starts_with($name, 'pengaturan.') || str_starts_with($name, 'audit-log.');
 
         return match ($role) {
             'admin' => true,
             'operator' => ! $adminOnly,
-            'guru' => str_starts_with($name, 'absensi.') || in_array($name, ['dashboard', 'logout'], true),
+            'guru' => str_starts_with($name, 'absensi.') || str_starts_with($name, 'absensi-siswa.') || str_starts_with($name, 'nilai.') || str_starts_with($name, 'portal.') || str_starts_with($name, 'akun.') || in_array($name, ['dashboard', 'logout'], true),
             default => false,
         };
     }
@@ -90,8 +90,8 @@ class RouteMatrixTest extends TestCase
         foreach ($this->protectedRoutes() as $r) {
             $response = $this->call($r['method'], $r['uri']);
 
-            if ($response->status() !== 302 || ! str_ends_with((string) $response->headers->get('Location'), '/login')) {
-                $failures[] = "{$r['method']} {$r['uri']} -> {$response->status()}";
+            if ($response->getStatusCode() !== 302 || ! str_ends_with((string) $response->headers->get('Location'), '/login')) {
+                $failures[] = "{$r['method']} {$r['uri']} -> {$response->getStatusCode()}";
             }
         }
 
@@ -108,7 +108,7 @@ class RouteMatrixTest extends TestCase
                 continue;
             }
 
-            $status = $this->call('GET', $r['uri'])->status();
+            $status = $this->call('GET', $r['uri'])->getStatusCode();
 
             if ($status >= 500 || $status === 403) {
                 $failures[] = "GET {$r['uri']} -> {$status}";
@@ -154,7 +154,7 @@ class RouteMatrixTest extends TestCase
                 if ($r['method'] !== 'GET') {
                     continue;
                 }
-                $status = $this->call('GET', $r['uri'])->status();
+                $status = $this->call('GET', $r['uri'])->getStatusCode();
                 if ($status === 403 || $status >= 500) {
                     $failures[] = "[{$role}] seharusnya boleh: GET {$r['uri']} -> {$status}";
                 }
@@ -165,7 +165,7 @@ class RouteMatrixTest extends TestCase
             // Id yang tidak ada harus tetap 403 (bukan 404): role diperiksa sebelum record dicari,
             // sehingga pengguna tanpa hak akses tidak bisa menebak id yang tersimpan.
             foreach (['uri', 'missing'] as $kind) {
-                $status = $this->call($r['method'], $r[$kind])->status();
+                $status = $this->call($r['method'], $r[$kind])->getStatusCode();
                 if ($status !== 403) {
                     $failures[] = "[{$role}] seharusnya 403: {$r['method']} {$r[$kind]} ({$r['name']}) -> {$status}";
                 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,7 +11,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Setting extends Model
 {
+    use Diaudit;
+
     protected $table = 'settings';
 
     protected $fillable = ['key', 'value'];
+
+    public function auditLabel(): string
+    {
+        return (string) $this->key;
+    }
 }

@@ -359,3 +359,106 @@ test.describe('surat keluar: pencarian siswa', () => {
         expect(html).not.toContain('Aisyah Putri Azzahra');
     });
 });
+
+test.describe('absensi siswa harian', () => {
+    test('admin menandai siswa sakit, simpan, lalu data muncul lagi dan masuk rekap', async ({ page }) => {
+        await page.goto('/absensi-siswa');
+        const baris = page.locator('.em-main tbody tr').first();
+        await expect(baris.locator('select')).toHaveValue('hadir');
+
+        await baris.locator('select').selectOption('sakit');
+        await baris.locator('input[type="text"]').fill('Demam');
+        await page.click('#formAbsensiSiswa button[type="submit"]');
+
+        await expect(page.locator('.em-alert-content')).toContainText('Absensi siswa berhasil disimpan');
+        const setelah = page.locator('.em-main tbody tr').first();
+        await expect(setelah.locator('select')).toHaveValue('sakit');
+        await expect(setelah.locator('input[type="text"]')).toHaveValue('Demam');
+
+        await page.goto('/absensi-siswa/rekap');
+        await expect(page.locator('.em-main tbody tr').first().locator('td').nth(4)).toHaveText('1');
+    });
+});
+
+test.describe('input nilai per kelas', () => {
+    test('admin mengisi nilai satu siswa, simpan, lalu nilai tampil lagi', async ({ page }) => {
+        await page.goto('/nilai');
+        const baris = page.locator('.em-main tbody tr').first();
+        await baris.locator('input[type="number"]').fill('87');
+        await baris.locator('input[type="text"]').fill('Paham materi');
+        await page.click('.em-main form[method="POST"][action$="/nilai"] button[type="submit"]');
+
+        await expect(page.locator('.em-alert-content')).toContainText('Nilai berhasil disimpan');
+        const setelah = page.locator('.em-main tbody tr').first();
+        await expect(setelah.locator('input[type="number"]')).toHaveValue('87');
+        await expect(setelah.locator('input[type="text"]')).toHaveValue('Paham materi');
+    });
+});
+
+test.describe('portal guru', () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    test('guru melihat kelas dan jadwalnya, lalu membuka daftar siswa kelasnya', async ({ page }) => {
+        await login(page, 'guru@madrasah.id', 'guru123');
+        await page.goto('/portal');
+
+        await expect(page.locator('.em-page-title')).toHaveText('Kelas & Jadwal Saya');
+        await page.getByRole('link', { name: 'Daftar siswa' }).first().click();
+        await expect(page).toHaveURL(/\/portal\/kelas\/\d+$/);
+        await expect(page.locator('.em-main tbody tr').first()).toBeVisible();
+    });
+
+    test.describe('di HP', () => {
+        test.use({ viewport: { width: 375, height: 800 } });
+
+        test('halaman portal, nilai, dan absensi siswa tanpa overflow horizontal', async ({ page }) => {
+            await login(page, 'guru@madrasah.id', 'guru123');
+            for (const url of ['/portal', '/nilai', '/absensi-siswa', '/absensi-siswa/rekap']) {
+                await page.goto(url);
+                const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+                expect(overflow, url).toBeLessThanOrEqual(0);
+            }
+        });
+    });
+});
+
+test.describe('kenaikan kelas', () => {
+    test('admin menaikkan satu siswa lalu membatalkannya', async ({ page }) => {
+        await page.goto('/kenaikan-kelas');
+        await page.selectOption('#kelas_id', { label: '7A' });
+        await page.click('.em-main form[method="GET"] button[type="submit"]');
+
+        const pilihan = page.locator('#formKenaikan tbody select');
+        const jumlah = await pilihan.count();
+        expect(jumlah).toBeGreaterThan(0);
+        for (let i = 1; i < jumlah; i++) await pilihan.nth(i).selectOption('tunda');
+        await page.selectOption('#kelas_tujuan_id', { index: 1 });
+
+        page.once('dialog', (d) => d.accept());
+        await page.click('#formKenaikan button[type="submit"]');
+        await expect(page.locator('.em-alert-content')).toContainText('1 siswa berhasil diproses');
+        await expect(page.getByText('Sudah diproses dari kelas ini')).toBeVisible();
+
+        page.once('dialog', (d) => d.accept());
+        await page.getByRole('button', { name: 'Batalkan' }).click();
+        await expect(page.locator('.em-alert-content')).toContainText('Proses siswa dibatalkan');
+    });
+});
+
+test.describe('raport: ekskul, kehadiran, catatan wali', () => {
+    test('admin mengisi ekskul dan catatan, lalu data tampil lagi', async ({ page }) => {
+        await page.goto('/raport');
+        await page.getByRole('link', { name: 'Kelola Nilai' }).first().click();
+
+        await page.fill('input[name="ekskul[0][nama]"]', 'Pramuka');
+        await page.fill('input[name="ekskul[0][nilai]"]', 'A');
+        await page.fill('input[name="sakit"]', '3');
+        await page.fill('textarea[name="catatan_wali"]', 'Terus semangat belajar.');
+        await page.click('form[action$="/pelengkap"] button[type="submit"]');
+
+        await expect(page.locator('.em-alert-content')).toContainText('berhasil disimpan');
+        await expect(page.locator('input[name="ekskul[0][nama]"]')).toHaveValue('Pramuka');
+        await expect(page.locator('input[name="sakit"]')).toHaveValue('3');
+        await expect(page.locator('textarea[name="catatan_wali"]')).toHaveValue('Terus semangat belajar.');
+    });
+});

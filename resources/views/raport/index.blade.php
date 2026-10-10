@@ -17,6 +17,34 @@
     </div>
 </div>
 
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3"><i class="fas fa-print me-2 text-primary"></i>Cetak Raport Satu Kelas</h6>
+        <form action="{{ route('raport.export-kelas') }}" method="GET" target="_blank" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-uppercase text-muted" for="cetak_kelas">Kelas</label>
+                <select name="kelas_id" id="cetak_kelas" class="form-select" required>
+                    @foreach($kelasList as $k)<option value="{{ $k->id }}">{{ $k->nama_kelas }}</option>@endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-bold text-uppercase text-muted" for="cetak_tp">Tahun Pelajaran</label>
+                <select name="tahun_pelajaran_id" id="cetak_tp" class="form-select" required>
+                    @foreach($tahunList as $t)<option value="{{ $t->id }}" @selected($t->id === $tahunAktifId)>{{ $t->kode }}</option>@endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-uppercase text-muted" for="cetak_smt">Semester</label>
+                <select name="semester" id="cetak_smt" class="form-select"><option value="1">1 (Ganjil)</option><option value="2">2 (Genap)</option></select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-danger flex-fill"><i class="fas fa-file-pdf me-1"></i> PDF</button>
+                <button type="submit" formaction="{{ route('ekspor.nilai') }}" formtarget="_self" class="btn btn-outline-success flex-fill" title="Ekspor nilai satu kelas ke Excel"><i class="fas fa-file-excel me-1"></i> Excel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">

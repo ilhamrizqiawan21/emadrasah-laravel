@@ -6,6 +6,12 @@
 <x-page-header title="Data Siswa">
     Kelola data seluruh siswa {{ $madrasah->nama }}.
     <x-slot:actions>
+        <a href="{{ route('ekspor.siswa') }}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-file-export me-2"></i>Ekspor Excel
+        </a>
+        <a href="{{ route('impor.index', 'siswa') }}" class="btn btn-outline-primary me-2">
+            <i class="fas fa-file-import me-2"></i>Impor Excel
+        </a>
         <a href="{{ route('siswa.create') }}" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Tambah Siswa
         </a>

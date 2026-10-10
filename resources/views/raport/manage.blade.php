@@ -103,6 +103,56 @@
         </div>
     </div>
 </form>
+
+<form action="{{ route('raport.pelengkap', $siswa) }}" method="POST" class="mt-4">
+    @csrf
+    <input type="hidden" name="tahun_pelajaran_id" value="{{ $selectedTp }}">
+    <input type="hidden" name="semester" value="{{ $semester }}">
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-0">
+            <h5 class="mb-0 fw-bold"><i class="fas fa-puzzle-piece me-2 text-primary"></i>Ekstrakurikuler, Kehadiran, dan Catatan Wali</h5>
+        </div>
+        <div class="card-body">
+            <h6 class="fw-bold">Ekstrakurikuler</h6>
+            @php($barisEkskul = max(3, $ekskul->count() + 1))
+            @for($i = 0; $i < min($barisEkskul, 8); $i++)
+            @php($e = $ekskul[$i] ?? null)
+            <div class="row g-2 mb-2">
+                <div class="col-md-5"><input type="text" name="ekskul[{{ $i }}][nama]" class="form-control" maxlength="150" placeholder="Nama ekskul" value="{{ old("ekskul.$i.nama", $e->nama_ekskul ?? '') }}" aria-label="Nama ekskul {{ $i + 1 }}"></div>
+                <div class="col-md-2"><input type="text" name="ekskul[{{ $i }}][nilai]" class="form-control" maxlength="30" placeholder="Nilai (A/B/C)" value="{{ old("ekskul.$i.nilai", $e->nilai ?? '') }}" aria-label="Nilai ekskul {{ $i + 1 }}"></div>
+                <div class="col-md-5"><input type="text" name="ekskul[{{ $i }}][keterangan]" class="form-control" maxlength="255" placeholder="Keterangan" value="{{ old("ekskul.$i.keterangan", $e->keterangan ?? '') }}" aria-label="Keterangan ekskul {{ $i + 1 }}"></div>
+            </div>
+            @endfor
+            <small class="text-muted d-block mb-4">Baris nama kosong dilewati. Simpan lalu buka lagi untuk menambah baris (maksimal 8).</small>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold mb-0">Ketidakhadiran (hari)</h6>
+                <a href="{{ route('raport.manage', [$siswa, 'tahun_pelajaran_id' => $selectedTp, 'semester' => $semester, 'hitung' => 1]) }}" class="btn btn-sm btn-outline-secondary"
+                   onclick="return confirm('Isi ulang dari absensi siswa harian? Perubahan nilai di halaman ini yang belum disimpan akan hilang.')">
+                    <i class="fas fa-rotate me-1"></i> Isi ulang dari absensi
+                </a>
+            </div>
+            <div class="row g-2 mb-1">
+                @foreach(['sakit' => 'Sakit', 'ijin' => 'Izin', 'tanpa_keterangan' => 'Tanpa keterangan'] as $kolom => $label)
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-uppercase text-muted" for="{{ $kolom }}">{{ $label }}</label>
+                    <input type="number" min="0" max="366" name="{{ $kolom }}" id="{{ $kolom }}" class="form-control" value="{{ old($kolom, $kehadiran[$kolom]) }}">
+                </div>
+                @endforeach
+            </div>
+            <small class="text-muted d-block mb-4">
+                {{ $kehadiranOtomatis ? 'Angka dihitung otomatis dari absensi siswa harian pada semester ini; simpan untuk menetapkannya.' : 'Angka tersimpan. Gunakan "Isi ulang dari absensi" untuk menghitung ulang.' }}
+            </small>
+
+            <h6 class="fw-bold">Catatan Wali Kelas</h6>
+            <textarea name="catatan_wali" class="form-control" rows="3" maxlength="2000" placeholder="Catatan untuk siswa dan orang tua">{{ old('catatan_wali', $catatan) }}</textarea>
+        </div>
+        <div class="card-footer bg-white text-end py-3">
+            <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i>Simpan Ekskul, Kehadiran, dan Catatan</button>
+        </div>
+    </div>
+</form>
 @endsection
 
 @push('scripts')

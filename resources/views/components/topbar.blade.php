@@ -42,6 +42,7 @@
                 <span class="badge em-profile__badge">{{ $topbarRole }}</span>
             </div>
             <div class="dropdown-divider"></div>
+            <a href="{{ route('akun.sandi') }}" class="dropdown-item"><i class="fas fa-key me-2"></i> Ganti Kata Sandi</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="dropdown-item em-profile__logout">

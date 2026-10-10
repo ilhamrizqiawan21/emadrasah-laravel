@@ -81,6 +81,25 @@ Disusun dari kondisi project saat ini. Tiap fase bisa dikerjakan terpisah, uruta
 - [ ] Putuskan lisensi dan skema update/pemeliharaan untuk client
 - [ ] Putuskan nasib `maatwebsite/excel`: apakah ekspor/impor Excel dibutuhkan client (dicabut karena belum kompatibel PHP 8.5)
 
+## Fase 6: Kelengkapan fitur untuk dipakai nyata (hasil evaluasi 2026-10-09)
+### Sprint 1: keamanan data
+- [x] Hapus kelas ditolak bila masih ada siswa (sebelumnya `onDelete('cascade')` menghapus seluruh siswa kelas itu diam-diam)
+- [x] Siswa memakai soft delete (migrasi `2026_10_09_000001`); riwayat raport dan dokumen dipertahankan. NIS/NISN/NIK siswa terhapus tetap terkunci supaya tidak dipakai ulang tanpa sadar. Belum ada layar pemulihan
+- [x] Semester raport diputuskan **1-2 per tahun pelajaran** (sesuai validasi). Komentar kolom di migrasi lama yang menyebut 1-6 sengaja tidak diubah
+- [x] Jadwal tidak lagi menebak `'2025/2026'`; menolak dengan pesan jelas bila tidak ada tahun pelajaran aktif. Default kolom `jadwals.tahun_pelajaran_kode` di migrasi lama masih `2025/2026`
+- [x] Tes: `tests/Feature/DataSafetyTest.php` (89 tes lulus)
+### Sprint 2: alur guru
+- [x] Absensi siswa harian (`/absensi-siswa`, `/absensi-siswa/rekap`): input per kelas dan tanggal, tombol "Semua hadir", rekap bulanan per siswa. Guru hanya bisa mengisi kelas yang dia walikan atau ajar (jadwal); admin/operator semua kelas. Tabel `absensi_siswa` menyimpan `kelas_id` saat dicatat. Tes PHP `AbsensiSiswaTest` (8) dan E2E (1). Belum: hubungan otomatis ke `raport_kehadiran`, ekspor PDF/Excel rekap, hari libur
+- [x] Portal guru (`/portal`): jadwal hari ini, jadwal mingguan, kelas saya (wali/pengampu, jumlah siswa aktif), daftar siswa per kelas (`/portal/kelas/{kelas}`), pintasan ke absensi dan nilai. Admin/operator diarahkan ke dashboard. Belum: guru masih mendarat di dashboard umum setelah login (bukan portal)
+- [x] Input nilai per kelas x mapel (`/nilai`): satu mapel untuk seluruh siswa kelas, per tahun pelajaran dan semester 1-2. Guru hanya kelas+mapel di jadwalnya (wali kelas saja tidak cukup). Kolom kosong dilewati dan tidak menghapus nilai lama (sama seperti raport per siswa), jadi nilai yang salah belum bisa dikosongkan. Pengecekan akses terpusat di `App\Support\AksesKelas`. Tes: `NilaiKelasTest` (7), `PortalGuruTest` (4), E2E 4
+- [ ] Catatan: tes E2E sidebar "laci menu" di HP tidak stabil (gagal ~1 dari 3 percobaan, juga dengan sidebar HEAD), perlu diselidiki terpisah
+### Sprint 3: siklus tahun ajaran
+- [x] Kenaikan kelas dan kelulusan (`/kenaikan-kelas`, menu Kesiswaan): per kelas asal dan tahun pelajaran, hasil naik/tinggal/lulus/tunda per siswa, satu kelas tujuan per proses. Riwayat di tabel `riwayat_kelas` (unik per siswa per tahun, jadi tidak bisa naik dua kali; urutan kelas bebas), tampil di buku induk. Lulus mengubah status dan mengisi `jenis_keluar`/`thn_lulus` di buku induk. Pembatalan per siswa hanya bila datanya belum diubah manual. Belum: pindah/keluar/meninggal massal, cek kapasitas kelas
+- [x] Raport lengkap: ekskul (maks. 8 baris), ketidakhadiran, dan catatan wali kelas per siswa per semester (`raport.pelengkap`; tabel baru `raport_catatan`). Kehadiran dihitung otomatis dari absensi siswa harian (Ganjil Jul-Des, Genap Jan-Jun, dari kode tahun pelajaran; nilai tersimpan diutamakan, ada tombol isi ulang). Disatukan di `App\Support\DataRaport`; PDF raport memuat ketiganya
+- [x] Cetak raport satu kelas (`/raport/export-kelas`): satu PDF, satu siswa per halaman, urut nama, hanya siswa aktif. Diperiksa visual: satu raport muat satu halaman A4 (sempat dua halaman, sudah dipadatkan)
+- [ ] Belum dikerjakan dari rencana Sprint 3: **P5/PPRA** (tabel `raport_p5ppra*` rumit, perlu rancangan tampilan), **prestasi** (`raport_prestasi`), `raport_kelulusan`/ijazah, dan catatan wali oleh guru wali kelas sendiri (kini hanya admin/operator)
+- [ ] Sprint 4: impor/ekspor Excel, lupa kata sandi, audit log
+
 ## Urutan yang disarankan
 1. Fase 0, lalu Fase 1. Keduanya cepat dan membuka jalan.
 2. Fase 2 dikerjakan per modul, mulai dari login, dashboard, dan satu modul contoh. Nilai arah desain dulu sebelum lanjut ke modul lain.

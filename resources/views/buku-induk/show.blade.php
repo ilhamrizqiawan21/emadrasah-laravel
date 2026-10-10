@@ -59,6 +59,23 @@
                     <tr><th>No. Ijazah</th><td>{{ $siswa->perkembangan->no_ijazah_asal ?? '-' }}</td></tr>
                 </table>
 
+                <h5 class="text-primary border-bottom pb-2 mb-3">Riwayat Kelas</h5>
+                <table class="table table-sm mb-4">
+                    <thead><tr><th>Tahun Pelajaran</th><th>Kelas</th><th>Hasil</th><th>Kelas Tujuan</th></tr></thead>
+                    <tbody>
+                        @forelse($siswa->riwayatKelas as $r)
+                        <tr>
+                            <td>{{ $r->tahunPelajaran->kode ?? '-' }}</td>
+                            <td>{{ $r->kelas_asal_nama }}</td>
+                            <td>{{ ucfirst($r->hasil) }}</td>
+                            <td>{{ $r->kelas_tujuan_nama ?? '-' }}</td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="4" class="text-muted">Belum ada riwayat kenaikan kelas.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
                 <h5 class="text-primary border-bottom pb-2 mb-3">Brankas Dokumen Digital</h5>
                 <div class="row g-2">
                     @forelse($siswa->dokumen as $dok)

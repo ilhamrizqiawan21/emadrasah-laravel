@@ -33,6 +33,13 @@
                 <h2 class="login-heading">Masuk</h2>
                 <p class="login-lead">Gunakan akun yang diberikan oleh administrator.</p>
 
+                @if(session('status'))
+                    <div class="alert em-alert em-alert-success mb-4" role="alert">
+                        <div class="em-alert-icon"><i class="fas fa-circle-check"></i></div>
+                        <div class="em-alert-content">{{ session('status') }}</div>
+                    </div>
+                @endif
+
                 @if($errors->any())
                     <div class="alert em-alert em-alert-danger mb-4" role="alert">
                         <div class="em-alert-icon"><i class="fas fa-circle-exclamation"></i></div>
@@ -59,6 +66,8 @@
                         <input class="form-check-input" type="checkbox" name="remember" id="remember">
                         <label class="form-check-label small text-muted" for="remember">Ingat saya di perangkat ini</label>
                     </div>
+
+                    <p class="text-end mb-3 mt-n2"><a href="{{ route('password.request') }}" class="small">Lupa password?</a></p>
 
                     <button type="submit" class="btn btn-primary btn-login w-100">
                         Masuk ke Sistem <i class="fas fa-arrow-right ms-2"></i>

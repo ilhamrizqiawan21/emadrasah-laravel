@@ -151,16 +151,15 @@ class BukuIndukController extends Controller
 
     public function show(Siswa $siswa)
     {
-        $siswa->load(['kelas', 'tahunPelajaran', 'orangTuaWali', 'perkembangan', 'dokumen']);
+        $siswa->load(['kelas', 'tahunPelajaran', 'orangTuaWali', 'perkembangan', 'dokumen', 'riwayatKelas.tahunPelajaran']);
 
         return view('buku-induk.show', compact('siswa'));
     }
 
     public function destroy(Siswa $siswa)
     {
-        $paths = $siswa->dokumen()->pluck('file_path')->filter()->all();
+        // Soft delete: dokumen sengaja dipertahankan agar data bisa dipulihkan.
         $siswa->delete();
-        Storage::disk('local')->delete($paths);
 
         return redirect()->route('buku-induk.index')->with('success', 'Data siswa berhasil dihapus.');
     }

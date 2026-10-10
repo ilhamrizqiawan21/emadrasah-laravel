@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Guru extends Model
 {
-    use HasFactory;
+    use Diaudit, HasFactory;
 
     protected $table = 'gurus';
 
@@ -57,5 +58,10 @@ class Guru extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function auditLabel(): string
+    {
+        return "{$this->nama} ({$this->kode})";
     }
 }

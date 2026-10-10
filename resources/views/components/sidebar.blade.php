@@ -92,6 +92,11 @@
                             <span class="em-nav__icon"><i class="fas fa-book-open"></i></span>
                             <span class="em-nav__text">Buku Induk</span>
                         </a>
+                        <a href="{{ route('kenaikan-kelas.index') }}"
+                           class="em-nav__link em-nav__link--sub {{ request()->routeIs('kenaikan-kelas.*') ? 'is-active' : '' }}">
+                            <span class="em-nav__icon"><i class="fas fa-turn-up"></i></span>
+                            <span class="em-nav__text">Kenaikan Kelas</span>
+                        </a>
                         <a href="{{ route('raport.index') }}"
                            class="em-nav__link em-nav__link--sub {{ request()->routeIs('raport.*') ? 'is-active' : '' }}">
                             <span class="em-nav__icon"><i class="fas fa-file-invoice"></i></span>
@@ -112,6 +117,26 @@
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Absensi Guru">
                     <span class="em-nav__icon"><i class="fas fa-fingerprint"></i></span>
                     <span class="em-nav__text">Absensi Guru</span>
+                </a>
+                @if(auth()->user()?->role === 'guru')
+                <a href="{{ route('portal.index') }}"
+                   class="em-nav__link {{ request()->routeIs('portal.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Kelas & Jadwal Saya">
+                    <span class="em-nav__icon"><i class="fas fa-calendar-day"></i></span>
+                    <span class="em-nav__text">Kelas & Jadwal Saya</span>
+                </a>
+                @endif
+                <a href="{{ route('nilai.index') }}"
+                   class="em-nav__link {{ request()->routeIs('nilai.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Input Nilai">
+                    <span class="em-nav__icon"><i class="fas fa-pen-to-square"></i></span>
+                    <span class="em-nav__text">Input Nilai</span>
+                </a>
+                <a href="{{ route('absensi-siswa.index') }}"
+                   class="em-nav__link {{ request()->routeIs('absensi-siswa.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Absensi Siswa">
+                    <span class="em-nav__icon"><i class="fas fa-user-check"></i></span>
+                    <span class="em-nav__text">Absensi Siswa</span>
                 </a>
                 @if($canManage)
                 <a href="{{ route('arsip-akademik.index') }}"
@@ -182,6 +207,12 @@
                    data-bs-toggle="tooltip" data-bs-placement="right" title="Manajemen Pengguna">
                     <span class="em-nav__icon"><i class="fas fa-user-cog"></i></span>
                     <span class="em-nav__text">Pengguna</span>
+                </a>
+                <a href="{{ route('audit-log.index') }}"
+                   class="em-nav__link {{ request()->routeIs('audit-log.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Audit Log">
+                    <span class="em-nav__icon"><i class="fas fa-clock-rotate-left"></i></span>
+                    <span class="em-nav__text">Audit Log</span>
                 </a>
                 <a href="{{ route('pengaturan.edit') }}"
                    class="em-nav__link {{ request()->routeIs('pengaturan.*') ? 'is-active' : '' }}"

@@ -75,10 +75,15 @@ class KelasController extends Controller
                 return redirect()->route('kelas.index')->with('error', "Kelas masih memiliki {$jadwalCount} jadwal. Hapus jadwal terlebih dahulu.");
             }
 
-            // Hapus langsung via query builder
-            $deleted = DB::table('kelas')->where('id', $id)->delete();
+            // Siswa terhubung dengan cascade; tanpa pemeriksaan ini seluruh siswa kelas ikut terhapus.
+            // Siswa yang dihapus lunak (arsip) tetap dihitung: barisnya masih ada dan ikut terhapus permanen oleh cascade.
+            $siswaCount = DB::table('siswa')->where('kelas_id', $id)->count();
+            if ($siswaCount > 0) {
+                return redirect()->route('kelas.index')->with('error', "Kelas masih terhubung dengan {$siswaCount} siswa (termasuk yang sudah dihapus/arsip). Pindahkan siswa ke kelas lain terlebih dahulu.");
+            }
 
-            if ($deleted) {
+            // Lewat model (bukan query builder) agar penghapusan tercatat di audit log.
+            if ($kelas->delete()) {
                 return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus.');
             } else {
                 return redirect()->route('kelas.index')->with('error', 'Gagal menghapus kelas. Data tidak ditemukan.');

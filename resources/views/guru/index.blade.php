@@ -5,6 +5,14 @@
 @section('content')
 <x-page-header title="Data Guru">
     Kelola data guru. Tambah guru baru lewat form di bawah ini.
+    <x-slot:actions>
+        <a href="{{ route('ekspor.guru') }}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-file-export me-2"></i>Ekspor Excel
+        </a>
+        <a href="{{ route('impor.index', 'guru') }}" class="btn btn-outline-primary">
+            <i class="fas fa-file-import me-2"></i>Impor Excel
+        </a>
+    </x-slot:actions>
 </x-page-header>
 
 <div class="card shadow-sm mb-4">

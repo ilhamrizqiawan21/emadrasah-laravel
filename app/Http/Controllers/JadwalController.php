@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 
 class JadwalController extends Controller
 {
+    private const PESAN_TANPA_TAHUN_AKTIF = 'Belum ada tahun pelajaran aktif. Aktifkan satu di menu Tahun Pelajaran.';
+
     public function index()
     {
         $kelasList = Kelas::orderBy('nama_kelas')->get();
@@ -87,7 +89,10 @@ class JadwalController extends Controller
             return back()->withErrors(['guru_id' => 'Guru sudah memiliki jadwal di waktu tersebut.'])->withInput();
         }
 
-        $tpKode = TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026';
+        $tpKode = TahunPelajaran::kodeAktif();
+        if (! $tpKode) {
+            return back()->withErrors(['kelas_id' => self::PESAN_TANPA_TAHUN_AKTIF])->withInput();
+        }
 
         // Simpan
         Jadwal::create([
@@ -215,7 +220,10 @@ class JadwalController extends Controller
 
     public function gridStore(Request $request)
     {
-        $tpKode = TahunPelajaran::where('is_aktif', true)->first()->kode ?? '2025/2026';
+        $tpKode = TahunPelajaran::kodeAktif();
+        if (! $tpKode) {
+            return response()->json(['status' => 'error', 'success' => false, 'message' => self::PESAN_TANPA_TAHUN_AKTIF], 422);
+        }
 
         // 1. Batch save
         if ($request->has('changes')) {
@@ -228,6 +236,7 @@ class JadwalController extends Controller
                         Jadwal::where('id', $item['jadwal_id'])->delete();
                     }
                     $results[] = ['success' => true, 'action' => 'delete'];
+
                     continue;
                 }
 
@@ -241,6 +250,7 @@ class JadwalController extends Controller
 
                 if (! $kelasId || ! $guruId || ! $hari) {
                     $results[] = ['success' => false, 'message' => 'Data tidak lengkap'];
+
                     continue;
                 }
 
@@ -275,6 +285,7 @@ class JadwalController extends Controller
 
                 if ($conflict) {
                     $results[] = ['success' => false, 'message' => 'Guru sudah memiliki jadwal di kelas lain pada waktu tersebut'];
+
                     continue;
                 }
 

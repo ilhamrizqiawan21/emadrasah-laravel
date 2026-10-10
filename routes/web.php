@@ -1,19 +1,28 @@
 <?php
 
+use App\Http\Controllers\AbsensiSiswaController;
+use App\Http\Controllers\AkunController;
 use App\Http\Controllers\AgendaGuruController;
 use App\Http\Controllers\ArsipAkademikController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BrandingController;
 use App\Http\Controllers\BukuIndukController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EksporController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\ImporController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JamPelajaranController;
 use App\Http\Controllers\KategoriSaranaController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\KenaikanKelasController;
 use App\Http\Controllers\MapelController;
+use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\PortalGuruController;
 use App\Http\Controllers\RaportController;
 use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\SiswaController;
@@ -36,6 +45,14 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:login');
 // Logout akan di dalam grup auth (karena butuh login dulu)
 
+// Lupa kata sandi (tamu). Nama route 'password.reset' dipakai notifikasi bawaan Laravel.
+Route::middleware('guest')->group(function () {
+    Route::get('/lupa-sandi', [PasswordResetController::class, 'form'])->name('password.request');
+    Route::post('/lupa-sandi', [PasswordResetController::class, 'kirim'])->middleware('throttle:lupa-sandi')->name('password.email');
+    Route::get('/reset-sandi/{token}', [PasswordResetController::class, 'formReset'])->name('password.reset');
+    Route::post('/reset-sandi', [PasswordResetController::class, 'simpan'])->middleware('throttle:reset-sandi')->name('password.update');
+});
+
 // Logo & favicon madrasah: publik karena dipakai halaman login dan tab browser.
 Route::get('/branding/{type}', [BrandingController::class, 'show'])
     ->whereIn('type', ['logo', 'favicon'])
@@ -46,6 +63,10 @@ Route::middleware(['auth'])->group(function () {
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Akun sendiri: semua role boleh mengganti kata sandinya.
+    Route::get('/akun/sandi', [AkunController::class, 'sandi'])->name('akun.sandi');
+    Route::put('/akun/sandi', [AkunController::class, 'ubahSandi'])->name('akun.sandi.update');
 
     // Dashboard (halaman utama setelah login)
     Route::get('/', fn () => redirect()->route('dashboard'));
@@ -60,6 +81,27 @@ Route::middleware(['auth'])->group(function () {
         Route::get('rekap/export', [AgendaGuruController::class, 'exportPdf'])->name('export-pdf');
         Route::get('pengganti/{agenda}', [AgendaGuruController::class, 'pengganti'])->name('pengganti');
         Route::post('pengganti/{agenda}', [AgendaGuruController::class, 'storePengganti'])->name('store-pengganti');
+    });
+
+    // ========== ABSENSI SISWA HARIAN ==========
+    // Guru dibatasi ke kelas yang dia walikan atau ajar (dicek di controller).
+    Route::prefix('absensi-siswa')->name('absensi-siswa.')->middleware('role:admin,operator,guru')->group(function () {
+        Route::get('/', [AbsensiSiswaController::class, 'index'])->name('index');
+        Route::post('/', [AbsensiSiswaController::class, 'store'])->name('store');
+        Route::get('rekap', [AbsensiSiswaController::class, 'rekap'])->name('rekap');
+    });
+
+    // ========== INPUT NILAI PER KELAS x MAPEL ==========
+    // Guru dibatasi ke kelas dan mapel di jadwalnya (dicek di controller).
+    Route::prefix('nilai')->name('nilai.')->middleware('role:admin,operator,guru')->group(function () {
+        Route::get('/', [NilaiController::class, 'index'])->name('index');
+        Route::post('/', [NilaiController::class, 'store'])->name('store');
+    });
+
+    // ========== PORTAL GURU ==========
+    Route::prefix('portal')->name('portal.')->middleware('role:admin,operator,guru')->group(function () {
+        Route::get('/', [PortalGuruController::class, 'index'])->name('index');
+        Route::get('kelas/{kelas}', [PortalGuruController::class, 'kelas'])->name('kelas');
     });
 
     // ========== MENU MANAJEMEN (khusus admin & operator) ==========
@@ -106,6 +148,7 @@ Route::middleware(['auth'])->group(function () {
         // ========== USER MANAGEMENT (khusus admin) ==========
         Route::middleware('role:admin')->group(function () {
             Route::resource('users', UserController::class)->except('show');
+            Route::get('audit-log', [AuditLogController::class, 'index'])->name('audit-log.index');
 
             // Pengaturan identitas & tampilan madrasah
             Route::get('pengaturan', [PengaturanController::class, 'edit'])->name('pengaturan.edit');
@@ -119,10 +162,30 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('siswa', SiswaController::class);
         Route::resource('buku-induk', BukuIndukController::class)->parameters(['buku-induk' => 'siswa']);
 
+        // ========== IMPOR DATA (Excel/CSV) ==========
+        Route::get('impor/{jenis}', [ImporController::class, 'index'])->name('impor.index');
+        Route::get('impor/{jenis}/template', [ImporController::class, 'template'])->name('impor.template');
+        Route::post('impor/{jenis}', [ImporController::class, 'proses'])->name('impor.proses');
+
+        // ========== EKSPOR EXCEL ==========
+        Route::prefix('ekspor')->name('ekspor.')->controller(EksporController::class)->group(function () {
+            Route::get('siswa', 'siswa')->name('siswa');
+            Route::get('guru', 'guru')->name('guru');
+            Route::get('absensi-siswa', 'absensiSiswa')->name('absensi-siswa');
+            Route::get('nilai', 'nilai')->name('nilai');
+        });
+
+        // ========== KENAIKAN KELAS & KELULUSAN ==========
+        Route::get('kenaikan-kelas', [KenaikanKelasController::class, 'index'])->name('kenaikan-kelas.index');
+        Route::post('kenaikan-kelas', [KenaikanKelasController::class, 'store'])->name('kenaikan-kelas.store');
+        Route::delete('kenaikan-kelas/{riwayat}', [KenaikanKelasController::class, 'batal'])->name('kenaikan-kelas.batal');
+
         // ========== RAPORT / ARSIP NILAI ==========
         Route::get('raport', [RaportController::class, 'index'])->name('raport.index');
+        Route::get('raport/export-kelas', [RaportController::class, 'exportKelas'])->name('raport.export-kelas');
         Route::get('raport/{siswa}/manage', [RaportController::class, 'manage'])->name('raport.manage');
         Route::get('raport/{siswa}/export-pdf', [RaportController::class, 'exportPdf'])->name('raport.export-pdf');
         Route::post('raport/{siswa}/store', [RaportController::class, 'store'])->name('raport.store');
+        Route::post('raport/{siswa}/pelengkap', [RaportController::class, 'storePelengkap'])->name('raport.pelengkap');
     });
 });

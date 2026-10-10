@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Diaudit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TahunPelajaran extends Model
 {
-    use HasFactory;
+    use Diaudit, HasFactory;
 
     protected $table = 'tahun_pelajaran';
 
@@ -18,6 +19,12 @@ class TahunPelajaran extends Model
     protected $casts = [
         'is_aktif' => 'boolean',
     ];
+
+    /** Kode tahun pelajaran yang sedang aktif, atau null bila belum ada. */
+    public static function kodeAktif(): ?string
+    {
+        return static::where('is_aktif', true)->value('kode');
+    }
 
     public function siswa()
     {
@@ -32,5 +39,10 @@ class TahunPelajaran extends Model
     public function raportNilai()
     {
         return $this->hasMany(RaportNilai::class);
+    }
+
+    public function auditLabel(): string
+    {
+        return (string) $this->kode;
     }
 }
