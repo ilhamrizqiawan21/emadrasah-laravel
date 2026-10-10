@@ -121,6 +121,12 @@
                     <span class="em-nav__icon"><i class="fas fa-calendar-days"></i></span>
                     <span class="em-nav__text">Jadwal Pelajaran</span>
                 </a>
+                <a href="{{ route('keuangan.index') }}"
+                   class="em-nav__link {{ request()->routeIs('keuangan.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Keuangan">
+                    <span class="em-nav__icon"><i class="fas fa-wallet"></i></span>
+                    <span class="em-nav__text">Keuangan</span>
+                </a>
                 @endif
                 <a href="{{ route('absensi.index') }}"
                    class="em-nav__link {{ request()->routeIs('absensi.*') ? 'is-active' : '' }}"

@@ -6,6 +6,7 @@ use App\Models\AbsensiSiswa;
 use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\Mapel;
+use App\Models\OrangTuaWali;
 use App\Models\RaportNilai;
 use App\Models\Siswa;
 use App\Models\TahunPelajaran;
@@ -88,6 +89,42 @@ class EksporTest extends TestCase
 
         $this->post('/impor/siswa', ['berkas' => new UploadedFile($copy, 'rt.xlsx', null, null, true)])
             ->assertRedirect()->assertSessionHas('hasil_impor', fn ($h) => $h['diimpor'] === 0 && count($h['dilewati']) === 2);
+    }
+
+    public function test_emis_export_has_full_columns_with_parents_and_keeps_identifiers_as_text(): void
+    {
+        $this->a->update(['nik' => '3201010101010001', 'no_kk' => '3201010101010002', 'tempat_lahir' => 'Bogor', 'tanggal_lahir' => '2012-03-04', 'rt' => '01', 'rw' => '02', 'desa_kelurahan' => 'Sukamaju', 'kode_pos' => '16110']);
+        $this->b->update(['status' => 'Aktif']);
+        OrangTuaWali::create(['siswa_id' => $this->a->id, 'nama_ayah' => 'Ayah A', 'pekerjaan_ayah' => 'Petani', 'nama_ibu' => 'Ibu A', 'nama_wali' => 'Wali A']);
+
+        $rows = $this->baca($this->get('/ekspor/emis?kelas_id='.$this->kelas->id));
+        $kolom = array_flip($rows[0]);
+
+        foreach (['NISN', 'NIK', 'No. KK', 'Nama Lengkap', 'Tanggal Lahir', 'RT', 'RW', 'Desa/Kelurahan', 'Kode Pos', 'Nama Ayah', 'Pekerjaan Ayah', 'Nama Ibu', 'Nama Wali'] as $nama) {
+            $this->assertArrayHasKey($nama, $kolom);
+        }
+        $this->assertCount(3, $rows);
+        $a = $rows[1];
+        $this->assertSame('0091234567', $a[$kolom['NISN']]);
+        $this->assertSame('3201010101010001', $a[$kolom['NIK']]);
+        $this->assertSame('01', $a[$kolom['RT']]);
+        $this->assertSame('=1+1', $a[$kolom['Nama Lengkap']]);
+        $this->assertSame('2012-03-04', $a[$kolom['Tanggal Lahir']]);
+        $this->assertSame('Ayah A', $a[$kolom['Nama Ayah']]);
+        $this->assertSame('Petani', $a[$kolom['Pekerjaan Ayah']]);
+        $this->assertEmpty($rows[2][$kolom['Nama Ayah']] ?? null);   // siswa tanpa data orang tua tetap diekspor
+    }
+
+    public function test_emis_export_defaults_to_active_students_and_skips_deleted(): void
+    {
+        $semua = $this->baca($this->get('/ekspor/emis?kelas_id='.$this->kelas->id));
+        $this->assertCount(2, $semua);   // header + satu siswa Aktif (b berstatus Lulus)
+
+        $lulus = $this->baca($this->get('/ekspor/emis?status=Lulus'));
+        $this->assertCount(2, $lulus);
+
+        $this->a->delete();
+        $this->assertCount(1, $this->baca($this->get('/ekspor/emis?kelas_id='.$this->kelas->id)));
     }
 
     public function test_teacher_export(): void

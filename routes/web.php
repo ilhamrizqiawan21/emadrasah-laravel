@@ -19,6 +19,7 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JamPelajaranController;
 use App\Http\Controllers\KategoriSaranaController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KenaikanKelasController;
 use App\Http\Controllers\MapelController;
 use App\Http\Controllers\NilaiController;
@@ -151,6 +152,16 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('jadwal', JadwalController::class)->except('show');
         Route::resource('arsip-akademik', ArsipAkademikController::class)->only(['index', 'store', 'destroy']);
 
+        // ========== KEUANGAN (tagihan & pembayaran) ==========
+        Route::prefix('keuangan')->name('keuangan.')->controller(KeuanganController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('generate', 'generate')->name('generate');
+            Route::get('tagihan/{tagihan}', 'show')->name('tagihan.show');
+            Route::delete('tagihan/{tagihan}', 'destroy')->name('tagihan.destroy');
+            Route::post('tagihan/{tagihan}/pembayaran', 'bayar')->name('pembayaran.store');
+            Route::delete('pembayaran/{pembayaran}', 'batalkanBayar')->name('pembayaran.destroy');
+        });
+
         // ========== PERSURATAN ==========
         Route::resource('surat-masuk', SuratMasukController::class);
         Route::resource('surat-keluar', SuratKeluarController::class);
@@ -199,6 +210,7 @@ Route::middleware(['auth'])->group(function () {
         // ========== EKSPOR EXCEL ==========
         Route::prefix('ekspor')->name('ekspor.')->controller(EksporController::class)->group(function () {
             Route::get('siswa', 'siswa')->name('siswa');
+            Route::get('emis', 'emis')->name('emis');
             Route::get('guru', 'guru')->name('guru');
             Route::get('absensi-siswa', 'absensiSiswa')->name('absensi-siswa');
             Route::get('nilai', 'nilai')->name('nilai');

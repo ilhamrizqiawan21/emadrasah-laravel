@@ -9,6 +9,9 @@
         <a href="{{ route('ekspor.siswa') }}" class="btn btn-outline-secondary me-2">
             <i class="fas fa-file-export me-2"></i>Ekspor Excel
         </a>
+        <a href="{{ route('ekspor.emis') }}" class="btn btn-outline-secondary me-2" title="Data lengkap (identitas, alamat, orang tua) siswa aktif untuk entri Dapodik/EMIS">
+            <i class="fas fa-file-excel me-2"></i>Ekspor EMIS
+        </a>
         <a href="{{ route('impor.index', 'siswa') }}" class="btn btn-outline-primary me-2">
             <i class="fas fa-file-import me-2"></i>Impor Excel
         </a>
