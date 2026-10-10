@@ -597,6 +597,22 @@ $em-topbar-h: 64px;
 
 .em-topbar__spacer { flex: 1; }
 
+// Lonceng notifikasi di topbar: tombol bulat lembut; angka belum dibaca lewat badge Bootstrap.
+.em-notif-btn {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--em-text-muted);
+    text-decoration: none;
+    transition: background-color .15s var(--em-ease), color .15s var(--em-ease);
+
+    &:hover,
+    &.is-active { background: color-mix(in srgb, var(--em-primary) 10%, transparent); color: var(--em-primary); }
+}
+
 .em-breadcrumb {
     display: flex;
     align-items: center;

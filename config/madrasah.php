@@ -40,4 +40,7 @@ return [
     'logo' => null,
     'favicon' => null,
 
+    // Disk filesystem (config/filesystems.php) tujuan salinan cadangan di luar server; kosong = tanpa salinan.
+    'backup_disk' => env('BACKUP_DISK'),
+
 ];

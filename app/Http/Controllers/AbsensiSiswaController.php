@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\AbsensiSiswa;
 use App\Models\Kelas;
 use App\Models\Siswa;
+use App\Models\User;
+use App\Notifications\SiswaAlpha;
 use App\Support\AksesKelas;
 use App\Support\RekapAbsensi;
 use Carbon\Carbon;
@@ -68,6 +70,7 @@ class AbsensiSiswaController extends Controller
         $siswaIds = Siswa::where('kelas_id', $kelas->id)->where('status', 'Aktif')
             ->whereIn('id', array_keys($request->status))->pluck('id');
         $tanggal = Carbon::parse($request->tanggal)->startOfDay();
+        $sebelumnya = AbsensiSiswa::whereDate('tanggal', $tanggal)->whereIn('siswa_id', $siswaIds)->pluck('status', 'siswa_id');
 
         DB::transaction(function () use ($request, $siswaIds, $kelas, $tanggal) {
             foreach ($siswaIds as $siswaId) {
@@ -83,9 +86,41 @@ class AbsensiSiswaController extends Controller
             }
         });
 
+        $this->kabariWali($siswaIds, $sebelumnya, $request->status, $tanggal);
+
         return redirect()
             ->route('absensi-siswa.index', ['kelas_id' => $kelas->id, 'tanggal' => $request->tanggal])
             ->with('success', 'Absensi siswa berhasil disimpan.');
+    }
+
+    /**
+     * Kabari wali siswa yang BARU menjadi alpha (bukan sudah alpha sebelumnya). Tanggal lebih lama dari
+     * seminggu tidak dikabari agar pengisian susulan tidak membanjiri wali. Gagal kirim tidak boleh
+     * menggagalkan penyimpanan absensi, cukup dicatat di log.
+     */
+    private function kabariWali($siswaIds, $sebelumnya, array $status, Carbon $tanggal): void
+    {
+        if ($tanggal->lt(today()->subDays(7))) {
+            return;
+        }
+
+        $baruAlpha = $siswaIds->filter(fn ($id) => ($status[$id] ?? null) === 'alpha' && ($sebelumnya[$id] ?? null) !== 'alpha');
+        if ($baruAlpha->isEmpty()) {
+            return;
+        }
+
+        $wali = User::where('is_active', true)->whereHas('anak', fn ($q) => $q->whereIn('siswa.id', $baruAlpha))
+            ->with(['anak' => fn ($q) => $q->whereIn('siswa.id', $baruAlpha)])->get();
+
+        foreach ($wali as $user) {
+            foreach ($user->anak as $anak) {
+                try {
+                    $user->notify(new SiswaAlpha($anak, $tanggal));
+                } catch (\Throwable $e) {
+                    report($e);
+                }
+            }
+        }
     }
 
     public function rekap(Request $request)

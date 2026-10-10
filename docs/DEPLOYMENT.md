@@ -48,14 +48,16 @@ Tambahkan satu entri cron untuk pengguna web server:
 ```
 * * * * * cd /var/www/emadrasah && php artisan schedule:run >> /dev/null 2>&1
 ```
-Jadwal yang berjalan: `madrasah:backup` setiap hari 01:30. Periksa dengan `php artisan schedule:list`.
+Jadwal yang berjalan: `madrasah:backup` setiap hari 01:30 dan `madrasah:pengingat` setiap hari 07:00 (tugas jatuh tempo/terlambat dan sarana yang dipinjam lebih dari 7 hari, masuk ke kotak notifikasi petugas). Periksa dengan `php artisan schedule:list`.
+
+Notifikasi di dalam aplikasi (lonceng di topbar) bersifat sinkron dan tidak memakai antrean. Kabar siswa alpha ke wali juga dikirim lewat email **hanya bila** `MAIL_MAILER` bukan `log`/`array` dan akun wali punya email; kegagalan kirim tidak menggagalkan penyimpanan absensi dan hanya dicatat di log.
 
 Antrean (`queue:work`) belum dibutuhkan karena aplikasi belum memakai *job*. Bila nanti ditambahkan, jalankan `php artisan queue:work --tries=3` lewat Supervisor/systemd.
 
 ## 5. Backup dan pemulihan
 `php artisan madrasah:backup` membuat `storage/app/backups/backup-<tanggal>.zip` (izin 0600) berisi database dan seluruh berkas unggahan (`storage/app/private`). Cadangan lebih dari 14 hari dihapus otomatis (`--keep=N` untuk mengubah).
 
-**Salin cadangan keluar server secara berkala** (rsync/rclone ke penyimpanan lain). Cadangan di server yang sama tidak melindungi dari kerusakan disk atau server hilang.
+**Salin cadangan keluar server.** Cadangan di server yang sama tidak melindungi dari kerusakan disk atau server hilang. Cara paling mudah: isi `BACKUP_DISK` di `.env` dengan nama disk dari `config/filesystems.php` (mis. disk `s3`, `sftp`, atau folder hasil mount NAS yang didaftarkan sebagai disk `local` baru). `madrasah:backup` lalu mengunggah zip hari itu ke disk tersebut dan menghapus salinan di sana yang lebih tua dari `--keep` hari. Jika unggahan gagal, perintah berakhir dengan kode galat (cadangan lokal tetap ada). Alternatif: rsync/rclone terjadwal dari server lain. Status cadangan terakhir tampil di dashboard admin (peringatan bila lebih dari 48 jam).
 
 Pemulihan:
 ```bash

@@ -26,6 +26,15 @@
 
     <div class="em-topbar__spacer"></div>
 
+    @php($notifBaru = $topbarUser ? $topbarUser->unreadNotifications()->count() : 0)
+    <a href="{{ route('notifikasi.index') }}" class="em-notif-btn position-relative me-2 {{ request()->routeIs('notifikasi.*') ? 'is-active' : '' }}"
+       aria-label="Notifikasi{{ $notifBaru > 0 ? ', '.$notifBaru.' belum dibaca' : '' }}" data-notif-count="{{ $notifBaru }}">
+        <i class="fas fa-bell"></i>
+        @if($notifBaru > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ $notifBaru > 99 ? '99+' : $notifBaru }}</span>
+        @endif
+    </a>
+
     <div class="dropdown em-profile">
         <button type="button" class="em-profile__btn" data-bs-toggle="dropdown" data-bs-offset="0,8" aria-expanded="false" aria-label="Menu akun">
             <span class="em-user-avatar"><span>{{ strtoupper(substr($topbarUser?->name ?? 'A', 0, 1)) }}</span></span>

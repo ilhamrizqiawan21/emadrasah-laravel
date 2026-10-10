@@ -1,0 +1,23 @@
+- main [ref=f1e2]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e5]: 
+      - paragraph [ref=f1e7]: MTs Al-Ihsan Batujajar
+    - heading "Lupa Kata Sandi" [level=2] [ref=f1e8]
+    - paragraph [ref=f1e9]: Masukkan email akun Anda. Kami kirim tautan untuk membuat kata sandi baru.
+    - generic [ref=f1e10]:
+      - generic [ref=f1e11]:
+        - textbox " Email" [active] [ref=f1e12]:
+          - /placeholder: nama@email.com
+        - generic:
+          - generic: 
+          - text: Email
+      - button "Kirim Tautan " [ref=f1e13] [cursor=pointer]:
+        - text: Kirim Tautan
+        - generic [ref=f1e14]: 
+    - paragraph [ref=f1e15]:
+      - link " Kembali ke halaman masuk" [ref=f1e16] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/login
+        - generic [ref=f1e17]: 
+        - text: Kembali ke halaman masuk
+  - paragraph [ref=f1e18]: © 2026 MTs Al-Ihsan Batujajar

@@ -1,0 +1,27 @@
+- main [ref=f2e2]:
+  - generic [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - generic [ref=f2e5]: 
+      - paragraph [ref=f2e7]: MTs Al-Ihsan Batujajar
+    - heading "Masuk" [level=1] [ref=f2e8]
+    - paragraph [ref=f2e9]: Gunakan akun yang diberikan oleh administrator.
+    - generic [ref=f2e10]:
+      - generic [ref=f2e11]:
+        - textbox "Email" [active] [ref=f2e12]:
+          - /placeholder: nama@email.com
+        - generic: Email
+      - generic [ref=f2e13]:
+        - textbox "Password" [ref=f2e14]
+        - generic: Password
+        - button "Tampilkan password" [ref=f2e15] [cursor=pointer]:
+          - generic [ref=f2e16]: 
+      - generic [ref=f2e17]:
+        - checkbox "Ingat saya di perangkat ini" [ref=f2e18]
+        - generic [ref=f2e19]: Ingat saya di perangkat ini
+      - paragraph [ref=f2e20]:
+        - link "Lupa password?" [ref=f2e21] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/lupa-sandi
+      - button "Masuk " [ref=f2e22] [cursor=pointer]:
+        - text: Masuk
+        - generic [ref=f2e23]: 
+  - paragraph [ref=f2e24]: © 2026 MTs Al-Ihsan Batujajar

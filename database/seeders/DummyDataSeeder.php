@@ -495,6 +495,15 @@ class DummyDataSeeder extends Seeder
             TemplateSurat::firstOrCreate(['nama_template' => $t['nama_template']], $t);
         }
 
+        // Akun demo wali murid, tertaut ke siswa pertama (untuk mencoba Portal Wali).
+        $waliDemo = User::firstOrCreate(
+            ['email' => 'wali@madrasah.id'],
+            ['name' => 'Wali Murid Demo', 'password' => Hash::make('wali123456'), 'role' => 'wali_murid', 'is_active' => true]
+        );
+        if ($createdSiswa !== []) {
+            $waliDemo->anak()->syncWithoutDetaching([$createdSiswa[0]->id]);
+        }
+
         // 14. Tasks (Manajemen Tugas TU)
         $adminUser = User::where('role', 'admin')->first();
         $taskList = [

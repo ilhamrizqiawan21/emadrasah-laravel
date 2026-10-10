@@ -21,6 +21,7 @@
 
     {{-- ── Navigation ── --}}
     @php($canManage = in_array(auth()->user()?->role, ['admin', 'operator'], true))
+    @php($isWali = in_array(auth()->user()?->role, ['wali_murid', 'siswa'], true))
     <div class="em-sidebar__inner">
         <nav class="em-nav">
 
@@ -32,6 +33,14 @@
                     <span class="em-nav__icon"><i class="fas fa-gauge-high"></i></span>
                     <span class="em-nav__text">Dashboard</span>
                 </a>
+                @if($isWali)
+                <a href="{{ route('wali.index') }}"
+                   class="em-nav__link {{ request()->routeIs('wali.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Portal Wali">
+                    <span class="em-nav__icon"><i class="fas fa-children"></i></span>
+                    <span class="em-nav__text">Portal Wali</span>
+                </a>
+                @endif
             </div>
 
             @if($canManage)
@@ -70,6 +79,7 @@
             </div>
             @endif
 
+            @unless($isWali)
             <div class="em-nav__group">
                 <span class="em-nav__label">Akademik</span>
                 @if($canManage)
@@ -118,6 +128,12 @@
                     <span class="em-nav__icon"><i class="fas fa-fingerprint"></i></span>
                     <span class="em-nav__text">Absensi Guru</span>
                 </a>
+                <a href="{{ route('izin-guru.index') }}"
+                   class="em-nav__link {{ request()->routeIs('izin-guru.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Izin & Cuti Guru">
+                    <span class="em-nav__icon"><i class="fas fa-calendar-check"></i></span>
+                    <span class="em-nav__text">Izin & Cuti</span>
+                </a>
                 @if(auth()->user()?->role === 'guru')
                 <a href="{{ route('portal.index') }}"
                    class="em-nav__link {{ request()->routeIs('portal.*') ? 'is-active' : '' }}"
@@ -147,6 +163,7 @@
                 </a>
                 @endif
             </div>
+            @endunless
 
             @if($canManage)
             <div class="em-nav__group">

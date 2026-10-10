@@ -9,11 +9,20 @@ use App\Models\SaranaPrasarana;
 use App\Models\Siswa;
 use App\Models\SuratMasuk;
 use App\Models\Task;
+use App\Support\PerluTindakan;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Wali murid dan siswa tidak boleh melihat statistik madrasah; mereka punya portal sendiri.
+        if (in_array(auth()->user()->role, ['wali_murid', 'siswa'], true)) {
+            return redirect()->route('wali.index');
+        }
+
+        // Daftar pekerjaan hari ini hanya untuk staf TU; guru melihat portal mereka sendiri.
+        $perluTindakan = in_array(auth()->user()->role, ['admin', 'operator'], true) ? PerluTindakan::untuk(auth()->user()) : null;
+
         // Statistik utama
         $totalSiswa = Siswa::count();
         $totalGuru = Guru::count();
@@ -28,11 +37,17 @@ class DashboardController extends Controller
         $persenLengkap = $totalSiswa > 0 ? round(($siswaLengkap / $totalSiswa) * 100) : 0;
 
         // Data untuk grafik kehadiran 7 hari terakhir
+        // Satu query terkelompok untuk 7 hari (bukan 2 query per hari).
+        $perHari = AgendaGuru::whereDate('tanggal', '>=', today()->subDays(6))
+            ->selectRaw('tanggal, status, count(*) as total')->groupBy('tanggal', 'status')->get()
+            ->groupBy(fn ($r) => $r->tanggal->format('Y-m-d'));
+
         $kehadiran = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = today()->subDays($i);
-            $hadir = AgendaGuru::whereDate('tanggal', $date)->where('status', 'hadir')->count();
-            $tidakHadir = AgendaGuru::whereDate('tanggal', $date)->whereIn('status', ['izin', 'sakit', 'alpha'])->count();
+            $baris = $perHari->get($date->format('Y-m-d'), collect());
+            $hadir = (int) $baris->where('status', 'hadir')->sum('total');
+            $tidakHadir = (int) $baris->whereIn('status', ['izin', 'sakit', 'alpha'])->sum('total');
             $kehadiran[] = [
                 'tanggal' => $date->format('d/m'),
                 'hadir' => $hadir,
@@ -63,7 +78,8 @@ class DashboardController extends Controller
             'persenLengkap',
             'kehadiran',
             'pendingTasks',
-            'recentSuratMasuk'
+            'recentSuratMasuk',
+            'perluTindakan'
         ));
     }
 }

@@ -58,6 +58,40 @@
                 </form>
             </div>
         </div>
+
+        @if(in_array($user->role, ['wali_murid', 'siswa'], true))
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-white py-3">
+                <h6 class="mb-0 fw-semibold">Siswa Tertaut</h6>
+                <small class="text-muted">Akun ini hanya dapat melihat data siswa di bawah ini lewat Portal Wali.</small>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush mb-3">
+                    @forelse($user->anak()->orderBy('nama_lengkap')->get() as $s)
+                        <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                            <span>{{ $s->nama_lengkap }} <span class="text-muted small">· NIS {{ $s->nis }}</span></span>
+                            <form method="POST" action="{{ route('users.siswa.destroy', [$user, $s]) }}">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" aria-label="Lepas {{ $s->nama_lengkap }}"><i class="fas fa-link-slash"></i></button>
+                            </form>
+                        </li>
+                    @empty
+                        <li class="list-group-item px-0 text-muted">Belum ada siswa yang ditautkan.</li>
+                    @endforelse
+                </ul>
+                <form method="POST" action="{{ route('users.siswa.store', $user) }}" class="row g-2">
+                    @csrf
+                    <div class="col-sm-8">
+                        <input type="text" name="nis" class="form-control @error('nis') is-invalid @enderror" placeholder="Masukkan NIS siswa" value="{{ old('nis') }}" required>
+                        @error('nis')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-sm-4 d-grid">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-link me-1"></i> Tautkan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @endif
     </div>
     <div class="col-md-4">
         <div class="card bg-danger bg-opacity-10 border-danger">

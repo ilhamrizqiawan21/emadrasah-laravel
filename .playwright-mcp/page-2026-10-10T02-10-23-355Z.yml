@@ -1,0 +1,152 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - complementary [ref=f4e3]:
+      - generic [ref=f4e4]:
+        - generic [ref=f4e5]:
+          - img "Logo" [ref=f4e7]
+          - generic [ref=f4e8]:
+            - generic [ref=f4e9]: e-Madrasah
+            - generic [ref=f4e10]: MTs Al-Ihsan
+        - text: 
+        - button "Tutup menu" [ref=f4e11] [cursor=pointer]:
+          - generic [ref=f4e12]: 
+      - navigation [ref=f4e14]:
+        - generic [ref=f4e15]:
+          - generic [ref=f4e16]: Menu Utama
+          - link " Dashboard" [ref=f4e17] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/dashboard
+            - generic [ref=f4e18]: 
+            - generic [ref=f4e20]: Dashboard
+          - link " Portal Wali" [ref=f4e21] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/wali
+            - generic [ref=f4e22]: 
+            - generic [ref=f4e24]: Portal Wali
+      - generic [ref=f4e25]: e-Madrasah v2.0
+    - banner [ref=f4e27]:
+      - button "Buka menu" [ref=f4e28] [cursor=pointer]:
+        - generic [ref=f4e29]: 
+      - navigation "Breadcrumb" [ref=f4e30]:
+        - text: 
+        - generic [aria-hidden] [ref=f4e31]: 
+        - generic [ref=f4e32]: Muhammad Rayhan Pratama
+      - generic [ref=f4e33]:
+        - button "Menu akun" [ref=f4e34] [cursor=pointer]:
+          - generic [ref=f4e35]: W
+          - generic [ref=f4e37]:
+            - generic [ref=f4e38]: Wali Murid Demo
+            - generic [ref=f4e39]: Wali murid
+          - generic [ref=f4e40]: 
+        - text:  
+    - main [ref=f4e41]:
+      - generic [ref=f4e42]:
+        - generic [ref=f4e43]:
+          - generic [ref=f4e44]:
+            - heading "Muhammad Rayhan Pratama" [level=2] [ref=f4e45]
+            - paragraph [ref=f4e46]: NIS 2425001 · Kelas 7A
+          - link "Kembali" [ref=f4e48] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/wali
+        - generic [ref=f4e49]:
+          - generic [ref=f4e50]:
+            - heading "Kehadiran · Oktober 2026" [level=5] [ref=f4e51]
+            - generic [ref=f4e52]:
+              - link "Bulan sebelumnya" [ref=f4e53] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/wali/1?bulan=2026-09
+                - generic [ref=f4e54]: 
+              - link "Bulan berikutnya" [ref=f4e55] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/wali/1?bulan=2026-11
+                - generic [ref=f4e56]: 
+          - generic [ref=f4e57]:
+            - generic [ref=f4e58]:
+              - generic [ref=f4e59]: Hadir 0
+              - generic [ref=f4e60]: Izin 0
+              - generic [ref=f4e61]: Sakit 0
+              - generic [ref=f4e62]: Alpha 0
+            - paragraph [ref=f4e63]: Tidak ada catatan izin, sakit, atau alpha pada bulan ini.
+        - generic [ref=f4e64]:
+          - heading "Nilai Raport" [level=5] [ref=f4e66]
+          - generic [ref=f4e67]:
+            - generic [ref=f4e68]:
+              - heading "2025/2026 · Semester 1" [level=6] [ref=f4e69]
+              - link " Unduh Raport" [ref=f4e70] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/wali/1/raport?tahun_pelajaran_id=1&semester=1
+                - generic [ref=f4e71]: 
+                - text: Unduh Raport
+            - table [ref=f4e73]:
+              - rowgroup [ref=f4e74]:
+                - row [ref=f4e75]:
+                  - columnheader "Mata Pelajaran" [ref=f4e76]
+                  - columnheader "Nilai Akhir" [ref=f4e77]
+                  - columnheader "KKTP" [ref=f4e78]
+              - rowgroup [ref=f4e79]:
+                - row [ref=f4e80]:
+                  - cell "Al-Qur'an Hadits" [ref=f4e81]
+                  - cell "91" [ref=f4e82]
+                  - cell "75" [ref=f4e83]
+                - row [ref=f4e84]:
+                  - cell "Akidah Akhlak" [ref=f4e85]
+                  - cell "82" [ref=f4e86]
+                  - cell "75" [ref=f4e87]
+                - row [ref=f4e88]:
+                  - cell "Fikih" [ref=f4e89]
+                  - cell "94" [ref=f4e90]
+                  - cell "75" [ref=f4e91]
+                - row [ref=f4e92]:
+                  - cell "Sejarah Kebudayaan Islam" [ref=f4e93]
+                  - cell "92" [ref=f4e94]
+                  - cell "75" [ref=f4e95]
+                - row [ref=f4e96]:
+                  - cell "Bahasa Arab" [ref=f4e97]
+                  - cell "94" [ref=f4e98]
+                  - cell "75" [ref=f4e99]
+                - row [ref=f4e100]:
+                  - cell "Bahasa Indonesia" [ref=f4e101]
+                  - cell "88" [ref=f4e102]
+                  - cell "75" [ref=f4e103]
+                - row [ref=f4e104]:
+                  - cell "Matematika" [ref=f4e105]
+                  - cell "91" [ref=f4e106]
+                  - cell "75" [ref=f4e107]
+                - row [ref=f4e108]:
+                  - cell "Ilmu Pengetahuan Alam (IPA)" [ref=f4e109]
+                  - cell "88" [ref=f4e110]
+                  - cell "75" [ref=f4e111]
+                - row [ref=f4e112]:
+                  - cell "Ilmu Pengetahuan Sosial (IPS)" [ref=f4e113]
+                  - cell "84" [ref=f4e114]
+                  - cell "75" [ref=f4e115]
+                - row [ref=f4e116]:
+                  - cell "Bahasa Inggris" [ref=f4e117]
+                  - cell "93" [ref=f4e118]
+                  - cell "75" [ref=f4e119]
+                - row [ref=f4e120]:
+                  - cell "Pendidikan Jasmani (PJOK)" [ref=f4e121]
+                  - cell "86" [ref=f4e122]
+                  - cell "75" [ref=f4e123]
+                - row [ref=f4e124]:
+                  - cell "Informatika" [ref=f4e125]
+                  - cell "83" [ref=f4e126]
+                  - cell "75" [ref=f4e127]
+        - generic [ref=f4e128]:
+          - heading "Jadwal Pelajaran" [level=5] [ref=f4e130]
+          - generic [ref=f4e131]:
+            - heading "Senin" [level=6] [ref=f4e132]
+            - list [ref=f4e133]:
+              - listitem [ref=f4e134]: 07:00–07:40 · Al-Qur'an Hadits · Ahmad Fauzi, S.Pd.I
+              - listitem [ref=f4e135]: 07:40–08:20 · Al-Qur'an Hadits · Ahmad Fauzi, S.Pd.I
+              - listitem [ref=f4e136]: 09:30–10:10 · Bahasa Indonesia · Siti Nurhaliza, S.Pd.
+              - listitem [ref=f4e137]: 10:10–10:50 · Bahasa Indonesia · Siti Nurhaliza, S.Pd.
+            - heading "Selasa" [level=6] [ref=f4e138]
+            - list [ref=f4e139]:
+              - listitem [ref=f4e140]: 07:00–07:40 · Matematika · Budi Santoso, M.Pd.
+              - listitem [ref=f4e141]: 07:40–08:20 · Matematika · Budi Santoso, M.Pd.
+            - heading "Rabu" [level=6] [ref=f4e142]
+            - list [ref=f4e143]:
+              - listitem [ref=f4e144]: 07:00–07:40 · Ilmu Pengetahuan Alam (IPA) · Dewi Sartika, S.Si.
+            - heading "Kamis" [level=6] [ref=f4e145]
+            - list [ref=f4e146]:
+              - listitem [ref=f4e147]: 07:00–07:40 · Pendidikan Jasmani (PJOK) · M. Rizky Pratama, S.Pd.
+            - heading "Jumat" [level=6] [ref=f4e148]
+            - list [ref=f4e149]:
+              - listitem [ref=f4e150]: 07:00–07:40 · Fikih · Nurul Hidayah, S.Ag.
+  - contentinfo [ref=f4e151]:
+    - paragraph [ref=f4e152]: © 2026 e-Madrasah — MTs Al-Ihsan Batujajar

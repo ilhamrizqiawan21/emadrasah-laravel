@@ -45,6 +45,31 @@
     </div>
 </div>
 
+@if(auth()->user()->role === 'admin' && $tahunAktifId)
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h6 class="fw-bold mb-1"><i class="fas fa-unlock-keyhole me-2 text-primary"></i>Rilis Raport ke Wali Murid</h6>
+        <p class="small text-muted">Wali murid dan siswa hanya melihat nilai dan PDF raport semester yang sudah dirilis (tahun pelajaran aktif).</p>
+        <div class="d-flex flex-wrap gap-3">
+            @foreach([1 => 'Ganjil', 2 => 'Genap'] as $smt => $nama)
+                @php
+                    $sudah = $dirilis->has($tahunAktifId.'-'.$smt);
+                @endphp
+                <form method="POST" action="{{ route('pengaturan.raport-rilis') }}" class="d-flex align-items-center gap-2">
+                    @csrf
+                    <input type="hidden" name="tahun_pelajaran_id" value="{{ $tahunAktifId }}">
+                    <input type="hidden" name="semester" value="{{ $smt }}">
+                    <input type="hidden" name="dirilis" value="{{ $sudah ? 0 : 1 }}">
+                    <span>Semester {{ $smt }} ({{ $nama }})</span>
+                    <span class="badge {{ $sudah ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis' }}">{{ $sudah ? 'Dirilis' : 'Belum dirilis' }}</span>
+                    <button type="submit" class="btn btn-sm {{ $sudah ? 'btn-outline-danger' : 'btn-primary' }}">{{ $sudah ? 'Tarik' : 'Rilis' }}</button>
+                </form>
+            @endforeach
+        </div>
+    </div>
+</div>
+@endif
+
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">

@@ -1,0 +1,329 @@
+- generic [active] [ref=f12e1]:
+  - generic [ref=f12e2]:
+    - complementary [ref=f12e3]:
+      - generic [ref=f12e4]:
+        - generic [ref=f12e5]:
+          - img "Logo" [ref=f12e7]
+          - generic [ref=f12e8]:
+            - generic [ref=f12e9]: e-Madrasah
+            - generic [ref=f12e10]: MTs Al-Ihsan
+        - text: 
+        - button "Tutup menu" [ref=f12e11] [cursor=pointer]:
+          - generic [ref=f12e12]: 
+      - navigation [ref=f12e14]:
+        - generic [ref=f12e15]:
+          - generic [ref=f12e16]: Menu Utama
+          - link " Dashboard" [ref=f12e17] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/dashboard
+            - generic [ref=f12e18]: 
+            - generic [ref=f12e20]: Dashboard
+        - generic [ref=f12e21]:
+          - generic [ref=f12e22]: Master Data
+          - link " Data Guru" [ref=f12e23] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/guru
+            - generic [ref=f12e24]: 
+            - generic [ref=f12e26]: Data Guru
+          - link " Data Kelas" [ref=f12e27] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/kelas
+            - generic [ref=f12e28]: 
+            - generic [ref=f12e30]: Data Kelas
+          - link " Mata Pelajaran" [ref=f12e31] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/mapel
+            - generic [ref=f12e32]: 
+            - generic [ref=f12e34]: Mata Pelajaran
+          - link " Jam Pelajaran" [ref=f12e35] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/jam-pelajaran
+            - generic [ref=f12e36]: 
+            - generic [ref=f12e38]: Jam Pelajaran
+          - link " Tahun Pelajaran" [ref=f12e39] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/tahun-pelajaran
+            - generic [ref=f12e40]: 
+            - generic [ref=f12e42]: Tahun Pelajaran
+        - generic [ref=f12e43]:
+          - generic [ref=f12e44]: Akademik
+          - generic [ref=f12e45]:
+            - button " Kesiswaan " [ref=f12e46] [cursor=pointer]:
+              - generic [ref=f12e47]: 
+              - generic [ref=f12e49]: Kesiswaan
+              - generic [ref=f12e50]: 
+            - text:    
+          - link " Jadwal Pelajaran" [ref=f12e51] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/jadwal
+            - generic [ref=f12e52]: 
+            - generic [ref=f12e54]: Jadwal Pelajaran
+          - link " Absensi Guru" [ref=f12e55] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/absensi
+            - generic [ref=f12e56]: 
+            - generic [ref=f12e58]: Absensi Guru
+          - link " Input Nilai" [ref=f12e59] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/nilai
+            - generic [ref=f12e60]: 
+            - generic [ref=f12e62]: Input Nilai
+          - link " Absensi Siswa" [ref=f12e63] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/absensi-siswa
+            - generic [ref=f12e64]: 
+            - generic [ref=f12e66]: Absensi Siswa
+          - link " Arsip Akademik" [ref=f12e67] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/arsip-akademik
+            - generic [ref=f12e68]: 
+            - generic [ref=f12e70]: Arsip Akademik
+        - generic [ref=f12e71]:
+          - generic [ref=f12e72]: Administrasi
+          - link " Surat Masuk 2" [ref=f12e73] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/surat-masuk
+            - generic [ref=f12e74]: 
+            - generic [ref=f12e76]: Surat Masuk
+            - generic "2 surat belum selesai" [ref=f12e77]: "2"
+          - link " Surat Keluar" [ref=f12e78] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/surat-keluar
+            - generic [ref=f12e79]: 
+            - generic [ref=f12e81]: Surat Keluar
+          - link " Template Surat" [ref=f12e82] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/template-surat
+            - generic [ref=f12e83]: 
+            - generic [ref=f12e85]: Template Surat
+        - generic [ref=f12e86]:
+          - generic [ref=f12e87]: Operasional
+          - link " Tugas TU 3" [ref=f12e88] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/tasks
+            - generic [ref=f12e89]: 
+            - generic [ref=f12e91]: Tugas TU
+            - generic "3 tugas belum selesai" [ref=f12e92]: "3"
+          - link " Sarana" [ref=f12e93] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/sarana
+            - generic [ref=f12e94]: 
+            - generic [ref=f12e96]: Sarana
+          - link " Kategori Sarana" [ref=f12e97] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/kategori-sarana
+            - generic [ref=f12e98]: 
+            - generic [ref=f12e100]: Kategori Sarana
+        - generic [ref=f12e101]:
+          - generic [ref=f12e102]: Sistem
+          - link " Pengguna" [ref=f12e103] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/users
+            - generic [ref=f12e104]: 
+            - generic [ref=f12e106]: Pengguna
+          - link " Audit Log" [ref=f12e107] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/audit-log
+            - generic [ref=f12e108]: 
+            - generic [ref=f12e110]: Audit Log
+          - link " Pengaturan" [ref=f12e111] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/pengaturan
+            - generic [ref=f12e112]: 
+            - generic [ref=f12e114]: Pengaturan
+      - generic [ref=f12e115]: e-Madrasah v2.0
+    - banner [ref=f12e117]:
+      - button "Buka menu" [ref=f12e118] [cursor=pointer]:
+        - generic [ref=f12e119]: 
+      - navigation "Breadcrumb" [ref=f12e120]:
+        - text: 
+        - generic [ref=f12e121]: Dashboard
+      - link "Notifikasi" [ref=f12e122] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/notifikasi
+        - generic [ref=f12e123]: 
+      - generic [ref=f12e124]:
+        - button "Menu akun" [ref=f12e125] [cursor=pointer]:
+          - generic [ref=f12e126]: A
+          - generic [ref=f12e128]:
+            - generic [ref=f12e129]: Administrator
+            - generic [ref=f12e130]: Admin
+          - generic [ref=f12e131]: 
+        - text:  
+    - main [ref=f12e132]:
+      - generic [ref=f12e133]:
+        - generic [ref=f12e134]:
+          - generic [ref=f12e135]:
+            - generic [ref=f12e136]: Selamat pagi
+            - generic [ref=f12e137]: Administrator
+            - generic [ref=f12e138]: Berikut ringkasan aktivitas madrasah hari ini.
+            - generic [ref=f12e139]:
+              - generic [ref=f12e140]: 
+              - text: Sabtu, 10 Oktober 2026
+          - generic [ref=f12e142]:
+            - generic [ref=f12e143]: 
+            - text: MTs Al-Ihsan Batujajar
+        - generic [ref=f12e144]: Perlu Tindakan
+        - generic [ref=f12e146]:
+          - link "Kelas belum diabsen hari ini 7A, 7B, 8A dan 2 lainnya 5" [ref=f12e147] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/absensi-siswa
+            - generic [aria-hidden] [ref=f12e148]: 
+            - generic [ref=f12e149]:
+              - generic [ref=f12e150]: Kelas belum diabsen hari ini
+              - generic [ref=f12e151]: 7A, 7B, 8A dan 2 lainnya
+            - generic [ref=f12e152]: "5"
+          - link "Guru belum diabsen hari ini  Beres" [ref=f12e153] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/absensi
+            - generic [aria-hidden] [ref=f12e154]: 
+            - generic [ref=f12e155]: Guru belum diabsen hari ini
+            - generic [ref=f12e157]:
+              - generic [ref=f12e158]: 
+              - text: Beres
+          - link "Tugas melewati tenggat  Beres" [ref=f12e159] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/tasks
+            - generic [aria-hidden] [ref=f12e160]: 
+            - generic [ref=f12e161]: Tugas melewati tenggat
+            - generic [ref=f12e163]:
+              - generic [ref=f12e164]: 
+              - text: Beres
+          - link "Surat masuk belum selesai > 3 hari Jadwal Pemeriksaan Kesehatan Berkala & Imunisasi Siswa, Undangan Rapat Koordinasi Persiapan Ujian Madrasah 2" [ref=f12e165] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/surat-masuk
+            - generic [aria-hidden] [ref=f12e166]: 
+            - generic [ref=f12e167]:
+              - generic [ref=f12e168]: Surat masuk belum selesai > 3 hari
+              - generic [ref=f12e169]: Jadwal Pemeriksaan Kesehatan Berkala & Imunisasi Siswa, Undangan Rapat Koordinasi Persiapan Ujian Madrasah
+            - generic [ref=f12e170]: "2"
+          - generic [ref=f12e171]:
+            - generic [aria-hidden] [ref=f12e172]: 
+            - generic [ref=f12e173]:
+              - generic [ref=f12e174]: Cadangan data
+              - generic [ref=f12e175]: Belum ada cadangan. Pastikan penjadwal (cron) aktif.
+            - generic [ref=f12e176]: Perlu dicek
+        - generic [ref=f12e177]: Statistik Utama
+        - generic [ref=f12e178]:
+          - generic [ref=f12e180]:
+            - generic [ref=f12e181]: 
+            - generic [ref=f12e183]:
+              - generic [ref=f12e184]: Total Siswa
+              - generic [ref=f12e185]: "6"
+              - generic [ref=f12e186]: Siswa terdaftar
+          - generic [ref=f12e188]:
+            - generic [ref=f12e189]: 
+            - generic [ref=f12e191]:
+              - generic [ref=f12e192]: Total Kelas
+              - generic [ref=f12e193]: "6"
+              - generic [ref=f12e194]: Kelas aktif semester ini
+          - generic [ref=f12e196]:
+            - generic [ref=f12e197]: 
+            - generic [ref=f12e199]:
+              - generic [ref=f12e200]: Tugas Pending
+              - generic [ref=f12e201]: "3"
+              - generic [ref=f12e202]: Belum diselesaikan
+          - generic [ref=f12e204]:
+            - generic [ref=f12e205]: 
+            - generic [ref=f12e207]:
+              - generic [ref=f12e208]: Surat Masuk
+              - generic [ref=f12e209]: "2"
+              - generic [ref=f12e210]: Bulan Oktober
+        - generic [ref=f12e211]:
+          - generic [ref=f12e213]:
+            - generic [ref=f12e214]: 
+            - generic [ref=f12e216]:
+              - generic [ref=f12e217]: Guru Hadir
+              - generic [ref=f12e218]: "8"
+              - generic [ref=f12e219]: Dari 8 guru
+          - generic [ref=f12e221]:
+            - generic [ref=f12e222]: 
+            - generic [ref=f12e224]:
+              - generic [ref=f12e225]: Sarana Rusak
+              - generic [ref=f12e226]: "2"
+              - generic [ref=f12e227]: Perlu perhatian
+          - generic [ref=f12e229]:
+            - generic [ref=f12e230]: 
+            - generic [ref=f12e232]:
+              - generic [ref=f12e233]: Buku Induk
+              - generic [ref=f12e234]: 100%
+              - generic [ref=f12e235]: Data sudah lengkap
+          - generic [ref=f12e237]:
+            - generic [ref=f12e238]:
+              - generic [ref=f12e239]:
+                - generic [ref=f12e240]: Kehadiran Hari Ini
+                - text: 100%
+              - generic [ref=f12e241]: 
+            - generic [ref=f12e246]:
+              - generic [ref=f12e247]: 8 hadir
+              - generic [ref=f12e248]: 0 tidak hadir
+        - generic [ref=f12e249]: Grafik Kehadiran
+        - generic [ref=f12e251]:
+          - heading " Kehadiran Guru — 7 Hari Terakhir" [level=5] [ref=f12e252]:
+            - generic [ref=f12e253]: 
+            - text: Kehadiran Guru — 7 Hari Terakhir
+          - generic [ref=f12e254]:
+            - generic [ref=f12e255]: Hadir
+            - generic [ref=f12e257]: Tidak Hadir
+        - generic [ref=f12e261]: Aksi Cepat
+        - generic [ref=f12e262]:
+          - link " Catat Absensi" [ref=f12e263] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/absensi
+            - generic [ref=f12e264]: 
+            - text: Catat Absensi
+          - link " Surat Masuk Baru" [ref=f12e265] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/surat-masuk/create
+            - generic [ref=f12e266]: 
+            - text: Surat Masuk Baru
+          - link " Tambah Tugas" [ref=f12e267] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/tasks/create
+            - generic [ref=f12e268]: 
+            - text: Tambah Tugas
+          - link " Cek Sarana" [ref=f12e269] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/sarana
+            - generic [ref=f12e270]: 
+            - text: Cek Sarana
+        - generic [ref=f12e271]: Aktivitas Terkini
+        - generic [ref=f12e272]:
+          - generic [ref=f12e274]:
+            - generic [ref=f12e275]:
+              - heading " Tugas Belum Selesai" [level=5] [ref=f12e276]:
+                - generic [ref=f12e277]: 
+                - text: Tugas Belum Selesai
+              - link "Lihat Semua" [ref=f12e278] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/tasks
+            - generic [ref=f12e279]:
+              - generic [ref=f12e280]: 
+              - generic [ref=f12e282]:
+                - generic [ref=f12e283]: Rekapitulasi Absensi Bulanan Guru & Staff
+                - generic [ref=f12e284]:
+                  - generic [ref=f12e285]: 
+                  - text: 11 Okt 2026
+              - generic [ref=f12e286]: Tinggi
+            - generic [ref=f12e287]:
+              - generic [ref=f12e288]: 
+              - generic [ref=f12e290]:
+                - generic [ref=f12e291]: Pemeriksaan Inventaris Alat Lab Komputer
+                - generic [ref=f12e292]:
+                  - generic [ref=f12e293]: 
+                  - text: 12 Okt 2026
+              - generic [ref=f12e294]: Tinggi
+            - generic [ref=f12e295]:
+              - generic [ref=f12e296]: 
+              - generic [ref=f12e298]:
+                - generic [ref=f12e299]: Verifikasi Data Brankas Dokumen Siswa Baru (Buku Induk)
+                - generic [ref=f12e300]:
+                  - generic [ref=f12e301]: 
+                  - text: 14 Okt 2026
+              - generic [ref=f12e302]: Sedang
+          - generic [ref=f12e304]:
+            - generic [ref=f12e305]:
+              - heading " Surat Masuk Terbaru" [level=5] [ref=f12e306]:
+                - generic [ref=f12e307]: 
+                - text: Surat Masuk Terbaru
+              - link "Lihat Semua" [ref=f12e308] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/surat-masuk
+            - generic [ref=f12e309]:
+              - generic [ref=f12e310]: 
+              - generic [ref=f12e312]:
+                - generic [ref=f12e313]: Kelompok Kerja Madrasah Tsanawiyah (KKM-MTs)
+                - generic [ref=f12e314]:
+                  - generic [ref=f12e315]: Undangan Rapat Koordinasi Persiapan Ujian Madrasah
+                  - generic [ref=f12e316]: ·
+                  - text: 07 Okt 2026
+              - generic [ref=f12e317]: Diterima
+            - generic [ref=f12e318]:
+              - generic [ref=f12e319]: 
+              - generic [ref=f12e321]:
+                - generic [ref=f12e322]: Puskesmas Batujajar
+                - generic [ref=f12e323]:
+                  - generic [ref=f12e324]: Jadwal Pemeriksaan Kesehatan Berkala & Imunisasi Siswa
+                  - generic [ref=f12e325]: ·
+                  - text: 04 Okt 2026
+              - generic [ref=f12e326]: Diproses
+            - generic [ref=f12e327]:
+              - generic [ref=f12e328]: 
+              - generic [ref=f12e330]:
+                - generic [ref=f12e331]: Kantor Kementerian Agama Kab. Bandung Barat
+                - generic [ref=f12e332]:
+                  - generic [ref=f12e333]: Sosialisasi Asesmen Bakat Minat (ABM) Madrasah Tahun 2026
+                  - generic [ref=f12e334]: ·
+                  - text: 29 Sep 2026
+              - generic [ref=f12e335]: Selesai
+  - contentinfo [ref=f12e336]:
+    - paragraph [ref=f12e337]: © 2026 e-Madrasah — MTs Al-Ihsan Batujajar

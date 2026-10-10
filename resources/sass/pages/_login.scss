@@ -1,148 +1,79 @@
-// Halaman login: dua panel di desktop (merek | form), satu kolom di HP.
+// Halaman login: satu kartu terpusat, minimalis. Fokus visual ada pada tombol Masuk.
 body.login-page {
-    background: var(--em-white);
     min-height: 100vh;
+    background:
+        radial-gradient(60rem 28rem at 50% -10%, color-mix(in srgb, var(--em-primary) 14%, transparent), transparent 70%),
+        var(--em-gray-50, #f8f9fa);
 }
 
-.login-split {
+.login-shell {
     min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr;
-
-    @media (min-width: 992px) {
-        grid-template-columns: minmax(380px, 5fr) 6fr;
-    }
-}
-
-// ── Panel merek ──────────────────────────────────────────────
-.login-brand {
-    position: relative;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 36px 28px 28px;
-    color: #fff;
-    background: linear-gradient(150deg, var(--em-green-950) 0%, var(--em-green-800) 60%, var(--em-green-700) 100%);
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    animation: em-fade-in .35s var(--em-ease) both;
+}
 
-    // Lingkaran dekoratif
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, .06);
-        pointer-events: none;
-    }
-    &::before { width: 340px; height: 340px; top: -120px; right: -100px; }
-    &::after { width: 240px; height: 240px; bottom: -90px; left: -70px; }
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 36px 32px 32px;
+    background: var(--em-white);
+    border: 1px solid var(--em-gray-200, #e9ecef);
+    border-radius: var(--em-r-xl);
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 12px 32px -8px rgba(16, 24, 40, .1);
 
-    @media (min-width: 992px) {
-        padding: 56px;
+    @media (max-width: 480px) {
+        padding: 28px 22px 24px;
     }
 }
 
-.login-brand__inner {
-    position: relative;
-    z-index: 1;
-    margin: auto 0;
+.login-head {
     text-align: center;
-
-    @media (min-width: 992px) {
-        text-align: left;
-    }
+    margin-bottom: 24px;
 }
 
 .login-logo {
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 18px;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, .16);
-    border: 1px solid rgba(255, 255, 255, .25);
     border-radius: var(--em-r-xl);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
-    font-size: 2rem;
-
-    @media (min-width: 992px) {
-        width: 96px;
-        height: 96px;
-        margin: 0 0 28px;
-        font-size: 2.6rem;
-    }
+    background: color-mix(in srgb, var(--em-primary) 10%, transparent);
+    color: var(--em-primary);
+    font-size: 1.7rem;
 }
 
 .login-logo__img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    padding: 10px;
+    padding: 6px;
 }
 
 .login-brand__name {
-    font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: -.3px;
-    margin: 0 0 6px;
-
-    @media (min-width: 992px) {
-        font-size: 2.1rem;
-        line-height: 1.2;
-    }
-}
-
-.login-brand__tagline {
     margin: 0;
-    color: rgba(255, 255, 255, .72);
-    font-size: .9rem;
-
-    @media (min-width: 992px) {
-        font-size: 1.05rem;
-        max-width: 28ch;
-    }
-}
-
-.login-brand__foot {
-    position: relative;
-    z-index: 1;
-    margin: 0;
-    font-size: .8rem;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, .5);
-    display: none;
-
-    @media (min-width: 992px) {
-        display: block;
-    }
-}
-
-// ── Panel form ───────────────────────────────────────────────
-.login-panel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px 40px;
-    background: var(--em-white);
-    animation: em-fade-in .35s var(--em-ease) both;
-}
-
-.login-panel__inner {
-    width: 100%;
-    max-width: 380px;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--em-text-muted);
 }
 
 .login-heading {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 800;
+    letter-spacing: -.3px;
     margin: 0 0 4px;
+    text-align: center;
 }
 
 .login-lead {
     color: var(--em-text-muted);
+    font-size: .9rem;
+    text-align: center;
     margin: 0 0 24px;
 }
 
@@ -172,15 +103,24 @@ body.login-page {
     opacity: .8;
 }
 
+// Tombol Masuk: aksi utama halaman, dibuat menonjol.
 .btn-login {
-    padding: 12px;
+    padding: 13px;
     font-weight: 700;
     letter-spacing: .3px;
+    box-shadow: 0 6px 16px -4px color-mix(in srgb, var(--em-primary) 55%, transparent);
+    transition: transform .15s var(--em-ease), box-shadow .15s var(--em-ease);
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px -6px color-mix(in srgb, var(--em-primary) 60%, transparent);
+    }
+    &:active { transform: translateY(0); }
 }
 
 .login-footer {
     text-align: center;
-    margin: 28px 0 0;
+    margin: 20px 0 0;
     font-size: .75rem;
     color: var(--em-gray-400);
 }

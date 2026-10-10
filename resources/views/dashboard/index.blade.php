@@ -26,6 +26,54 @@
     </div>
 </div>
 
+{{-- ── Perlu Tindakan (admin & operator) ── --}}
+@if($perluTindakan)
+<span class="em-section-label">Perlu Tindakan</span>
+<div class="card shadow-sm border-0 mb-4">
+    <div class="list-group list-group-flush">
+        @foreach($perluTindakan['item'] as $i)
+            <a href="{{ $i['url'] }}" class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3">
+                <i class="fas {{ $i['ikon'] }} fa-fw {{ $i['jumlah'] ? 'text-warning' : 'text-success' }}" aria-hidden="true"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">{{ $i['label'] }}</div>
+                    @if($i['jumlah'])
+                        <div class="small text-muted">{{ implode(', ', $i['contoh']) }}{{ $i['jumlah'] > count($i['contoh']) ? ' dan '.($i['jumlah'] - count($i['contoh'])).' lainnya' : '' }}</div>
+                    @endif
+                </div>
+                @if($i['jumlah'])
+                    <span class="badge bg-warning-subtle text-warning-emphasis">{{ $i['jumlah'] }}</span>
+                @else
+                    <span class="badge bg-success-subtle text-success-emphasis"><i class="fas fa-check me-1"></i>Beres</span>
+                @endif
+            </a>
+        @endforeach
+        @if($perluTindakan['backup'])
+            @php
+                $b = $perluTindakan['backup'];
+            @endphp
+            <div class="list-group-item d-flex align-items-center gap-3 py-3">
+                <i class="fas fa-database fa-fw {{ $b['bermasalah'] ? 'text-danger' : 'text-success' }}" aria-hidden="true"></i>
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">Cadangan data</div>
+                    <div class="small text-muted">
+                        @if($b['terakhir'])
+                            Terakhir {{ $b['terakhir']->translatedFormat('d F Y, H:i') }}
+                        @else
+                            Belum ada cadangan. Pastikan penjadwal (cron) aktif.
+                        @endif
+                    </div>
+                </div>
+                @if($b['bermasalah'])
+                    <span class="badge bg-danger-subtle text-danger-emphasis">Perlu dicek</span>
+                @else
+                    <span class="badge bg-success-subtle text-success-emphasis"><i class="fas fa-check me-1"></i>Aman</span>
+                @endif
+            </div>
+        @endif
+    </div>
+</div>
+@endif
+
 {{-- ── Row 1: 4 Stat Cards Utama ── --}}
 <span class="em-section-label">Statistik Utama</span>
 <div class="row g-3 mb-4">

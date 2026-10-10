@@ -45,6 +45,12 @@ class User extends Authenticatable
         return $this->hasMany(TaskLog::class);
     }
 
+    /** Siswa yang tertaut ke akun ini (anak untuk wali murid, diri sendiri untuk akun siswa). */
+    public function anak()
+    {
+        return $this->belongsToMany(Siswa::class, 'wali_siswa')->withTimestamps();
+    }
+
     public function auditLabel(): string
     {
         return "{$this->name} ({$this->email})";

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
@@ -61,10 +62,51 @@ class BackupCommand extends Command
         chmod($zipPath, 0600);
         $this->info(sprintf('Backup selesai: %s (%s KB, database + %d berkas unggahan)', $zipPath, number_format(filesize($zipPath) / 1024, 1), $files));
 
-        $removed = $this->prune($dir, max(1, (int) $this->option('keep')));
+        $keep = max(1, (int) $this->option('keep'));
+        $removed = $this->prune($dir, $keep);
         if ($removed > 0) {
             $this->line("Cadangan lama dihapus: {$removed}");
         }
+
+        return $this->salinKeLuarServer($zipPath, $keep);
+    }
+
+    /**
+     * Salin cadangan ke disk Laravel lain (BACKUP_DISK: mis. S3, SFTP, atau folder yang di-mount dari NAS)
+     * supaya selamat dari kerusakan server. Gagal menyalin dianggap kegagalan backup (exit code 1) agar
+     * terlihat di log penjadwal; cadangan lokal tetap ada.
+     */
+    private function salinKeLuarServer(string $zipPath, int $keep): int
+    {
+        $diskName = config('madrasah.backup_disk');
+        if (! $diskName) {
+            return self::SUCCESS;
+        }
+
+        try {
+            $disk = Storage::disk($diskName);
+            $stream = fopen($zipPath, 'rb');
+            try {
+                if ($disk->put(basename($zipPath), $stream) === false) {
+                    throw new RuntimeException('disk menolak berkas');
+                }
+            } finally {
+                fclose($stream);
+            }
+
+            $limit = now()->subDays($keep)->getTimestamp();
+            foreach ($disk->files() as $file) {
+                if (str_starts_with(basename($file), 'backup-') && str_ends_with($file, '.zip') && $disk->lastModified($file) < $limit) {
+                    $disk->delete($file);
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->error("Salinan luar server gagal ({$diskName}): ".$e->getMessage());
+
+            return self::FAILURE;
+        }
+
+        $this->info("Salinan luar server tersimpan di disk '{$diskName}'.");
 
         return self::SUCCESS;
     }

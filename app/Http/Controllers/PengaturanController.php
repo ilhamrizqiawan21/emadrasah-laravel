@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RaportRilis;
 use App\Support\Madrasah;
 use App\Support\ThemePalette;
 use Illuminate\Http\Request;
@@ -83,6 +84,25 @@ class PengaturanController extends Controller
         $value = $value === null ? null : trim($value);
 
         return $value === '' ? null : $value;
+    }
+
+    /** Buka atau tutup akses wali murid/siswa ke raport satu semester. */
+    public function raportRilis(Request $request)
+    {
+        $data = $request->validate([
+            'tahun_pelajaran_id' => 'required|integer|exists:tahun_pelajaran,id',
+            'semester' => 'required|in:1,2',
+            'dirilis' => 'required|boolean',
+        ]);
+        $kunci = ['tahun_pelajaran_id' => $data['tahun_pelajaran_id'], 'semester' => (int) $data['semester']];
+
+        if ($data['dirilis']) {
+            RaportRilis::firstOrCreate($kunci);
+        } else {
+            RaportRilis::where($kunci)->delete();
+        }
+
+        return back()->with('success', $data['dirilis'] ? 'Raport dirilis ke wali murid.' : 'Rilis raport ditarik kembali.');
     }
 
     /** Removes an uploaded file, but only ever from the branding folder. */

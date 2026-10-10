@@ -14,6 +14,7 @@ use App\Http\Controllers\EksporController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\ImporController;
+use App\Http\Controllers\IzinGuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JamPelajaranController;
 use App\Http\Controllers\KategoriSaranaController;
@@ -21,8 +22,10 @@ use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KenaikanKelasController;
 use App\Http\Controllers\MapelController;
 use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PortalGuruController;
+use App\Http\Controllers\PortalWaliController;
 use App\Http\Controllers\RaportController;
 use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\SiswaController;
@@ -32,6 +35,7 @@ use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TemplateSuratController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserSiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,6 +67,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Kotak masuk notifikasi pribadi: semua role, hanya milik sendiri.
+    Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('/notifikasi/baca-semua', [NotifikasiController::class, 'bacaSemua'])->name('notifikasi.baca-semua');
+    Route::post('/notifikasi/{id}/baca', [NotifikasiController::class, 'baca'])->name('notifikasi.baca');
 
     // Akun sendiri: semua role boleh mengganti kata sandinya.
     Route::get('/akun/sandi', [AkunController::class, 'sandi'])->name('akun.sandi');
@@ -104,6 +113,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('kelas/{kelas}', [PortalGuruController::class, 'kelas'])->name('kelas');
     });
 
+    // Pengajuan izin/cuti guru: guru mengajukan, admin/operator melihat semua. Keputusan ada di grup manajemen.
+    Route::prefix('izin-guru')->name('izin-guru.')->middleware('role:admin,operator,guru')->group(function () {
+        Route::get('/', [IzinGuruController::class, 'index'])->name('index');
+        Route::get('buat', [IzinGuruController::class, 'create'])->name('create');
+        Route::post('/', [IzinGuruController::class, 'store'])->name('store');
+        Route::delete('{izin}', [IzinGuruController::class, 'destroy'])->name('destroy');
+    });
+
+    // ========== PORTAL WALI MURID / SISWA ==========
+    // Hanya data siswa yang ditautkan ke akun (lihat PortalWaliController).
+    Route::prefix('wali')->name('wali.')->middleware('role:wali_murid,siswa')->group(function () {
+        Route::get('/', [PortalWaliController::class, 'index'])->name('index');
+        Route::get('{siswa}', [PortalWaliController::class, 'show'])->name('show');
+        Route::get('{siswa}/raport', [PortalWaliController::class, 'raport'])->name('raport');
+    });
+
     // ========== MENU MANAJEMEN (khusus admin & operator) ==========
     Route::middleware('role:admin,operator')->group(function () {
 
@@ -111,6 +136,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('files/{path}', [FileController::class, 'show'])->where('path', '.*')->name('files.show');
 
         // ========== MASTER DATA ==========
+        Route::post('persetujuan-izin/{izin}', [IzinGuruController::class, 'putuskan'])->name('persetujuan-izin.putuskan');
         Route::resource('guru', GuruController::class)->except('show');
         Route::resource('kelas', KelasController::class)->parameters(['kelas' => 'kelas'])->except('show');
         Route::resource('mapel', MapelController::class)->except('show');
@@ -148,11 +174,14 @@ Route::middleware(['auth'])->group(function () {
         // ========== USER MANAGEMENT (khusus admin) ==========
         Route::middleware('role:admin')->group(function () {
             Route::resource('users', UserController::class)->except('show');
+            Route::post('users/{user}/siswa', [UserSiswaController::class, 'store'])->name('users.siswa.store');
+            Route::delete('users/{user}/siswa/{siswa}', [UserSiswaController::class, 'destroy'])->withTrashed()->name('users.siswa.destroy');
             Route::get('audit-log', [AuditLogController::class, 'index'])->name('audit-log.index');
 
             // Pengaturan identitas & tampilan madrasah
             Route::get('pengaturan', [PengaturanController::class, 'edit'])->name('pengaturan.edit');
             Route::put('pengaturan', [PengaturanController::class, 'update'])->name('pengaturan.update');
+            Route::post('pengaturan/raport-rilis', [PengaturanController::class, 'raportRilis'])->name('pengaturan.raport-rilis');
         });
 
         // Siswa

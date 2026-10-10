@@ -25,6 +25,10 @@ class RouteMatrixTest extends TestCase
     {
         parent::setUp();
         $this->seed(DatabaseSeeder::class);
+
+        foreach (['wali_murid', 'siswa'] as $role) {
+            User::create(['name' => $role, 'email' => "{$role}@matriks.test", 'password' => 'rahasia-panjang-1', 'role' => $role, 'is_active' => true]);
+        }
     }
 
     /** Akses yang seharusnya dimiliki tiap role, tertulis mandiri. */
@@ -32,10 +36,14 @@ class RouteMatrixTest extends TestCase
     {
         $adminOnly = str_starts_with($name, 'users.') || str_starts_with($name, 'pengaturan.') || str_starts_with($name, 'audit-log.');
 
+        // Portal wali khusus akun wali murid/siswa; staf (termasuk admin) memang 403.
+        $wali = str_starts_with($name, 'wali.');
+
         return match ($role) {
-            'admin' => true,
-            'operator' => ! $adminOnly,
-            'guru' => str_starts_with($name, 'absensi.') || str_starts_with($name, 'absensi-siswa.') || str_starts_with($name, 'nilai.') || str_starts_with($name, 'portal.') || str_starts_with($name, 'akun.') || in_array($name, ['dashboard', 'logout'], true),
+            'admin' => ! $wali,
+            'wali_murid', 'siswa' => $wali || str_starts_with($name, 'akun.') || str_starts_with($name, 'notifikasi.') || in_array($name, ['dashboard', 'logout'], true),
+            'operator' => ! $adminOnly && ! $wali,
+            'guru' => str_starts_with($name, 'izin-guru.') || str_starts_with($name, 'absensi.') || str_starts_with($name, 'absensi-siswa.') || str_starts_with($name, 'nilai.') || str_starts_with($name, 'portal.') || str_starts_with($name, 'akun.') || str_starts_with($name, 'notifikasi.') || in_array($name, ['dashboard', 'logout'], true),
             default => false,
         };
     }
@@ -104,7 +112,8 @@ class RouteMatrixTest extends TestCase
         $failures = [];
 
         foreach ($this->protectedRoutes() as $r) {
-            if ($r['method'] !== 'GET' || $r['name'] === 'logout') {
+            // Portal wali sengaja 403 untuk admin; diuji di test_wali_and_siswa_are_limited_to_their_portal.
+            if ($r['method'] !== 'GET' || $r['name'] === 'logout' || str_starts_with($r['name'], 'wali.')) {
                 continue;
             }
 
@@ -126,6 +135,12 @@ class RouteMatrixTest extends TestCase
     public function test_guru_is_limited_to_attendance_and_dashboard(): void
     {
         $this->assertRoleBoundary('guru');
+    }
+
+    public function test_wali_and_siswa_are_limited_to_their_portal(): void
+    {
+        $this->assertRoleBoundary('wali_murid');
+        $this->assertRoleBoundary('siswa');
     }
 
     /**

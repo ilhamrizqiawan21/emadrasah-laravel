@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use ZipArchive;
 
@@ -75,6 +76,62 @@ class BackupCommandTest extends TestCase
 
         $this->assertFileDoesNotExist($old);
         $this->assertFileExists($recent);
+
+        File::deleteDirectory($storage);
+    }
+
+    public function test_backup_is_copied_to_the_offsite_disk_and_old_remote_copies_are_pruned(): void
+    {
+        $storage = $this->isolatedStorage();
+        $this->liveSqlite($storage);
+        DB::connection('backup_test')->statement('create table t (x int)');
+
+        Storage::fake('offsite');
+        Storage::disk('offsite')->put('backup-20200101-000000.zip', 'lama');
+        touch(Storage::disk('offsite')->path('backup-20200101-000000.zip'), now()->subDays(30)->getTimestamp());
+        Storage::disk('offsite')->put('catatan-lain.txt', 'bukan cadangan');
+        config(['madrasah.backup_disk' => 'offsite']);
+
+        $this->artisan('madrasah:backup', ['--keep' => 14])->expectsOutputToContain('Salinan luar server')->assertSuccessful();
+
+        $local = basename(glob("{$storage}/app/backups/backup-*.zip")[0]);
+        Storage::disk('offsite')->assertExists($local);
+        $this->assertSame(
+            file_get_contents("{$storage}/app/backups/{$local}"),
+            Storage::disk('offsite')->get($local),
+            'Salinan di luar server harus identik dengan cadangan lokal'
+        );
+        Storage::disk('offsite')->assertMissing('backup-20200101-000000.zip');
+        Storage::disk('offsite')->assertExists('catatan-lain.txt');
+
+        File::deleteDirectory($storage);
+    }
+
+    public function test_offsite_failure_fails_the_command_loudly_but_keeps_the_local_backup(): void
+    {
+        $storage = $this->isolatedStorage();
+        $this->liveSqlite($storage);
+        DB::connection('backup_test')->statement('create table t (x int)');
+
+        config([
+            'madrasah.backup_disk' => 'rusak',
+            'filesystems.disks.rusak' => ['driver' => 'local', 'root' => '/proc/tidak-ada/offsite', 'throw' => true],
+        ]);
+
+        $this->artisan('madrasah:backup')->expectsOutputToContain('Salinan luar server gagal')->assertFailed();
+        $this->assertCount(1, glob("{$storage}/app/backups/backup-*.zip"), 'Cadangan lokal tetap ada');
+
+        File::deleteDirectory($storage);
+    }
+
+    public function test_no_offsite_copy_is_attempted_when_not_configured(): void
+    {
+        $storage = $this->isolatedStorage();
+        $this->liveSqlite($storage);
+        DB::connection('backup_test')->statement('create table t (x int)');
+        config(['madrasah.backup_disk' => null]);
+
+        $this->artisan('madrasah:backup')->doesntExpectOutputToContain('Salinan luar server')->assertSuccessful();
 
         File::deleteDirectory($storage);
     }

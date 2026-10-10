@@ -8,6 +8,7 @@ use App\Models\RaportCatatan;
 use App\Models\RaportEkskul;
 use App\Models\RaportKehadiran;
 use App\Models\RaportNilai;
+use App\Models\RaportRilis;
 use App\Models\Siswa;
 use App\Models\TahunPelajaran;
 use App\Support\DataRaport;
@@ -29,7 +30,9 @@ class RaportController extends Controller
         $tahunList = TahunPelajaran::orderByDesc('kode')->get();
         $tahunAktifId = TahunPelajaran::where('is_aktif', true)->value('id');
 
-        return view('raport.index', compact('siswa', 'kelasList', 'tahunList', 'tahunAktifId'));
+        $dirilis = RaportRilis::all()->map(fn ($r) => $r->tahun_pelajaran_id.'-'.$r->semester)->flip();
+
+        return view('raport.index', compact('siswa', 'kelasList', 'tahunList', 'tahunAktifId', 'dirilis'));
     }
 
     public function manage(Siswa $siswa, Request $request)
