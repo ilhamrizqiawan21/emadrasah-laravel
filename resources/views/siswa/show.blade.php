@@ -56,6 +56,12 @@
                     <a href="{{ route('buku-induk.export-pdf', $siswa) }}" target="_blank" class="btn btn-outline-danger btn-sm text-start">
                         <i class="fas fa-file-pdf me-2"></i> Cetak PDF Buku Induk
                     </a>
+                    <a href="{{ route('kartu-pelajar.siswa', $siswa) }}" target="_blank" class="btn btn-outline-secondary btn-sm text-start">
+                        <i class="fas fa-id-card me-2"></i> Cetak Kartu Pelajar
+                    </a>
+                    <a href="{{ route('surat-siswa.index', $siswa) }}" class="btn btn-outline-primary btn-sm text-start">
+                        <i class="fas fa-envelope-open-text me-2"></i> Surat Keterangan Aktif
+                    </a>
                     <a href="{{ route('raport.export-pdf', $siswa) }}" target="_blank" class="btn btn-outline-success btn-sm text-start">
                         <i class="fas fa-file-invoice me-2"></i> Cetak PDF Raport
                     </a>

@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\AbsensiSiswa;
 use App\Models\Jadwal;
+use App\Models\Pembayaran;
+use App\Models\Pengumuman;
 use App\Models\RaportNilai;
 use App\Models\RaportRilis;
 use App\Models\Siswa;
+use App\Models\Tagihan;
 use App\Models\TahunPelajaran;
 use App\Support\DataRaport;
 use App\Support\RekapAbsensi;
@@ -40,7 +43,9 @@ class PortalWaliController extends Controller
             return [$s->id => $baris];
         });
 
-        return view('wali.index', compact('anak', 'rekap'));
+        $pengumuman = Pengumuman::aktif()->untukRole($request->user()->role)->urut()->limit(3)->get();
+
+        return view('wali.index', compact('anak', 'rekap', 'pengumuman'));
     }
 
     public function show(Request $request, Siswa $siswa)
@@ -71,7 +76,9 @@ class PortalWaliController extends Controller
                 ->sortBy(fn ($j) => (self::URUTAN_HARI[$j->hari] ?? 9).$j->jam_mulai)->groupBy('hari')
             : collect();
 
-        return view('wali.show', compact('siswa', 'bulan', 'rekap', 'tidakHadir', 'nilai', 'jadwal'));
+        $tagihan = Tagihan::with('pembayaran')->denganTerbayar()->where('siswa_id', $siswa->id)->orderByDesc('jatuh_tempo')->orderByDesc('id')->get();
+
+        return view('wali.show', compact('siswa', 'bulan', 'rekap', 'tidakHadir', 'nilai', 'jadwal', 'tagihan'));
     }
 
     public function raport(Request $request, Siswa $siswa)
@@ -92,6 +99,14 @@ class PortalWaliController extends Controller
 
         return Pdf::loadView('raport.pdf', $data)->setPaper('a4', 'portrait')
             ->stream('Raport_'.$siswa->nis.'_'.$tpKode.'_S'.$semester.'.pdf');
+    }
+
+    public function kuitansi(Request $request, Siswa $siswa, Pembayaran $pembayaran)
+    {
+        $this->pastikanMilik($request, $siswa);
+        abort_unless($pembayaran->tagihan()->where('siswa_id', $siswa->id)->exists(), 404);
+
+        return KeuanganController::unduhKuitansi($pembayaran);
     }
 
     private function pastikanMilik(Request $request, Siswa $siswa): void

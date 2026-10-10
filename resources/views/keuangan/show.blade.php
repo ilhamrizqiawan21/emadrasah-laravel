@@ -39,8 +39,9 @@
                                 <td data-label="Metode">{{ \App\Models\Pembayaran::METODE[$p->metode] ?? $p->metode }}</td>
                                 <td data-label="Jumlah" class="text-end">{{ $rp($p->jumlah) }}</td>
                                 <td data-label="Catatan">{{ $p->catatan }}<div class="small text-muted">{{ $p->pencatat?->name }}</div></td>
-                                <td class="text-end">
-                                    <form method="POST" action="{{ route('keuangan.pembayaran.destroy', $p) }}" onsubmit="return confirm('Batalkan pembayaran ini?')">
+                                <td class="text-end text-nowrap">
+                                    <a href="{{ route('keuangan.pembayaran.kuitansi', $p) }}" target="_blank" class="btn btn-sm btn-outline-secondary" title="Cetak kuitansi"><i class="fas fa-file-pdf"></i></a>
+                                    <form method="POST" action="{{ route('keuangan.pembayaran.destroy', $p) }}" class="d-inline" onsubmit="return confirm('Batalkan pembayaran ini?')">
                                         @csrf @method('DELETE')
                                         <button class="btn btn-sm btn-outline-danger">Batalkan</button>
                                     </form>

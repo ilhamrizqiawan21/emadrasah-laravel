@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AgendaGuru;
 use App\Models\Guru;
 use App\Models\Kelas;
+use App\Models\Pengumuman;
 use App\Models\SaranaPrasarana;
 use App\Models\Siswa;
 use App\Models\SuratMasuk;
@@ -22,6 +23,8 @@ class DashboardController extends Controller
 
         // Daftar pekerjaan hari ini hanya untuk staf TU; guru melihat portal mereka sendiri.
         $perluTindakan = in_array(auth()->user()->role, ['admin', 'operator'], true) ? PerluTindakan::untuk(auth()->user()) : null;
+
+        $pengumuman = Pengumuman::aktif()->untukRole(auth()->user()->role)->urut()->limit(3)->get();
 
         // Statistik utama
         $totalSiswa = Siswa::count();
@@ -68,6 +71,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.index', compact(
+            'pengumuman',
             'totalSiswa',
             'totalGuru',
             'totalKelas',

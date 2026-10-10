@@ -92,6 +92,16 @@ class Siswa extends Model
         return $this->hasMany(RaportPrestasi::class);
     }
 
+    public function pelanggaran()
+    {
+        return $this->hasMany(Pelanggaran::class)->orderByDesc('tanggal')->orderByDesc('id');
+    }
+
+    public function catatanBk()
+    {
+        return $this->hasMany(CatatanBk::class)->orderByDesc('tanggal')->orderByDesc('id');
+    }
+
     public function dokumen()
     {
         return $this->hasMany(SiswaDokumen::class);

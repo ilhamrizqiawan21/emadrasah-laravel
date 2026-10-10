@@ -33,6 +33,18 @@
                     <span class="em-nav__icon"><i class="fas fa-gauge-high"></i></span>
                     <span class="em-nav__text">Dashboard</span>
                 </a>
+                <a href="{{ route('pengumuman.index') }}"
+                   class="em-nav__link {{ request()->routeIs('pengumuman.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Pengumuman">
+                    <span class="em-nav__icon"><i class="fas fa-bullhorn"></i></span>
+                    <span class="em-nav__text">Pengumuman</span>
+                </a>
+                <a href="{{ route('kalender.index') }}"
+                   class="em-nav__link {{ request()->routeIs('kalender.*') ? 'is-active' : '' }}"
+                   data-bs-toggle="tooltip" data-bs-placement="right" title="Kalender Akademik">
+                    <span class="em-nav__icon"><i class="fas fa-calendar-days"></i></span>
+                    <span class="em-nav__text">Kalender</span>
+                </a>
                 @if($isWali)
                 <a href="{{ route('wali.index') }}"
                    class="em-nav__link {{ request()->routeIs('wali.*') ? 'is-active' : '' }}"
@@ -84,7 +96,7 @@
                 <span class="em-nav__label">Akademik</span>
                 @if($canManage)
                 {{-- ── MANAJEMEN SISWA (dropdown) ── --}}
-                <div class="em-nav__dropdown {{ request()->routeIs('siswa.*', 'buku-induk.*', 'raport.*') ? 'is-open' : '' }}" id="dropdown-kesiswaan-parent">
+                <div class="em-nav__dropdown {{ request()->routeIs('siswa.*', 'buku-induk.*', 'raport.*', 'kedisiplinan.*') ? 'is-open' : '' }}" id="dropdown-kesiswaan-parent">
                     <div class="em-nav__dropdown-toggle" data-dropdown="kesiswaan" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
                         <span class="em-nav__icon"><i class="fas fa-user-graduate"></i></span>
                         <span class="em-nav__text">Kesiswaan</span>
@@ -111,6 +123,11 @@
                            class="em-nav__link em-nav__link--sub {{ request()->routeIs('raport.*') ? 'is-active' : '' }}">
                             <span class="em-nav__icon"><i class="fas fa-file-invoice"></i></span>
                             <span class="em-nav__text">Nilai Raport</span>
+                        </a>
+                        <a href="{{ route('kedisiplinan.index') }}"
+                           class="em-nav__link em-nav__link--sub {{ request()->routeIs('kedisiplinan.*') ? 'is-active' : '' }}">
+                            <span class="em-nav__icon"><i class="fas fa-scale-balanced"></i></span>
+                            <span class="em-nav__text">Kedisiplinan & BK</span>
                         </a>
                     </div>
                 </div>

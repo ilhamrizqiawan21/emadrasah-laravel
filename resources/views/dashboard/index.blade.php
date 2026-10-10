@@ -26,6 +26,8 @@
     </div>
 </div>
 
+@include('pengumuman.partials.ringkas', ['pengumuman' => $pengumuman])
+
 {{-- ── Perlu Tindakan (admin & operator) ── --}}
 @if($perluTindakan)
 <span class="em-section-label">Perlu Tindakan</span>

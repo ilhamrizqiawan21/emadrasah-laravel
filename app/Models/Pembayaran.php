@@ -27,6 +27,11 @@ class Pembayaran extends Model
         return $this->belongsTo(User::class, 'dicatat_oleh');
     }
 
+    public function nomorKuitansi(): string
+    {
+        return sprintf('KW-%06d', $this->id);
+    }
+
     public function auditLabel(): string
     {
         return "Pembayaran Rp {$this->jumlah} untuk tagihan #{$this->tagihan_id}";

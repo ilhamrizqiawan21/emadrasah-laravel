@@ -7,9 +7,11 @@ use App\Models\AgendaGuru;
 use App\Models\Guru;
 use App\Models\IzinGuru;
 use App\Models\Jadwal;
+use App\Models\KalenderAkademik;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\SuratMasuk;
+use App\Models\Tagihan;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -29,18 +31,20 @@ class PerluTindakan
     /** @return array{item: list<array<string, mixed>>, backup: ?array{terakhir: ?Carbon, bermasalah: bool}} */
     public static function untuk(User $user): array
     {
+        $libur = KalenderAkademik::liburPada(today());
+
         return [
-            'item' => [self::kelasBelumAbsen(), self::guruBelumAbsen(), self::izinMenunggu(), self::tugasTerlambat(), self::suratMenunggu()],
+            'item' => [self::kelasBelumAbsen($libur), self::guruBelumAbsen($libur), self::izinMenunggu(), self::tugasTerlambat(), self::suratMenunggu(), self::tagihanTerlambat()],
             'backup' => $user->role === 'admin' ? self::statusBackup() : null,
         ];
     }
 
-    /** Kelas berisi siswa aktif yang absensinya belum diisi hari ini (tidak dihitung pada hari Minggu). */
-    private static function kelasBelumAbsen(): array
+    /** Kelas berisi siswa aktif yang absensinya belum diisi hari ini (tidak dihitung pada hari Minggu atau libur kalender). */
+    private static function kelasBelumAbsen(bool $libur): array
     {
         $nama = collect();
 
-        if (! today()->isSunday()) {
+        if (! today()->isSunday() && ! $libur) {
             $sudah = AbsensiSiswa::whereDate('tanggal', today())->distinct()->pluck('kelas_id');
             $kelasIds = Siswa::where('status', 'Aktif')->whereNotNull('kelas_id')->whereNotIn('kelas_id', $sudah)->distinct()->pluck('kelas_id');
             $nama = Kelas::whereIn('id', $kelasIds)->orderBy('nama_kelas')->pluck('nama_kelas');
@@ -50,8 +54,12 @@ class PerluTindakan
     }
 
     /** Guru aktif yang punya jadwal hari ini tetapi belum tercatat di absensi guru. */
-    private static function guruBelumAbsen(): array
+    private static function guruBelumAbsen(bool $libur): array
     {
+        if ($libur) {
+            return self::item('guru-belum-absen', 'Guru belum diabsen hari ini', collect(), route('absensi.index'), 'fa-fingerprint');
+        }
+
         $sudah = AgendaGuru::whereDate('tanggal', today())->pluck('guru_id');
         $mengajar = Jadwal::where('hari', now()->translatedFormat('l'))->where('status', 'aktif')->distinct()->pluck('guru_id');
         $nama = Guru::whereIn('id', $mengajar)->whereNotIn('id', $sudah)->where('status', 'aktif')->orderBy('nama')->pluck('nama');
@@ -83,6 +91,15 @@ class PerluTindakan
             ->orderBy('tanggal_terima')->pluck('perihal');
 
         return self::item('surat-menunggu', 'Surat masuk belum selesai > '.self::HARI_SURAT_MENUNGGU.' hari', $perihal, route('surat-masuk.index'), 'fa-envelope-open-text');
+    }
+
+    /** Siswa yang punya tagihan belum lunas dan sudah lewat jatuh tempo (satu siswa dihitung sekali). */
+    private static function tagihanTerlambat(): array
+    {
+        $nama = Tagihan::query()->status('terlambat')->join('siswa', 'siswa.id', '=', 'tagihan.siswa_id')->whereNull('siswa.deleted_at')
+            ->orderBy('tagihan.jatuh_tempo')->pluck('siswa.nama_lengkap')->unique()->values();
+
+        return self::item('tagihan-terlambat', 'Siswa menunggak tagihan', $nama, route('keuangan.index', ['status' => 'terlambat']), 'fa-wallet');
     }
 
     private static function item(string $kunci, string $label, $contoh, string $url, string $ikon): array

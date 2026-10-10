@@ -39,11 +39,14 @@ class RouteMatrixTest extends TestCase
         // Portal wali khusus akun wali murid/siswa; staf (termasuk admin) memang 403.
         $wali = str_starts_with($name, 'wali.');
 
+        // Halaman baca yang terbuka untuk semua role yang login.
+        $umum = in_array($name, ['pengumuman.index', 'kalender.index'], true);
+
         return match ($role) {
             'admin' => ! $wali,
-            'wali_murid', 'siswa' => $wali || str_starts_with($name, 'akun.') || str_starts_with($name, 'notifikasi.') || in_array($name, ['dashboard', 'logout'], true),
+            'wali_murid', 'siswa' => $wali || $umum || str_starts_with($name, 'akun.') || str_starts_with($name, 'notifikasi.') || in_array($name, ['dashboard', 'logout'], true),
             'operator' => ! $adminOnly && ! $wali,
-            'guru' => str_starts_with($name, 'izin-guru.') || str_starts_with($name, 'absensi.') || str_starts_with($name, 'absensi-siswa.') || str_starts_with($name, 'nilai.') || str_starts_with($name, 'portal.') || str_starts_with($name, 'akun.') || str_starts_with($name, 'notifikasi.') || in_array($name, ['dashboard', 'logout'], true),
+            'guru' => $umum || str_starts_with($name, 'izin-guru.') || str_starts_with($name, 'absensi.') || str_starts_with($name, 'absensi-siswa.') || str_starts_with($name, 'nilai.') || str_starts_with($name, 'portal.') || str_starts_with($name, 'akun.') || str_starts_with($name, 'notifikasi.') || in_array($name, ['dashboard', 'logout'], true),
             default => false,
         };
     }

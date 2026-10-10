@@ -42,6 +42,40 @@
     </div>
 </div>
 
+{{-- Tagihan --}}
+@php $rp = fn ($n) => 'Rp '.number_format($n, 0, ',', '.'); @endphp
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3"><h5 class="mb-0 fw-semibold">Tagihan</h5></div>
+    <div class="card-body">
+        @forelse($tagihan as $t)
+            <div class="py-2 {{ ! $loop->last ? 'border-bottom' : '' }}">
+                <div class="d-flex flex-wrap justify-content-between gap-2">
+                    <div>
+                        <span class="fw-semibold">{{ $t->jenis }}@if($t->periode) · {{ $t->namaPeriode() }}@endif</span>
+                        <div class="small text-muted">Jatuh tempo {{ $t->jatuh_tempo->translatedFormat('d F Y') }}</div>
+                    </div>
+                    <div class="text-end">
+                        <div>{{ $rp($t->jumlah) }}
+                            @if($t->status() === 'lunas')<span class="badge bg-success-subtle text-success-emphasis">Lunas</span>
+                            @elseif($t->terlambat())<span class="badge bg-danger-subtle text-danger-emphasis">Terlambat</span>
+                            @else<span class="badge bg-warning-subtle text-warning-emphasis">Belum lunas</span>@endif
+                        </div>
+                        @if($t->status() !== 'lunas')<div class="small text-muted">Sisa {{ $rp($t->sisa()) }}</div>@endif
+                    </div>
+                </div>
+                @foreach($t->pembayaran as $p)
+                    <div class="small text-muted mt-1">
+                        Dibayar {{ $rp($p->jumlah) }} pada {{ $p->tanggal->translatedFormat('d M Y') }}
+                        · <a href="{{ route('wali.kuitansi', [$siswa, $p]) }}" target="_blank" rel="noopener">Kuitansi</a>
+                    </div>
+                @endforeach
+            </div>
+        @empty
+            <p class="text-muted mb-0">Belum ada tagihan.</p>
+        @endforelse
+    </div>
+</div>
+
 {{-- Nilai --}}
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-header bg-white py-3"><h5 class="mb-0 fw-semibold">Nilai Raport</h5></div>

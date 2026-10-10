@@ -11,8 +11,11 @@ use Illuminate\Support\Str;
  */
 trait Diaudit
 {
-    /** Kolom yang nilainya tidak boleh tersimpan di log; hanya ditandai "[diubah]". */
-    protected array $auditRahasia = ['password'];
+    /** Kolom yang nilainya tidak boleh tersimpan di log; hanya ditandai "[diubah]". Timpa di model bila perlu. */
+    protected function auditRahasia(): array
+    {
+        return ['password'];
+    }
 
     /** Kolom yang diabaikan sama sekali. */
     protected array $auditKecualikan = [];
@@ -54,7 +57,7 @@ trait Diaudit
             if (in_array($kolom, $buang, true) || $kolom === $this->getKeyName()) {
                 continue;
             }
-            $hasil[$kolom] = in_array($kolom, $this->auditRahasia, true)
+            $hasil[$kolom] = in_array($kolom, $this->auditRahasia(), true)
                 ? '[diubah]'
                 : (is_string($nilai) ? Str::limit($nilai, 200, '…') : $nilai);
         }

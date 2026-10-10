@@ -6,6 +6,7 @@ use App\Models\Kelas;
 use App\Models\Pembayaran;
 use App\Models\Siswa;
 use App\Models\Tagihan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -116,6 +117,19 @@ class KeuanganController extends Controller
         }
 
         return redirect()->route('keuangan.tagihan.show', $tagihan)->with('success', 'Pembayaran dicatat.');
+    }
+
+    public function kuitansi(Pembayaran $pembayaran)
+    {
+        return $this->unduhKuitansi($pembayaran);
+    }
+
+    /** Dipakai juga portal wali; pemanggil wajib memastikan hak aksesnya lebih dulu. */
+    public static function unduhKuitansi(Pembayaran $pembayaran)
+    {
+        $pembayaran->load('tagihan.siswa.kelas', 'pencatat');
+
+        return Pdf::loadView('keuangan.kuitansi', compact('pembayaran'))->setPaper('a5', 'landscape')->stream('Kuitansi_'.$pembayaran->nomorKuitansi().'.pdf');
     }
 
     public function batalkanBayar(Pembayaran $pembayaran)

@@ -87,6 +87,9 @@
                         <td>{{ $item->kapasitas ?? '0' }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
+                                <a href="{{ route('kartu-pelajar.kelas', $item) }}" target="_blank" class="btn btn-outline-secondary" title="Cetak kartu pelajar satu kelas" aria-label="Cetak kartu pelajar {{ $item->nama_kelas }}">
+                                    <i class="fas fa-id-card"></i>
+                                </a>
                                 <a href="{{ route('kelas.edit', $item) }}" class="btn btn-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>

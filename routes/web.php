@@ -18,13 +18,17 @@ use App\Http\Controllers\IzinGuruController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JamPelajaranController;
 use App\Http\Controllers\KategoriSaranaController;
+use App\Http\Controllers\KedisiplinanController;
+use App\Http\Controllers\KalenderController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\KartuPelajarController;
 use App\Http\Controllers\KeuanganController;
 use App\Http\Controllers\KenaikanKelasController;
 use App\Http\Controllers\MapelController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PortalGuruController;
 use App\Http\Controllers\PortalWaliController;
 use App\Http\Controllers\RaportController;
@@ -32,6 +36,7 @@ use App\Http\Controllers\SaranaController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\SuratKeluarController;
 use App\Http\Controllers\SuratMasukController;
+use App\Http\Controllers\SuratSiswaController;
 use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TemplateSuratController;
@@ -73,6 +78,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
     Route::post('/notifikasi/baca-semua', [NotifikasiController::class, 'bacaSemua'])->name('notifikasi.baca-semua');
     Route::post('/notifikasi/{id}/baca', [NotifikasiController::class, 'baca'])->name('notifikasi.baca');
+
+    // Pengumuman: semua role membaca yang ditujukan kepadanya; pengelolaan ada di grup manajemen.
+    Route::get('pengumuman', [PengumumanController::class, 'index'])->name('pengumuman.index');
+
+    Route::get('kalender', [KalenderController::class, 'index'])->name('kalender.index');
 
     // Akun sendiri: semua role boleh mengganti kata sandinya.
     Route::get('/akun/sandi', [AkunController::class, 'sandi'])->name('akun.sandi');
@@ -128,6 +138,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [PortalWaliController::class, 'index'])->name('index');
         Route::get('{siswa}', [PortalWaliController::class, 'show'])->name('show');
         Route::get('{siswa}/raport', [PortalWaliController::class, 'raport'])->name('raport');
+        Route::get('{siswa}/kuitansi/{pembayaran}', [PortalWaliController::class, 'kuitansi'])->name('kuitansi');
     });
 
     // ========== MENU MANAJEMEN (khusus admin & operator) ==========
@@ -152,6 +163,44 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('jadwal', JadwalController::class)->except('show');
         Route::resource('arsip-akademik', ArsipAkademikController::class)->only(['index', 'store', 'destroy']);
 
+        // ========== PENGUMUMAN (kelola) ==========
+        Route::get('pengumuman/buat', [PengumumanController::class, 'create'])->name('pengumuman.create');
+        Route::post('pengumuman', [PengumumanController::class, 'store'])->name('pengumuman.store');
+        Route::get('pengumuman/{pengumuman}/edit', [PengumumanController::class, 'edit'])->name('pengumuman.edit');
+        Route::put('pengumuman/{pengumuman}', [PengumumanController::class, 'update'])->name('pengumuman.update');
+        Route::delete('pengumuman/{pengumuman}', [PengumumanController::class, 'destroy'])->name('pengumuman.destroy');
+
+        // ========== KALENDER AKADEMIK (kelola) ==========
+        Route::get('kalender/buat', [KalenderController::class, 'create'])->name('kalender.create');
+        Route::post('kalender', [KalenderController::class, 'store'])->name('kalender.store');
+        Route::get('kalender/{agenda}/edit', [KalenderController::class, 'edit'])->name('kalender.edit');
+        Route::put('kalender/{agenda}', [KalenderController::class, 'update'])->name('kalender.update');
+        Route::delete('kalender/{agenda}', [KalenderController::class, 'destroy'])->name('kalender.destroy');
+
+        // ========== KARTU PELAJAR ==========
+        Route::get('kartu-pelajar/siswa/{siswa}', [KartuPelajarController::class, 'siswa'])->name('kartu-pelajar.siswa');
+        Route::get('kartu-pelajar/kelas/{kelas}', [KartuPelajarController::class, 'kelas'])->name('kartu-pelajar.kelas');
+
+        // ========== KEDISIPLINAN & BK (staf saja; catatan BK rahasia) ==========
+        Route::prefix('kedisiplinan')->name('kedisiplinan.')->controller(KedisiplinanController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('siswa/{siswa}', 'siswa')->name('siswa');
+            Route::post('siswa/{siswa}/pelanggaran', 'storePelanggaran')->name('pelanggaran.store');
+            Route::delete('pelanggaran/{pelanggaran}', 'destroyPelanggaran')->name('pelanggaran.destroy');
+            Route::post('siswa/{siswa}/bk', 'storeBk')->name('bk.store');
+            Route::delete('bk/{catatan}', 'destroyBk')->name('bk.destroy');
+            Route::get('jenis', 'jenis')->name('jenis.index');
+            Route::post('jenis', 'storeJenis')->name('jenis.store');
+            Route::delete('jenis/{jenis}', 'destroyJenis')->name('jenis.destroy');
+        });
+
+        // ========== SURAT UNTUK SISWA (nomor otomatis, tercatat di surat keluar) ==========
+        Route::prefix('surat-siswa')->name('surat-siswa.')->controller(SuratSiswaController::class)->group(function () {
+            Route::get('cetak/{surat}', 'cetak')->name('cetak');
+            Route::get('{siswa}', 'index')->name('index');
+            Route::post('{siswa}', 'store')->name('store');
+        });
+
         // ========== KEUANGAN (tagihan & pembayaran) ==========
         Route::prefix('keuangan')->name('keuangan.')->controller(KeuanganController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -159,6 +208,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('tagihan/{tagihan}', 'show')->name('tagihan.show');
             Route::delete('tagihan/{tagihan}', 'destroy')->name('tagihan.destroy');
             Route::post('tagihan/{tagihan}/pembayaran', 'bayar')->name('pembayaran.store');
+            Route::get('pembayaran/{pembayaran}/kuitansi', 'kuitansi')->name('pembayaran.kuitansi');
             Route::delete('pembayaran/{pembayaran}', 'batalkanBayar')->name('pembayaran.destroy');
         });
 

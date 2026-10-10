@@ -43,4 +43,10 @@ return [
     // Disk filesystem (config/filesystems.php) tujuan salinan cadangan di luar server; kosong = tanpa salinan.
     'backup_disk' => env('BACKUP_DISK'),
 
+    // Kode tengah nomor surat otomatis, mis. 012/SK/X/2026.
+    'kode_surat' => env('MADRASAH_KODE_SURAT', 'SK'),
+
+    // Total poin pelanggaran siswa yang ditandai "melewati ambang" di halaman Kedisiplinan.
+    'ambang_poin' => (int) env('MADRASAH_AMBANG_POIN', 50),
+
 ];

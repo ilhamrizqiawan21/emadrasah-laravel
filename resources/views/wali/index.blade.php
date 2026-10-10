@@ -7,6 +7,8 @@
     Pantau kehadiran, nilai, dan jadwal anak Anda.
 </x-page-header>
 
+@include('pengumuman.partials.ringkas', ['pengumuman' => $pengumuman])
+
 @forelse($anak as $s)
     @php($r = $rekap[$s->id])
     <div class="card shadow-sm border-0 mb-3">
